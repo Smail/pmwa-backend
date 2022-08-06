@@ -1,15 +1,29 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const debug = require('debug')('backend:app');
+// Local modules
+const NetworkError = require('./src/NetworkError');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const app = express();
 
-var app = express();
+// Load config
+dotenv.config();
 
-// view engine setup
+if (process.env.DEBUG) {
+  require('./src/mock');
+}
+
+// Routes
+const { router: usersRouter } = require('./routes/users');
+const { router: authRouter } = require('./routes/auth');
+const { router: tasksRouter } = require('./routes/tasks');
+
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -18,24 +32,43 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors({ origin: true, credentials: true }));
 
-app.use('/', indexRouter);
+
+// Add routes
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
+app.use('/tasks', tasksRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
+// Catch 404 and forward to error handler
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+// Error handler
+app.use(function (err, req, res, next) {
+  // Set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  debug(req.app.get('env'));
+
+  console.error(err);
+  if (err instanceof NetworkError) {
+    res.status(err.httpCode);
+  } else {
+    res.status(err.status || 500);
+  }
+
+  // Render the error page
+  if (req.is('application/json')) {
+    res.send(JSON.stringify({
+      statusCode: err.httpCode,
+      message: err.message,
+    }));
+  } else {
+    res.send(err.message);
+  }
 });
 
 module.exports = app;
