@@ -116,7 +116,10 @@ class User {
     }
   }
 
-  // Return clone of this object with the sensible data removed.
+  /**
+   * Clone this object with its sensible data, e.g., password hash, removed.
+   * @returns Object
+   */
   sensibleClone() {
     // TODO add this on node>=v17 otherwise use lodash
     // const thisClone = structuredClone(this);
