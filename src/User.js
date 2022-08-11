@@ -33,21 +33,18 @@ class User {
     // }
 
     // Hash password
-    (async () => {
-      this._passwordHash = await bcrypt.hash(plaintextPassword, 10);
-    })();
+    // Promise
+    this.passwordHash = bcrypt.hash(plaintextPassword, 10);
 
     this.tasks = [];
     this.refreshTokens = new Set();
-  }
 
-  async getPasswordHash() {
-    return this._passwordHash;
+    // Note: Check for new added members in isValidObject().
   }
 
   async verifyPassword(plaintextPassword) {
     assert(plaintextPassword, new Error('plaintextPassword is null'));
-    return bcrypt.compare(plaintextPassword, await this.getPasswordHash());
+    return bcrypt.compare(plaintextPassword, await this.passwordHash);
   }
 
   // Create JWT access token.
