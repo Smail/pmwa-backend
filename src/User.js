@@ -129,7 +129,7 @@ class User {
     return thisClone;
   }
 
-  toString() {
+  sensibleString() {
     return JSON.stringify(this.sensibleClone);
   }
 
