@@ -1,4 +1,5 @@
 const { assert } = require('console');
+const { User } = require('./User');
 
 const users = [];
 // Observe push method on users array.
