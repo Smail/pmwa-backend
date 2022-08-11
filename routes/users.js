@@ -2,7 +2,7 @@ const express = require('express');
 const { ReasonPhrases, StatusCodes } = require('http-status-codes');
 const router = express.Router();
 // Local modules
-const { users, getUserFromUsername, existsUsername } = require('../src/app-model');
+const { users, getUserFromUsername, existsUsername } = require('../src/model');
 const NetworkError = require('../src/NetworkError');
 const { requireAccessToken } = require('./auth')
 

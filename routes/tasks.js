@@ -4,7 +4,7 @@ const { StatusCodes } = require('http-status-codes');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 // Local modules
-const { users, getUserFromUsername, existsUsername } = require('../src/app-model');
+const { users, getUserFromUsername, existsUsername } = require('../src/model');
 const { requireAccessToken, loadAuthenticatedUser } = require('./auth');
 
 router.use(requireAccessToken);

@@ -1,5 +1,5 @@
 // Local modules
-const { users, getUserFromUsername, existsUsername } = require('../src/app-model');
+const { users, getUserFromUsername, existsUsername } = require('../src/model');
 const { User } = require('./User');
 // Load config
 require('dotenv').config();

@@ -4,8 +4,6 @@ const jwt = require('jsonwebtoken');
 const CryptoJS = require('crypto-js');
 const { v4: uuidv4 } = require('uuid');
 const lodash = require('lodash');
-// Local modules
-const { users, getUserFromUsername, existsUsername } = require('./app-model');
 
 // Load config
 require('dotenv').config();

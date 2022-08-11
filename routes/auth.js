@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 // Local files
 const NetworkError = require('../src/NetworkError');
-const { users, getUserFromUsername, existsUsername } = require('../src/app-model');
+const { users, getUserFromUsername, existsUsername } = require('../src/model');
 const { User } = require('../src/User');
 const { assert } = require('console');
 
