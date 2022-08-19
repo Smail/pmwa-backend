@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS tasks (
+  uuid TEXT PRIMARY KEY,
+  userUuid TEXT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(userUuid) REFERENCES users(uuid) ON UPDATE CASCADE ON DELETE CASCADE
+)
+-- TODO primary key with uuid and useruuid
