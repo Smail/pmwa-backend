@@ -15,14 +15,14 @@ function loadSqlQueries(directory) {
   const sqlFiles = files.filter(file => file.endsWith('.sql'));
 
   debug(`Number of SQL files in directory '${directory}': ${sqlFiles.length}`);
-  debug(`SQL files in directory '${directory}': ${sqlFiles}`);
+  debug(`SQL files in directory '${directory}'`);
 
   for (const sqlFile of sqlFiles) {
     const sql = fs.readFileSync(join(filePath, sqlFile), { encoding: 'utf8', flag: 'r' });
     const queryName = sqlFile.replace('.sql', '');
 
     queries[queryName] = sql;
-    debug(`Added query '${queryName}'`);
+    debug(`Added query '${queryName}': ${queries[queryName] }`);
   }
 
   return queries;
