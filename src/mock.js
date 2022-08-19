@@ -1,6 +1,6 @@
 // Local modules
 const { users, getUserFromUsername, existsUsername } = require('../src/model');
-const { User } = require('./User');
+const { UserBuilder } = require('./User');
 // Load config
 require('dotenv').config();
 
@@ -17,14 +17,33 @@ if (process.env.DEBUG) {
       const firstName = randomName.split(' ')[0]; // Jane
       const lastName = randomName.split(' ')[1]; // Doe
       const username = faker.internet.userName(firstName, lastName);
-      const email = faker.internet.email();
-      const password = faker.internet.password(15);
 
-      usersTmp.push(new User(username, firstName, lastName, email, password));
+      const user = new UserBuilder()
+        .addUsername(username)
+        .addFirstName(firstName)
+        .addLastName(lastName)
+        .addEmail(faker.internet.email())
+        .addPassword(faker.internet.password(15))
+        .build();
+      usersTmp.push(user);
     }
 
-    usersTmp.push(new User('smail', 'Smail', 'Mustermann', 'smail@example.com', 'Smail1234'));
-    
+    const smail = new UserBuilder()
+      .addUsername('smail')
+      .addFirstName('Smail')
+      .addLastName('Mustermann')
+      .addEmail('smail@example.com')
+      .addPassword('Smail1234')
+      .build();
+    console.log(smail.firstName);
+    console.log(smail.lastName);
+    console.log(smail.uuid);
+    console.log(smail.username);
+    console.log(smail.createAccessToken());
+    console.log(smail.createRefreshToken());
+    console.log(smail.refreshTokens);
+    usersTmp.push(smail);
+
     // Add created mock elements to users array
     for (const user of usersTmp) {
       const username = user.username.toLowerCase();
