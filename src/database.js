@@ -1,8 +1,9 @@
 const fs = require('fs');
 const fsp = fs.promises;
 const { join } = require('path');
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(':memory:');
+// const sqlite3 = require('better-sqlite3');
+// const db = new sqlite3.Database(':memory:');
+const db = require('better-sqlite3')(':memory:');
 const debug = require('debug')('backend:database');
 
 // Load config
