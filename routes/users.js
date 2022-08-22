@@ -39,4 +39,16 @@ router.get('/dump', requireAccessToken, function (req, res, next) {
   res.send(JSON.stringify(Model.users.map(user => user.sensibleClone())));
 });
 
+router.get('/:username/display-name', requireAccessToken, function (req, res, next) {
+  const tokenContent = req.accessTokenContent;
+
+  if (tokenContent.username !== req.params.username) {
+    // TODO log errors in node console output / file
+    throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
+  }
+
+  res.send({ displayName: Model.getUserFromUsername(tokenContent.username).displayName });
+});
+
+
 module.exports = { router };

@@ -49,6 +49,7 @@ enum UserStatements {
   SELECT_ALL_USER_WITH_USERNAME = 'SELECT * FROM users WHERE username = $username',
   SELECT_UUID_FROM_USERNAME = 'SELECT uuid FROM users WHERE username = $username',
   SELECT_USERNAME = 'SELECT username FROM users WHERE uuid = $uuid',
+  SELECT_DISPLAY_NAME = 'SELECT displayName FROM users WHERE uuid = $uuid',
   SELECT_FIRST_NAME = 'SELECT firstName FROM users WHERE uuid = $uuid',
   SELECT_LAST_NAME = 'SELECT lastName FROM users WHERE uuid = $uuid',
   SELECT_EMAIL = 'SELECT email FROM users WHERE uuid = $uuid',
@@ -56,7 +57,7 @@ enum UserStatements {
   COUNT_UUIDS = 'SELECT COUNT(*) AS count FROM users WHERE uuid = $uuid',
   COUNT_USERNAMES = 'SELECT COUNT(*) AS count FROM users WHERE username = $username',
   SELECT_REFRESH_TOKENS = 'SELECT tokenCipher FROM users JOIN refreshTokens ON users.uuid = refreshTokens.userUuid WHERE users.uuid = $uuid',
-  INSERT_USER = 'INSERT INTO users (uuid, username, firstName, lastName, email, passwordHash) VALUES ($uuid, $username, $firstName, $lastName, $email, $passwordHash)',
+  INSERT_USER = 'INSERT INTO users (uuid, username, displayName, firstName, lastName, email, passwordHash) VALUES ($uuid, $username, $displayName, $firstName, $lastName, $email, $passwordHash)',
   INSERT_REFRESH_TOKEN = 'INSERT INTO refreshTokens (uuid, tokenCipher, userUuid) VALUES ($uuid, $tokenCipher, $userUuid)',
 }
 
@@ -67,6 +68,7 @@ class UserBuilder {
   private lastName: string;
   private email: string;
   private passwordHash: string;
+  private displayName: string;
 
   constructor() {
     this.uuid = uuidv4();
@@ -75,6 +77,12 @@ class UserBuilder {
   public addUsername(v: string): UserBuilder {
     if (!v) throw new Error('Argument is falsy');
     this.username = v;
+    return this;
+  }
+
+  public addDisplayName(v: string): UserBuilder {
+    if (!v) throw new Error('Argument is falsy');
+    this.displayName = v;
     return this;
   }
 
@@ -115,6 +123,7 @@ class UserBuilder {
     stmt.run({
       uuid: this.uuid,
       username: this.username,
+      displayName: this.displayName,
       firstName: this.firstName,
       lastName: this.lastName,
       email: this.email,
@@ -170,6 +179,10 @@ class User {
 
   public get username(): string {
     return this.getDatabaseValue(UserStatements.SELECT_USERNAME).username;
+  }
+
+  public get displayName(): string {
+    return this.getDatabaseValue(UserStatements.SELECT_DISPLAY_NAME).displayName;
   }
 
   public set firstName(v: string) {

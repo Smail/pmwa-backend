@@ -30,13 +30,15 @@ if (process.env.DEBUG) {
 
     const smail = new UserBuilder()
       .addUsername('smail')
+      .addDisplayName('Smail')
       .addFirstName('Smail')
       .addLastName('Mustermann')
       .addEmail('smail@example.com')
       .addPassword('Smail1234')
       .build();
-    console.log(`Username: ${smail.username}`);
     console.log(`UUID: ${smail.uuid}`);
+    console.log(`Username: ${smail.username}`);
+    console.log(`Display name: ${smail.displayName}`);
     console.log(`First name: ${smail.firstName}`);
     console.log(`Last name: ${smail.lastName}`);
     console.log(`Access Token: ${smail.createAccessToken()}`);
