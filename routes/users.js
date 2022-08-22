@@ -2,7 +2,7 @@ const express = require('express');
 const { ReasonPhrases, StatusCodes } = require('http-status-codes');
 const router = express.Router();
 // Local modules
-const { users, getUserFromUsername, existsUsername } = require('../src/model');
+const Model = require('../src/model');
 const NetworkError = require('../src/NetworkError');
 const { requireAccessToken } = require('./auth')
 
@@ -14,7 +14,7 @@ router.get('/username/:username', requireAccessToken, function (req, res, next) 
     throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
   }
 
-  res.send(getUserFromUsername(tokenContent.username).toString());
+  res.send(Model.getUserFromUsername(tokenContent.username).toString()); // TODO this is weird code? toString doesnt exists
 });
 
 /* GET usernames */
@@ -25,7 +25,7 @@ router.get('/usernames', requireAccessToken, function (req, res, next) {
     throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
   }
 
-  res.send(JSON.stringify(users.map(user => user.username)));
+  res.send(JSON.stringify(Model.users.map(user => user.username)));
 });
 
 /* GET dump all user data. */
@@ -36,7 +36,7 @@ router.get('/dump', requireAccessToken, function (req, res, next) {
     throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
   }
 
-  res.send(JSON.stringify(users.map(user => user.sensibleClone())));
+  res.send(JSON.stringify(Model.users.map(user => user.sensibleClone())));
 });
 
 module.exports = { router };
