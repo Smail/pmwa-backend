@@ -2,6 +2,7 @@ import assert from "assert";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import CryptoJS from "crypto-js";
+
 const { v4: uuidv4, validate: isValidUUID } = require('uuid');
 const Database = require('./database');
 
@@ -147,7 +148,7 @@ class User {
   }
 
   /**
-   * Return all (decrypted) refresh tokens of this user. 
+   * Return all (decrypted) refresh tokens of this user.
    */
   private get refreshTokens(): Set<string> {
     return new Set(
@@ -208,8 +209,7 @@ class User {
   }
 
   private get passwordHash(): string {
-    const passwordHash = this.getDatabaseValue(UserStatements.SELECT_PASSWORD_HASH).passwordHash;
-    return passwordHash;
+    return this.getDatabaseValue(UserStatements.SELECT_PASSWORD_HASH).passwordHash;
   }
 
   private updateDatabaseValue(queryName: string, bindings: object) {
@@ -279,8 +279,8 @@ class User {
   }
 
   /**
-   * Encrypt and store a refresh token into the database. 
-   * @param plaintextRefreshToken 
+   * Encrypt and store a refresh token into the database.
+   * @param plaintextRefreshToken
    */
   private storeRefreshTokenCipher(plaintextRefreshToken) {
     // Encrypt refresh token and store it in user object.
