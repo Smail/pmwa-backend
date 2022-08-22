@@ -52,8 +52,7 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   debug(req.app.get('env'));
-
-  console.error(err);
+  debug(err);
   if (err instanceof NetworkError) {
     res.status(err.httpCode);
   } else {
