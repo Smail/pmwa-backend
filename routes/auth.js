@@ -148,7 +148,7 @@ router.post('/signin', async (req, res, next) => {
     const isPasswordVerified = user.verifyPassword(password);
 
     if (user == null) throw new NetworkError('Username does not exist', StatusCodes.UNAUTHORIZED);
-    if (!await isPasswordVerified) throw new NetworkError('Wrong password', StatusCodes.UNAUTHORIZED)
+    if (!await isPasswordVerified) throw new NetworkError('Wrong password', StatusCodes.UNAUTHORIZED);
 
     // Issue tokens.
     const tokens = createAccessAndRefreshToken(user);
