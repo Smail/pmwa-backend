@@ -6,6 +6,11 @@ const debug = require('debug')('backend:database');
 // Load config
 require('dotenv').config();
 
+// Remove database
+if (process.env.DEBUG) {
+  fs.unlink(process.env.DB_PATH, () => {});
+}
+
 const db = sqlite3(process.env.DB_PATH);
 
 function loadSqlQueries(directory) {
