@@ -279,25 +279,15 @@ class User {
       { expiresIn: 14 * 24 * 60 * 60, /* 14 days */ }
     );
 
-    this.storeRefreshTokenCipher(refreshToken);
-    return refreshToken;
-  }
-
-  /**
-   * Encrypt and store a refresh token into the database.
-   * @param plaintextRefreshToken
-   */
-  private storeRefreshTokenCipher(plaintextRefreshToken) {
-    // Encrypt refresh token and store it in user object.
-    // TODO load real AES key from env variable that contains the file location.
-    const refreshTokenCipher = CryptoJS.AES
-      .encrypt(plaintextRefreshToken, process.env.AES_KEY)
-      .toString();
-
-    // Store refresh token to user object in database.
+    // Encrypt refresh token and store the cipher in the database.
     // This is to be able to revoke it if necessary.
-    Database.db.prepare(UserStatements.INSERT_REFRESH_TOKEN)
-      .run({ uuid: uuidv4(), tokenCipher: refreshTokenCipher, userUuid: this.uuid });
+    // TODO load real AES key from env variable that contains the file location.
+    const refreshTokenCipher = CryptoJS.AES.encrypt(refreshToken, process.env.AES_KEY).toString();
+
+    Database.db.prepare(UserStatements.INSERT_REFRESH_TOKEN_CIPHER)
+      .run({ uuid: payload.uuid, tokenCipher: refreshTokenCipher, userUuid: this.uuid });
+
+    return refreshToken;
   }
 
   public static fromUsername(username: string): User {
