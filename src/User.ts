@@ -54,6 +54,7 @@ enum UserStatements {
   SELECT_REFRESH_TOKEN_CIPHERS = 'SELECT tokenCipher FROM users JOIN refreshTokens ON users.uuid = refreshTokens.userUuid WHERE users.uuid = $uuid',
   INSERT_USER = 'INSERT INTO users (uuid, username, displayName, firstName, lastName, email, passwordHash) VALUES ($uuid, $username, $displayName, $firstName, $lastName, $email, $passwordHash)',
   INSERT_REFRESH_TOKEN = 'INSERT INTO refreshTokens (uuid, tokenCipher, userUuid) VALUES ($uuid, $tokenCipher, $userUuid)',
+  DELETE_REFRESH_TOKEN_CIPHER = 'DELETE FROM refreshTokens WHERE uuid=$tokenId AND userUuid=$userId',
 }
 
 class UserBuilder {
