@@ -254,6 +254,8 @@ class User {
   public createAccessToken(): string {
     return jwt.sign(
       {
+        uuid: uuidv4(),
+        userId: this.uuid,
         username: this.username,
         type: 'access', // TODO change to grant-type
       },
