@@ -51,7 +51,7 @@ enum UserStatements {
   SELECT_PASSWORD_HASH = 'SELECT passwordHash FROM users WHERE uuid = $uuid',
   COUNT_UUIDS = 'SELECT COUNT(*) AS count FROM users WHERE uuid = $uuid',
   COUNT_USERNAMES = 'SELECT COUNT(*) AS count FROM users WHERE username = $username',
-  SELECT_REFRESH_TOKENS = 'SELECT tokenCipher FROM users JOIN refreshTokens ON users.uuid = refreshTokens.userUuid WHERE users.uuid = $uuid',
+  SELECT_REFRESH_TOKEN_CIPHERS = 'SELECT tokenCipher FROM users JOIN refreshTokens ON users.uuid = refreshTokens.userUuid WHERE users.uuid = $uuid',
   INSERT_USER = 'INSERT INTO users (uuid, username, displayName, firstName, lastName, email, passwordHash) VALUES ($uuid, $username, $displayName, $firstName, $lastName, $email, $passwordHash)',
   INSERT_REFRESH_TOKEN = 'INSERT INTO refreshTokens (uuid, tokenCipher, userUuid) VALUES ($uuid, $tokenCipher, $userUuid)',
 }
@@ -142,7 +142,7 @@ class User {
    */
   private get refreshTokenCiphers(): Set<string> {
     const tokens = new Set<string>;
-    const stmt = Database.db.prepare(UserStatements.SELECT_REFRESH_TOKENS, { uuid: this._uuid });
+    const stmt = Database.db.prepare(UserStatements.SELECT_REFRESH_TOKEN_CIPHERS, { uuid: this._uuid });
 
     for (const row of stmt.all({ uuid: this.uuid })) {
       tokens.add(row.tokenCipher);
