@@ -294,6 +294,19 @@ class User {
     return this.refreshTokens.has(token);
   }
 
+  public deleteRefreshToken(token: string): boolean {
+    const payload = jwt.verify(token, process.env.REFRESH_TOKEN_PASSPHRASE);
+
+    if (payload.userId !== this.uuid) throw new Error('User ID mismatch');
+
+    const stmt = Database.db.prepare(UserStatements.DELETE_REFRESH_TOKEN_CIPHER);
+    const info = stmt.run({ tokenId: payload.uuid, userId: this.uuid }); // TODO transaction
+
+    console.debug(`Number of rows deleted ${info.changes}`);
+    if (info.changes > 1) throw new Error(`More than one refresh token was deleted (#${info.changes}) for user id ${this.uuid}`);
+    return info.changes == 1;
+  }
+
   public static fromUsername(username: string): User {
     if (!username) throw new Error('Not a valid UUID');
     const stmt = Database.db.prepare(UserStatements.SELECT_UUID_FROM_USERNAME);

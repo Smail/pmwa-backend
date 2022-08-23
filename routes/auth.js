@@ -194,8 +194,12 @@ router.post('/refresh-token', async (req, res, next) => {
       process.exit(1);
     }
 
-    // Remove old/current/passed refresh token.
-    user.removeRefreshToken(refreshToken);
+    // Remove used refresh token.
+    if (!user.deleteRefreshToken(refreshToken)) {
+      throw new NetworkError(
+        `SERIOUS BUG: Refresh token could not be removed (id = ${ user.uuid }) even though it exists.`,
+        StatusCodes.INTERNAL_SERVER_ERROR);
+    }
 
     // Issue new tokens
     const tokens = createAccessAndRefreshToken(user);
