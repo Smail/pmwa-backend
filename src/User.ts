@@ -269,17 +269,14 @@ class User {
    * @returns JWT token - string
    */
   public createRefreshToken(): string {
-    const refreshToken = jwt.sign(
-      {
-        uuid: this.uuid,
-        username: this.username,
-        type: 'refresh', // TODO change to grant-type
-      },
-      process.env.REFRESH_TOKEN_PASSPHRASE,
-      {
-        // 14 days
-        expiresIn: 14 * 24 * 60 * 60,
-      }
+    const payload = {
+      uuid: uuidv4(),
+      userId: this.uuid,
+      username: this.username,
+      type: 'refresh', // TODO change to grant-type
+    };
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_PASSPHRASE,
+      { expiresIn: 14 * 24 * 60 * 60, /* 14 days */ }
     );
 
     this.storeRefreshTokenCipher(refreshToken);
