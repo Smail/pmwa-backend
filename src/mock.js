@@ -41,8 +41,6 @@ if (process.env.DEBUG) {
     console.log(`Display name: ${smail.displayName}`);
     console.log(`First name: ${smail.firstName}`);
     console.log(`Last name: ${smail.lastName}`);
-    console.log(`Access Token: ${smail.createAccessToken()}`);
-    console.log(`Refresh Token: ${smail.createRefreshToken()}`);
     usersTmp.push(smail);
 
     // Add created mock elements to users array
