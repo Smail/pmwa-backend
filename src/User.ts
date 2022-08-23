@@ -57,7 +57,7 @@ enum UserStatements {
 }
 
 class UserBuilder {
-  private uuid: string;
+  private readonly uuid: string;
   private username: string;
   private firstName: string;
   private lastName: string;
@@ -129,7 +129,7 @@ class UserBuilder {
 }
 
 class User {
-  private _uuid: string;
+  private readonly _uuid: string;
 
   constructor(uuid) {
     if (!isValidUUID(uuid)) throw new Error('Not a valid UUID');
