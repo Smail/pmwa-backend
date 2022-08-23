@@ -290,6 +290,10 @@ class User {
     return refreshToken;
   }
 
+  public hasRefreshToken(token: string): boolean {
+    return this.refreshTokens.has(token);
+  }
+
   public static fromUsername(username: string): User {
     if (!username) throw new Error('Not a valid UUID');
     const stmt = Database.db.prepare(UserStatements.SELECT_UUID_FROM_USERNAME);
