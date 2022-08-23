@@ -1,5 +1,11 @@
 const { assert } = require('console');
 const { User } = require('./User');
+const Database = require('./database');
+
+// Create tables
+Database.db.prepare(Database.queries['createTableUsers']).run();
+Database.db.prepare(Database.queries['createTableRefreshTokens']).run();
+Database.db.prepare(Database.queries['createTableTasks']).run();
 
 const users = [];
 // Observe push method on users array.

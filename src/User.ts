@@ -9,11 +9,6 @@ const Database = require('./database');
 // Load config
 require('dotenv').config();
 
-// Create tables
-Database.db.prepare(Database.queries['createTableUsers']).run();
-Database.db.prepare(Database.queries['createTableRefreshTokens']).run();
-Database.db.prepare(Database.queries['createTableTasks']).run();
-
 function isValidBcryptHash(hash: string): boolean {
   return /^\$2[aby]?\$\d{1,2}\$[.\/A-Za-z0-9]{53}$/.test(hash);
 }
