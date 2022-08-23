@@ -1,12 +1,12 @@
 const fs = require('fs');
 const { join } = require('path');
-// const sqlite3 = require('better-sqlite3');
-// const db = new sqlite3.Database(':memory:');
-const db = require('better-sqlite3')(':memory:');
+const sqlite3 = require('better-sqlite3');
 const debug = require('debug')('backend:database');
 
 // Load config
 require('dotenv').config();
+
+const db = sqlite3(process.env.DB_PATH);
 
 function loadSqlQueries(directory) {
   const queries = {};
