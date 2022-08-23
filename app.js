@@ -54,8 +54,10 @@ app.use(function (err, req, res, next) {
   debug(req.app.get('env'));
   debug(err);
   if (err instanceof NetworkError) {
+    if (err.httpCode >= 500) console.error(err);
     res.status(err.httpCode);
   } else {
+    if (err.status >= 500) console.error(err);
     res.status(err.status || 500);
   }
 
