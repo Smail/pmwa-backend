@@ -30,17 +30,6 @@ router.get('/usernames', requireAccessToken, function (req, res, next) {
   res.send(JSON.stringify(Model.users.map(user => user.username)));
 });
 
-/* GET dump all user data. */
-router.get('/dump', requireAccessToken, function (req, res, next) {
-  const tokenContent = req.accessTokenContent;
-
-  if (tokenContent.userLevel !== 'admin') {
-    throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
-  }
-
-  res.send(JSON.stringify(Model.users.map(user => user.sensibleClone())));
-});
-
 router.get('/:username/display-name', requireAccessToken, function (req, res, next) {
   // @ts-ignore TODO
   const tokenContent = req.accessTokenContent;
