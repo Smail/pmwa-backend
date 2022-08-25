@@ -1,6 +1,7 @@
 // Local modules
 const { users } = require('../src/model');
 const { UserBuilder } = require('./User');
+const debug = require('debug')('backend:mock');
 // Load config
 require('dotenv').config();
 
@@ -36,11 +37,11 @@ if (process.env.DEBUG) {
       .addEmail('smail@example.com')
       .addPassword('Smail1234')
       .build();
-    console.log(`UUID: ${smail.uuid}`);
-    console.log(`Username: ${smail.username}`);
-    console.log(`Display name: ${smail.displayName}`);
-    console.log(`First name: ${smail.firstName}`);
-    console.log(`Last name: ${smail.lastName}`);
+    debug(`UUID: ${smail.uuid}`);
+    debug(`Username: ${smail.username}`);
+    debug(`Display name: ${smail.displayName}`);
+    debug(`First name: ${smail.firstName}`);
+    debug(`Last name: ${smail.lastName}`);
     usersTmp.push(smail);
 
     // Add created mock elements to users array
