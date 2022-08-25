@@ -6,8 +6,7 @@ const logger = require('morgan');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const debug = require('debug')('backend:app');
-// Local modules
-const NetworkError = require('./src/NetworkError');
+import { NetworkError } from 'NetworkError';
 
 const app = express();
 
@@ -15,7 +14,7 @@ const app = express();
 dotenv.config();
 
 if (process.env.DEBUG) {
-  require('./src/mock');
+  require('mock');
 }
 
 // Routes
