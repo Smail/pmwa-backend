@@ -8,6 +8,7 @@ require('dotenv').config();
 
 // Remove database
 if (process.env.DEBUG) {
+  if (!process.env.DB_PATH) throw new Error('No DB_PATH variable in .env found');
   fs.unlink(process.env.DB_PATH, () => {});
 }
 
