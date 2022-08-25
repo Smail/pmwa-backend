@@ -9,11 +9,13 @@ router.use(loadAuthenticatedUser);
 
 /* GET user's tasks. */
 router.get('/', function (req, res, next) {
+  // @ts-ignore TODO
   res.status(StatusCodes.OK).send(JSON.stringify(req.user.tasks || []));
 });
 
 /* POST Create new user task. */
 router.post('/', function (req, res, next) {
+  // @ts-ignore TODO
   const user = req.user;
   const task = req.body;
 
@@ -27,6 +29,7 @@ router.post('/', function (req, res, next) {
 
 /* DELETE user task. */
 router.delete('/:uuid', function (req, res, next) {
+  // @ts-ignore TODO
   const user = req.user;
   const uuid = req.params.uuid;
 

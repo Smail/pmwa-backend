@@ -13,32 +13,6 @@ function isValidBcryptHash(hash: string): boolean {
   return /^\$2[aby]?\$\d{1,2}\$[.\/A-Za-z0-9]{53}$/.test(hash);
 }
 
-function isValidEmail(email: string): boolean {
-  const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
-  return emailRegex.test(email);
-}
-
-function isValidPassword(password: string): boolean {
-  if (!password) return false;
-
-  let numLowerCase = 0;
-  let numUpperCase = 0;
-  let numDigits = 0;
-  let numSpecial = 0;
-  for (let i = 0; i < password.length; i++) {
-    const c = password[i];
-
-    if (/^[a-z]$/.test(c)) numLowerCase++;
-    else if (/^[A-Z]$/.test(c)) numUpperCase++;
-    else if (/^[0-9]$/.test(c)) numDigits++;
-    else if (/^[!@#$%^&*()\-__+.]$/.test(c)) numSpecial++;
-    // Password contains invalid character.
-    else return false;
-  }
-
-  return password.length >= 8 && numLowerCase >= 2 && numUpperCase >= 1 && numDigits >= 1;
-}
-
 enum UserStatements {
   SELECT_ALL_USER_WITH_UUID = 'SELECT * FROM users WHERE uuid = $uuid',
   SELECT_ALL_USER_WITH_USERNAME = 'SELECT * FROM users WHERE username = $username',
@@ -96,7 +70,7 @@ class UserBuilder {
 
   public addEmail(v: string): UserBuilder {
     if (!v) throw new Error('Argument is falsy');
-    if (!isValidEmail(v)) throw new Error('Invalid email syntax');
+    if (!User.isValidEmail(v)) throw new Error('Invalid email syntax');
     this.email = v;
     return this;
   }
@@ -163,6 +137,10 @@ class User {
     );
   }
 
+  public get numberOfRefreshTokens(): number {
+    return this.refreshTokens.size;
+  }
+
   public get uuid(): string {
     return this._uuid;
   }
@@ -200,7 +178,7 @@ class User {
   }
 
   public set email(v: string) {
-    if (!isValidEmail(v)) throw new Error('Invalid email syntax');
+    if (!User.isValidEmail(v)) throw new Error('Invalid email syntax');
     this.updateDatabaseValue('updateEmail', { email: v });
   }
 
@@ -339,6 +317,32 @@ class User {
 
   public static hashPassword(plaintextPassword: string): string {
     return bcrypt.hashSync(plaintextPassword, 10);
+  }
+
+  public static isValidEmail(email: string): boolean {
+    const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+    return emailRegex.test(email);
+  }
+
+  public static isPasswordWeak(password: string): boolean {
+    if (!password) return false;
+
+    let numLowerCase = 0;
+    let numUpperCase = 0;
+    let numDigits = 0;
+    let numSpecial = 0;
+    for (let i = 0; i < password.length; i++) {
+      const c = password[i];
+
+      if (/^[a-z]$/.test(c)) numLowerCase++;
+      else if (/^[A-Z]$/.test(c)) numUpperCase++;
+      else if (/^[0-9]$/.test(c)) numDigits++;
+      else if (/^[!@#$%^&*()\-__+.]$/.test(c)) numSpecial++;
+      // Password contains invalid character.
+      else return false;
+    }
+
+    return !(password.length >= 8 && numLowerCase >= 2 && numUpperCase >= 1 && numDigits >= 1);
   }
 }
 

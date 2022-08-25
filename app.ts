@@ -45,7 +45,7 @@ app.use(function (req, res, next) {
 });
 
 // Error handler
-app.use(function (err, req, res, next) {
+app.use(function (err: Error, req, res, next) {
   // Set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -56,14 +56,18 @@ app.use(function (err, req, res, next) {
     if (err.httpCode >= 500) console.error(err);
     res.status(err.httpCode);
   } else {
+    // @ts-ignore
     if (err.status >= 500) console.error(err);
+    // @ts-ignore
     res.status(err.status || 500);
   }
 
   // Render the error page
   if (req.is('application/json')) {
-    res.send(JSON.stringify({
-      statusCode: err.httpCode,
+    // @ts-ignore
+    const statusCode = err instanceof NetworkError ? err.httpCode : err.status;
+    res.status(statusCode).send(JSON.stringify({
+      statusCode: statusCode,
       message: err.message,
     }));
   } else {

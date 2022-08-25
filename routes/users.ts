@@ -8,17 +8,19 @@ const router = express.Router();
 
 /* GET user */
 router.get('/username/:username', requireAccessToken, function (req, res, next) {
+  // @ts-ignore TODO
   const tokenContent = req.accessTokenContent;
 
   if (!(tokenContent.username === req.params.username || tokenContent.userLevel === 'admin')) {
     throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
   }
 
-  res.send(Model.getUserFromUsername(tokenContent.username).toString()); // TODO this is weird code? toString doesnt exists
+  res.send(Model.getUserFromUsername(tokenContent.username)?.toString()); // TODO this is weird code? toString doesnt exists TODO (...)?.username
 });
 
 /* GET usernames */
 router.get('/usernames', requireAccessToken, function (req, res, next) {
+  // @ts-ignore TODO
   const tokenContent = req.accessTokenContent;
 
   if (tokenContent.userLevel !== 'admin') {
@@ -40,6 +42,7 @@ router.get('/dump', requireAccessToken, function (req, res, next) {
 });
 
 router.get('/:username/display-name', requireAccessToken, function (req, res, next) {
+  // @ts-ignore TODO
   const tokenContent = req.accessTokenContent;
 
   if (tokenContent.username !== req.params.username) {
@@ -47,7 +50,7 @@ router.get('/:username/display-name', requireAccessToken, function (req, res, ne
     throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
   }
 
-  res.send({ displayName: Model.getUserFromUsername(tokenContent.username).displayName });
+  res.send({ displayName: Model.getUserFromUsername(tokenContent.username)?.displayName }); // TODO null coalescing
 });
 
 

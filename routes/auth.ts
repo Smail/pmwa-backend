@@ -126,9 +126,16 @@ router.post('/signup', isValidSignUpUserObject, validateEmail, async (req, res, 
     }
 
     // Create new user
-    const user = new User(username, firstName, lastName, email, password);
+    const user: User = new UserBuilder()
+      .addUsername(username)
+      .addFirstName(firstName)
+      .addLastName(lastName)
+      .addEmail(email)
+      .addPassword(password)
+      .build();
+
     users.push(user);
-    res.status(StatusCodes.CREATED).send({ id: user.id });
+    res.status(StatusCodes.CREATED).send({ id: user.uuid });
   } catch (error) {
     next(error);
   }
@@ -142,10 +149,10 @@ router.post('/signin', async (req, res, next) => {
     if (password == null) throw new NetworkError('Missing password', StatusCodes.UNPROCESSABLE_ENTITY);
 
     const user = getUserFromUsername(username);
+    if (user == null) throw new NetworkError('Username does not exist', StatusCodes.UNAUTHORIZED);
+
     // Returns a promise. Let it do its thing in the background.
     const isPasswordVerified = user.verifyPassword(password);
-
-    if (user == null) throw new NetworkError('Username does not exist', StatusCodes.UNAUTHORIZED);
     if (!await isPasswordVerified) throw new NetworkError('Wrong password', StatusCodes.UNAUTHORIZED);
 
     // Issue tokens.
@@ -167,7 +174,7 @@ router.post('/refresh-token', async (req, res, next) => {
     const user = getUserFromUsername(username);
 
     if (user == null) throw new NetworkError('Username does not exist', StatusCodes.NOT_FOUND);
-    if (user.refreshTokens == null || user.refreshTokens.length === 0) {
+    if (user.numberOfRefreshTokens === 0) {
       throw new NetworkError('User does not own any refresh tokens', StatusCodes.NOT_FOUND);
     }
 
