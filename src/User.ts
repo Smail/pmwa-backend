@@ -342,4 +342,4 @@ class User {
   }
 }
 
-module.exports = { User, UserBuilder };
+export { User, UserBuilder };
