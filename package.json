@@ -5,6 +5,7 @@
   "main": "dist/bin/server.js",
   "scripts": {
     "build": "tsc --build",
+    "watch": "tsc --watch",
     "start": "node ./dist/bin/server.js",
     "start:dev": "set DEBUG=backend:* & nodemon ./dist/bin/server.js"
   },
