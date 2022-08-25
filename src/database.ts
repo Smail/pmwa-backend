@@ -14,7 +14,7 @@ if (process.env.DEBUG) {
 
 const db = sqlite3(process.env.DB_PATH);
 
-function loadSqlQueries(directory) {
+function loadSqlQueries(directory): {} {
   const queries = {};
   const filePath = join(process.cwd(), "src", "queries", directory);
   const files = fs.readdirSync(filePath);
@@ -28,13 +28,13 @@ function loadSqlQueries(directory) {
     const queryName = sqlFile.replace('.sql', '');
 
     queries[queryName] = sql;
-    debug(`Added query '${queryName}': ${queries[queryName] }`);
+    debug(`Added query '${queryName}': ${queries[queryName]}`);
   }
 
   return queries;
 }
 
-function loadAllSqlQueries() {
+function loadAllSqlQueries(): {} {
   let queries = {};
   const filePath = join(process.cwd(), "src", "queries");
   const files = fs.readdirSync(filePath);
