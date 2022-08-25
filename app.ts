@@ -56,15 +56,15 @@ app.use(function (err: Error, req, res, next) {
     if (err.httpCode >= 500) console.error(err);
     res.status(err.httpCode);
   } else {
-    // @ts-ignore
+    // @ts-ignore TODO
     if (err.status >= 500) console.error(err);
-    // @ts-ignore
+    // @ts-ignore TODO
     res.status(err.status || 500);
   }
 
   // Render the error page
   if (req.is('application/json')) {
-    // @ts-ignore
+    // @ts-ignore TODO
     const statusCode = err instanceof NetworkError ? err.httpCode : err.status;
     res.status(statusCode).send(JSON.stringify({
       statusCode: statusCode,
