@@ -1,5 +1,5 @@
 import * as Model from './model';
-import { User, UserBuilder } from 'User';
+import { User, UserBuilder } from './User';
 const debug = require('debug')('backend:mock');
 // Load config
 require('dotenv').config();

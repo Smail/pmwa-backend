@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-const app = require('../app');
+const { app } = require('../app');
 const debug = require('debug')('backend:server');
 const http = require('http');
 require('dotenv').config();

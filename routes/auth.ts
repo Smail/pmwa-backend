@@ -1,11 +1,9 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const { StatusCodes } = require('http-status-codes');
-// Local files
-const NetworkError = require('../src/NetworkError');
-const { users, getUserFromUsername, existsUsername } = require('../src/model');
-const { User } = require('../src/User');
-const { assert } = require('console');
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { StatusCodes } from 'http-status-codes';
+import { NetworkError } from '../src/NetworkError';
+import { users, getUserFromUsername, existsUsername } from '../src/model';
+import { User, UserBuilder } from '../src/User';
 
 const router = express.Router();
 
@@ -209,4 +207,4 @@ router.post('/refresh-token', async (req, res, next) => {
   }
 });
 
-module.exports = { router, requireAccessToken, loadAuthenticatedUser };
+export { router, requireAccessToken, loadAuthenticatedUser };

@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import CryptoJS from "crypto-js";
 
-const { v4: uuidv4, validate: isValidUUID } = require('uuid');
+import { v4 as uuidv4, validate as isValidUUID } from 'uuid';
 const Database = require('./database');
 
 // Load config

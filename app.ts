@@ -6,7 +6,7 @@ const logger = require('morgan');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const debug = require('debug')('backend:app');
-import { NetworkError } from 'NetworkError';
+import { NetworkError } from './src/NetworkError';
 
 const app = express();
 
@@ -14,13 +14,13 @@ const app = express();
 dotenv.config();
 
 if (process.env.DEBUG) {
-  require('mock');
+  require('./src/mock');
 }
 
 // Routes
-const { router: usersRouter } = require('./routes/users');
-const { router: authRouter } = require('./routes/auth');
-const { router: tasksRouter } = require('./routes/tasks');
+import { router as usersRouter } from './routes/users';
+import { router as authRouter } from './routes/auth';
+import { router as tasksRouter } from './routes/tasks';
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -1,5 +1,5 @@
 const { assert } = require('console');
-import { User } from 'User';
+import { User } from './User';
 
 const Database = require('./database');
 

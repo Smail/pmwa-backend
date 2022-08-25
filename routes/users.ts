@@ -1,10 +1,10 @@
-const express = require('express');
-const { ReasonPhrases, StatusCodes } = require('http-status-codes');
+import express from 'express';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import * as Model from '../src/model';
+import { NetworkError } from '../src/NetworkError';
+import { requireAccessToken } from './auth';
+
 const router = express.Router();
-// Local modules
-const Model = require('../src/model');
-const NetworkError = require('../src/NetworkError');
-const { requireAccessToken } = require('./auth')
 
 /* GET user */
 router.get('/username/:username', requireAccessToken, function (req, res, next) {
@@ -51,4 +51,4 @@ router.get('/:username/display-name', requireAccessToken, function (req, res, ne
 });
 
 
-module.exports = { router };
+export { router };
