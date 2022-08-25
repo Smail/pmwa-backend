@@ -216,7 +216,7 @@ class User {
     const stmt = Database.db.prepare(queryName);
     const row = stmt.get({ uuid: this.uuid, ...bindings });
     if (!row) throw new Error('No rows returned');
-    if (!Object.keys(row).length) throw new Error('No colums returned');
+    if (!Object.keys(row).length) throw new Error('No columns returned');
     return row;
   }
 
