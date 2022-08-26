@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import CryptoJS from "crypto-js";
 
 import { v4 as uuidv4, validate as isValidUUID } from 'uuid';
+import { Task } from './Task';
+
 const Database = require('./database');
 
 // Load config
@@ -197,6 +199,19 @@ class User {
 
   private get passwordHash(): string {
     return this.getDatabaseValue(UserStatements.SELECT_PASSWORD_HASH).passwordHash;
+  }
+
+  public get tasks(): Task[] {
+    const query = Database.queries['selectTaskUUIDsFromUserUUID'];
+    const stmt = Database.db.prepare(query, { uuid: this.uuid });
+    const rows = stmt.all({ userUuid: this.uuid });
+    const tasks: Task[] = [];
+
+    for (const row of rows) {
+      tasks.push(new Task(row.uuid));
+    }
+
+    return tasks;
   }
 
   private updateDatabaseValue(queryName: string, bindings: object) {
