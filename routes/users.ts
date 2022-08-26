@@ -42,5 +42,4 @@ router.get('/:username/display-name', requireAccessToken, function (req, res, ne
   res.send({ displayName: Model.getUserFromUsername(tokenContent.username)?.displayName }); // TODO null coalescing
 });
 
-
 export { router };
