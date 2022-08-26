@@ -23,7 +23,7 @@ export class Task {
       const info = stmt.run({uuid: this.uuid, content: v});
       if (info.changes > 1) throw new Error(`Too many rows updated. Expected 1, but updated ${info.changes}`);
       if (info.changes == 0) throw new Error('No rows were updated. Probably no such UUID');
-    });
+    })();
   }
 
   public get content(): string {
