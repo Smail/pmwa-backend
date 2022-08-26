@@ -29,18 +29,7 @@ router.post('/', function (req, res, next) {
 
 /* DELETE user task. */
 router.delete('/:uuid', function (req, res, next) {
-  // @ts-ignore TODO
-  const user = req.user;
-  const uuid = req.params.uuid;
-
-  if (!user.tasks) user.tasks = [];
-  const idx = user.tasks.findIndex(task => task.uuid === uuid);
-  if (idx > -1) {
-    user.tasks.splice(idx, 1);
-    res.sendStatus(StatusCodes.NO_CONTENT);
-  } else {
-    res.sendStatus(StatusCodes.NOT_FOUND);
-  }
+  res.sendStatus(StatusCodes.NOT_IMPLEMENTED);
 });
 
 export { router };
