@@ -52,24 +52,27 @@ app.use(function (err: Error, req, res, next) {
 
   debug(req.app.get('env'));
   debug(err);
+  let statusCode: number;
+
   if (err instanceof NetworkError) {
     if (err.httpCode >= 500) console.error(err);
-    res.status(err.httpCode);
+    statusCode = err.httpCode;
   } else {
     // @ts-ignore TODO
     if (err.status >= 500) console.error(err);
     // @ts-ignore TODO
-    res.status(err.status || 500);
+    statusCode = err.status || 500;
   }
+
+  res.status(statusCode);
 
   // Render the error page
   if (req.is('application/json')) {
-    // @ts-ignore TODO
-    const statusCode = err instanceof NetworkError ? err.httpCode : err.status;
-    res.status(statusCode).send(JSON.stringify({
-      statusCode: statusCode,
-      message: err.message,
-    }));
+    res.send(JSON.stringify({
+        statusCode: statusCode,
+        message: err.message,
+      })
+    );
   } else {
     res.send(err.message);
   }
