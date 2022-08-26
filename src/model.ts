@@ -1,7 +1,7 @@
 const { assert } = require('console');
 import { User } from './User';
 
-const Database = require('./database');
+import * as Database from './database';
 
 // Create tables
 Database.db.prepare(Database.queries['createTableUsers']).run();
