@@ -8,14 +8,13 @@ export class Task {
   public readonly userUuid: string;
 
   constructor(uuid: string) {
-    if (!isValidUUID(uuid)) throw new Error(`IllegalArgument: ${uuid} is not a valid UUID`);
+    if (!isValidUUID(uuid)) throw new NetworkError(`${uuid} is not a valid UUID`, StatusCodes.BAD_REQUEST);
     this.uuid = uuid;
 
     const stmt = Database.db.prepare(Database.queries['selectTask']);
     const task = stmt.get({uuid: this.uuid});
 
-    if (task == null) throw new Error(`IllegalArgument: No task exists with ${uuid}`);
-
+    if (task == null) throw new NetworkError(`No task exists with ${uuid}`, StatusCodes.NOT_FOUND);
     this.userUuid = task.userUuid;
   }
 
@@ -23,8 +22,8 @@ export class Task {
     Database.db.transaction(() => {
       const stmt = Database.db.prepare(Database.queries['updateTaskContent']);
       const info = stmt.run({uuid: this.uuid, content: v});
-      if (info.changes > 1) throw new Error(`Too many rows updated. Expected 1, but updated ${info.changes}`);
-      if (info.changes == 0) throw new Error('No rows were updated. Probably no such UUID');
+      if (info.changes > 1) throw new NetworkError(`Too many rows updated. Expected 1, but updated ${info.changes}`, StatusCodes.CONFLICT);
+      if (info.changes == 0) throw new NetworkError('No rows were updated.', StatusCodes.NOT_FOUND);
     })();
   }
 
