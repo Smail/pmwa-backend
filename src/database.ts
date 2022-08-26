@@ -9,7 +9,11 @@ require('dotenv').config();
 // Remove database
 if (process.env.DEBUG) {
   if (!process.env.DB_PATH) throw new Error('No DB_PATH variable in .env found');
-  fs.unlink(process.env.DB_PATH, () => {});
+  // If memory then database sits in memory (RAM) and not on disk (file)
+  if (process.env.DB_PATH !== ':memory:') {
+    debug('Removing old database if it exists');
+    fs.unlink(process.env.DB_PATH, () => {});
+  }
 }
 
 const db = sqlite3(process.env.DB_PATH);
