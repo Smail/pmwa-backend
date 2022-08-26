@@ -117,7 +117,7 @@ class User {
    */
   private get refreshTokenCiphers(): Set<string> {
     const tokens = new Set<string>;
-    const stmt = Database.db.prepare(UserStatements.SELECT_REFRESH_TOKEN_CIPHERS, { uuid: this._uuid });
+    const stmt = Database.db.prepare(UserStatements.SELECT_REFRESH_TOKEN_CIPHERS, { uuid: this.uuid });
 
     for (const row of stmt.all({ uuid: this.uuid })) {
       tokens.add(row.tokenCipher);
