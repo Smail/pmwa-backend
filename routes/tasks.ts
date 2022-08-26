@@ -67,9 +67,7 @@ router.post('/create', requireTaskContent, function (req, res, next) {
 /* Update Create new user task. */
 router.post('/update', requireTaskTaskUuid, requireTaskContent, function (req, res, next) {
   // @ts-ignore TODO
-  const task: Task = new Task(req.task.uuid);
-  // @ts-ignore TODO
-  task.content = req.task.content;
+  new Task(req.task.uuid).content = req.task.content;
 
   res.sendStatus(StatusCodes.OK);
 });
