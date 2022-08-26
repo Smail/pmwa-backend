@@ -70,7 +70,7 @@ router.post('/update', requireTaskTaskUuid, requireTaskContent, function (req, r
   // @ts-ignore TODO
   const task: Task = new Task(req.task.uuid);
   // @ts-ignore TODO
-  task.content = (req.task.content);
+  task.content = req.task.content;
 
   res.sendStatus(StatusCodes.OK);
 });
