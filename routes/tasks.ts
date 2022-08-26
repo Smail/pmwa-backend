@@ -4,6 +4,7 @@ import { requireAccessToken, loadAuthenticatedUser } from './auth';
 import { User } from "../src/User";
 import { Task, TaskBuilder } from "../src/Task";
 import { NetworkError } from "../src/NetworkError";
+import { validate as isValidUUID } from 'uuid';
 
 const router = express.Router();
 
@@ -77,7 +78,12 @@ router.post('/update', requireTaskTaskUuid, requireTaskContent, function (req, r
 
 /* DELETE user task. */
 router.delete('/:uuid', function (req, res, next) {
-  res.sendStatus(StatusCodes.NOT_IMPLEMENTED);
+  if (!req.params.uuid) throw new NetworkError('No UUID provided', StatusCodes.BAD_REQUEST);
+  if (!isValidUUID(req.params.uuid)) throw new NetworkError('Invalid UUID', StatusCodes.BAD_REQUEST);
+  // @ts-ignore TODO
+  new Task(req.params.uuid).delete();
+
+  res.sendStatus(StatusCodes.OK);
 });
 
 export { router };

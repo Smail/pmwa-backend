@@ -1,5 +1,7 @@
 import { v4 as uuidv4, validate as isValidUUID } from "uuid";
 import * as Database from "./database";
+import { NetworkError } from "./NetworkError";
+import { StatusCodes } from "http-status-codes";
 
 export class Task {
   public readonly uuid: string;
@@ -34,6 +36,15 @@ export class Task {
   // Don't remove. This is used internally by JSON.stringify
   public toJSON(): {} {
     return {uuid: this.uuid, userUuid: this.userUuid, content: this.content};
+  }
+
+  public delete(): void {
+    Database.db.transaction(() => {
+      const stmt = Database.db.prepare(Database.queries['deleteTask']);
+      const info = stmt.run({uuid: this.uuid});
+      if (info.changes > 1) throw new NetworkError(`Too many rows deleted. Expected 1, but removed ${info.changes}`, StatusCodes.CONFLICT);
+      if (info.changes == 0) throw new NetworkError('No rows were deleted.', StatusCodes.NOT_FOUND);
+    })();
   }
 }
 
