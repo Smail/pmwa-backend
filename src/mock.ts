@@ -1,5 +1,8 @@
 import * as Model from './model';
 import { User, UserBuilder } from './User';
+import { faker } from "@faker-js/faker/locale/en_US";
+import { Task, TaskBuilder } from "./Task";
+
 const debug = require('debug')('backend:mock');
 // Load config
 require('dotenv').config();
@@ -42,6 +45,15 @@ if (process.env.DEBUG) {
     debug(`First name: ${smail.firstName}`);
     debug(`Last name: ${smail.lastName}`);
     usersTmp.push(smail);
+
+    // Create fake tasks for smail
+    for (let i = 0; i < 10; i++) {
+      const smailTask: Task = new TaskBuilder()
+        .addUserUuid(smail.uuid)
+        .addContent(faker.hacker.phrase())
+        .build();
+      debug(`Task created: ${JSON.stringify(smailTask)}`)
+    }
 
     // Add created mock elements to users array
     for (const user of usersTmp) {
