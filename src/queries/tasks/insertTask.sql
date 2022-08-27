@@ -1,2 +1,2 @@
-INSERT INTO tasks(uuid, userUuid, content)
-VALUES ($uuid, $userUuid, $content);
+INSERT INTO tasks(uuid, userUuid, name, content)
+VALUES ($uuid, $userUuid, $name, $content);
