@@ -53,12 +53,14 @@ router.get('/', function (req, res, next) {
 });
 
 /* POST Create new user task. */
-router.post('/create', requireTaskContent, function (req, res, next) {
+router.post('/create', requireTaskName, function (req, res, next) {
   const task: Task = new TaskBuilder()
     // @ts-ignore TODO
     .addUserUuid(req.user.uuid)
     // @ts-ignore TODO
-    .addContent(req.task.content)
+    .addName(req.task.name)
+    // @ts-ignore TODO
+    .addContent(req.task.content) // can be null
     .build();
 
   res.status(StatusCodes.CREATED).send({uuid: task.uuid});
