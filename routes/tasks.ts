@@ -64,10 +64,16 @@ router.post('/create', requireTaskName, function (req, res, next) {
   res.status(StatusCodes.CREATED).send({uuid: task.uuid});
 });
 
-/* Update Create new user task. */
-router.post('/update', requireTaskTaskUuid, requireTaskContent, function (req, res, next) {
+/* Update user task. */
+router.post('/update', requireTaskTaskUuid, function (req, res, next) {
+  if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
+
   // @ts-ignore TODO
-  new Task(req.task.uuid).content = req.task.content;
+  const task = new Task(req.task.uuid);
+
+  if (req.body.name && typeof req.body.name === 'string') task.name = req.body.name;
+  if (req.body.isDone && typeof req.body.isDone === 'boolean') task.isDone = req.body.isDone;
+  if (req.body.content && typeof req.body.content === 'string') task.content = req.body.content;
 
   res.sendStatus(StatusCodes.OK);
 });
