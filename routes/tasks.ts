@@ -26,19 +26,17 @@ function requireTaskTaskUuid(req, res, next) {
   next();
 }
 
-function requireTaskContent(req, res, next) {
+function requireTaskName(req, res, next) {
   if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
-  if (!req.body.content) throw new NetworkError('No content provided', StatusCodes.BAD_REQUEST);
-  if (typeof req.body.content !== 'string') {
-    throw new NetworkError('Content is not a string', StatusCodes.BAD_REQUEST);
-  }
+  if (!req.body.name) throw new NetworkError('No name provided', StatusCodes.BAD_REQUEST);
+  if (typeof req.body.name !== 'string') throw new NetworkError('Name is not a string', StatusCodes.BAD_REQUEST);
   if (req.task && typeof req.task !== 'object') {
-    throw new NetworkError(`Task was assigned an unexpected type ${typeof req.task}`,
+    throw new NetworkError(`Task was already assigned an unexpected type ${typeof req.task}`,
       StatusCodes.INTERNAL_SERVER_ERROR);
   }
 
   if (!req.task) req.task = {};
-  req.task.content = req.body.content;
+  req.task.name = req.body.name;
 
   next();
 }
