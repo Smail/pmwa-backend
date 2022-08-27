@@ -114,8 +114,6 @@ export class TaskBuilder {
       content: this.content,
     };
 
-    console.log(bindings)
-
     Database.db.prepare(Database.queries['insertTask']).run(bindings);
     return new Task(this.uuid);
   }
