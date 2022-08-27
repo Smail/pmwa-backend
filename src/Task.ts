@@ -18,6 +18,20 @@ export class Task {
     this.userUuid = task.userUuid;
   }
 
+  public set name(v: string) {
+    Database.db.transaction(() => {
+      const stmt = Database.db.prepare(Database.queries['updateTaskName']);
+      const info = stmt.run({uuid: this.uuid, name: v});
+      if (info.changes > 1) throw new NetworkError(`Too many rows updated. Expected 1, but updated ${info.changes}`, StatusCodes.CONFLICT);
+      if (info.changes == 0) throw new NetworkError('No rows were updated.', StatusCodes.NOT_FOUND);
+    })();
+  }
+
+  public get name(): string {
+    const stmt = Database.db.prepare(Database.queries['selectTaskName']);
+    return stmt.get({uuid: this.uuid}).name;
+  }
+
   public set content(v: string) {
     Database.db.transaction(() => {
       const stmt = Database.db.prepare(Database.queries['updateTaskContent']);
@@ -32,9 +46,23 @@ export class Task {
     return stmt.get({uuid: this.uuid}).content;
   }
 
+  public set isDone(v: boolean) {
+    Database.db.transaction(() => {
+      const stmt = Database.db.prepare(Database.queries['updateTaskIsDone']);
+      const info = stmt.run({uuid: this.uuid, isDone: (v ? 1 : 0)});
+      if (info.changes > 1) throw new NetworkError(`Too many rows updated. Expected 1, but updated ${info.changes}`, StatusCodes.CONFLICT);
+      if (info.changes == 0) throw new NetworkError('No rows were updated.', StatusCodes.NOT_FOUND);
+    })();
+  }
+
+  public get isDone(): boolean {
+    const stmt = Database.db.prepare(Database.queries['selectTaskIsDone']);
+    return stmt.get({uuid: this.uuid}).isDone == 1;
+  }
+
   // Don't remove. This is used internally by JSON.stringify
   public toJSON(): {} {
-    return {uuid: this.uuid, userUuid: this.userUuid, content: this.content};
+    return {uuid: this.uuid, userUuid: this.userUuid, name: this.name, content: this.content, isDone: this.isDone};
   }
 
   public delete(): void {
@@ -50,8 +78,9 @@ export class Task {
 export class TaskBuilder {
   private readonly uuid: string;
   private userUuid: string;
-  private content: string;
-  private isConsumed: boolean = false;
+  private name: string;
+  private content: string | null;
+  private isConsumed: boolean;
 
   public constructor() {
     this.uuid = uuidv4();
@@ -63,19 +92,25 @@ export class TaskBuilder {
     return this;
   }
 
-  public addContent(content: string): TaskBuilder {
+  public addName(name: string): TaskBuilder {
+    this.name = name;
+    return this;
+  }
+
+  public addContent(content: string | null): TaskBuilder {
     this.content = content;
     return this;
   }
 
   public build(): Task {
     if (this.isConsumed) throw new Error('IllegalState: Builder was already consumed.');
-    if (!this.content) throw new Error('IllegalState: No content was supplied to the Builder.');
+    if (!this.name) throw new Error('No name provided');
     this.isConsumed = true;
 
     const bindings = {
       uuid: this.uuid,
       userUuid: this.userUuid,
+      name: this.name,
       content: this.content,
     };
 
