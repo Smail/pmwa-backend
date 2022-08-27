@@ -14,7 +14,7 @@ router.use(loadAuthenticatedUser);
 function requireTaskTaskUuid(req, res, next) {
   if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
   if (!req.body.uuid) throw new NetworkError('No UUID provided', StatusCodes.BAD_REQUEST);
-  if (!isValidUUID(req.params.uuid)) throw new NetworkError('Invalid UUID', StatusCodes.BAD_REQUEST);
+  if (!isValidUUID(req.body.uuid)) throw new NetworkError('Invalid UUID', StatusCodes.BAD_REQUEST);
   if (req.task && typeof req.task !== 'object') {
     throw new NetworkError(`Task was assigned an unexpected type ${typeof req.task}`,
       StatusCodes.INTERNAL_SERVER_ERROR);
