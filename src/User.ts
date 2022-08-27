@@ -8,9 +8,6 @@ import { Task } from './Task';
 
 const Database = require('./database');
 
-// Load config
-require('dotenv').config();
-
 function isValidBcryptHash(hash: string): boolean {
   return /^\$2[aby]?\$\d{1,2}\$[.\/A-Za-z0-9]{53}$/.test(hash);
 }

@@ -1,17 +1,16 @@
+// Load environment variables
+require('dotenv').config();
+
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const debug = require('debug')('backend:app');
 import { NetworkError } from './src/NetworkError';
 
 const app = express();
-
-// Load config
-dotenv.config();
 
 if (process.env.DEBUG) {
   require('./src/mock');

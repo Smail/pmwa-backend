@@ -3,9 +3,6 @@ const { join } = require('path');
 const sqlite3 = require('better-sqlite3');
 const debug = require('debug')('backend:database');
 
-// Load config
-require('dotenv').config();
-
 // Remove database
 if (process.env.DEBUG) {
   if (!process.env.DB_PATH) throw new Error('No DB_PATH variable in .env found');

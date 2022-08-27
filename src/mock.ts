@@ -4,8 +4,6 @@ import { faker } from "@faker-js/faker/locale/en_US";
 import { Task, TaskBuilder } from "./Task";
 
 const debug = require('debug')('backend:mock');
-// Load config
-require('dotenv').config();
 
 // Add faker.js data if in debug mode
 if (process.env.DEBUG) {

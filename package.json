@@ -7,7 +7,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "start": "node ./dist/bin/server.js",
-    "start:dev": "set DEBUG=backend:* & nodemon ./dist/bin/server.js"
+    "start:dev": "nodemon ./dist/bin/server.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
