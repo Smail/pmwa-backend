@@ -50,6 +50,7 @@ if (process.env.DEBUG) {
     for (let i = 0; i < 10; i++) {
       const smailTask: Task = new TaskBuilder()
         .addUserUuid(smail.uuid)
+        .addName(faker.hacker.phrase())
         .addContent(faker.hacker.phrase())
         .build();
       debug(`Task created: ${JSON.stringify(smailTask)}`)
