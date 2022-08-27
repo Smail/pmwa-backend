@@ -13,8 +13,6 @@ if (process.env.DEBUG) {
   (async () => {
     const { faker } = require('@faker-js/faker/locale/en_US');
 
-    faker.seed(123);
-
     for (let i = 0; i < 20; i++) {
       const randomName = faker.name.findName(); // Jane Doe
       const firstName = randomName.split(' ')[0]; // Jane
