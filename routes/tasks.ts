@@ -11,7 +11,7 @@ const router = express.Router();
 router.use(requireAccessToken);
 router.use(loadAuthenticatedUser);
 
-function requireTaskTaskUuid(req, res, next) {
+function requireTaskUuid(req, res, next) {
   if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
   if (!req.body.uuid) throw new NetworkError('No UUID provided', StatusCodes.BAD_REQUEST);
   if (!isValidUUID(req.body.uuid)) throw new NetworkError('Invalid UUID', StatusCodes.BAD_REQUEST);
@@ -65,7 +65,7 @@ router.post('/create', requireTaskName, function (req, res, next) {
 });
 
 /* Update user task. */
-router.post('/update', requireTaskTaskUuid, function (req, res, next) {
+router.post('/update', requireTaskUuid, function (req, res, next) {
   if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
 
   // @ts-ignore TODO
