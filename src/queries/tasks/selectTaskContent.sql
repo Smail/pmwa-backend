@@ -1,1 +1,3 @@
-SELECT content FROM tasks WHERE uuid=$uuid
+SELECT content
+FROM tasks
+WHERE uuid = $uuid

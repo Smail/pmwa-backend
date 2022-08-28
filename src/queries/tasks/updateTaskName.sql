@@ -1,1 +1,3 @@
-UPDATE tasks SET name=$name WHERE uuid=$uuid
+UPDATE tasks
+SET name=$name
+WHERE uuid = $uuid
