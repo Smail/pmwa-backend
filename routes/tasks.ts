@@ -5,11 +5,13 @@ import { User } from "../src/User";
 import { Task, TaskBuilder } from "../src/Task";
 import { NetworkError } from "../src/NetworkError";
 import { validate as isValidUUID } from 'uuid';
+import { router as tagsRouter } from './tags';
 
 const router = express.Router();
 
 router.use(requireAccessToken);
 router.use(loadAuthenticatedUser);
+router.use('/tags', tagsRouter);
 
 function requireTaskUuid(req, res, next) {
   if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
