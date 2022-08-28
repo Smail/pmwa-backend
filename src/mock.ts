@@ -44,6 +44,7 @@ if (process.env.DEBUG) {
     usersTmp.push(smail);
 
     // Create fake tasks for smail
+    const tags = [faker.word.noun(), faker.word.noun(), faker.word.noun()];
     for (let i = 0; i < 10; i++) {
       const smailTask: Task = new TaskBuilder()
         .addUserUuid(smail.uuid)
@@ -56,7 +57,7 @@ if (process.env.DEBUG) {
       for (let j = 0; j < Math.round(5 * Math.random()); j++) {
         const tag: Tag = new TagBuilder()
           .addTaskUuid(smailTask.uuid)
-          .addName(faker.word.noun())
+          .addName(tags[Math.floor(tags.length * Math.random())])
           .addColor(Math.random() < 0.8 ? faker.internet.color() : null)
           .build();
         debug(`Tag created: ${JSON.stringify(tag)}`);
