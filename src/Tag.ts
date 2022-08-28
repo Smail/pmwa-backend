@@ -61,7 +61,7 @@ export class TagBuilder {
     this.uuid = uuidv4();
   }
 
-  public addUserUuid(taskUuid: string): TagBuilder {
+  public addTaskUuid(taskUuid: string): TagBuilder {
     if (!isValidUUID(taskUuid)) throw new Error(`IllegalArgument: ${taskUuid} is not a valid UUID`);
     this.taskUuid = taskUuid;
     return this;
