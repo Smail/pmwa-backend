@@ -66,6 +66,32 @@ export class Task {
       if (info.changes == 0) throw new NetworkError('No rows were deleted.', StatusCodes.NOT_FOUND);
     })();
   }
+
+  /**
+   * Return the UUIDs of all tasks, that are tagged with the specified tag name.
+   * @param {string} tagName The tag name to search for.
+   * @returns {string[]} List of UUID strings.
+   */
+  public static withTagName(tagName: string): string[] {
+    if (!tagName) throw new Error('Argument is falsy');
+    const stmt = Database.db.prepare(Database.queries['selectAllTasksWithTagName']);
+    const rows = stmt.all({ name: tagName });
+
+    return rows.map(row => row.taskUuid);
+  }
+
+  /**
+   * Return the UUIDs of all tasks, that are tagged with the specified tag UUID.
+   * @param tagUuid The UUID to search for.
+   * @returns {string[]} List of UUID strings.
+   */
+  public static withTagUUID(tagUuid: string): string[] {
+    if (!isValidUUID(tagUuid)) throw new Error('Invalid UUID');
+    const stmt = Database.db.prepare(Database.queries['selectAllTasksWithTagUuid']);
+    const rows = stmt.all({ uuid: tagUuid });
+
+    return rows.map(row => row.taskUuid);
+  }
 }
 
 export class TaskBuilder {
