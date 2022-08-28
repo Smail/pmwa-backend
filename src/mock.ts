@@ -2,6 +2,7 @@ import * as Model from './model';
 import { User, UserBuilder } from './User';
 import { faker } from "@faker-js/faker/locale/en_US";
 import { Task, TaskBuilder } from "./Task";
+import { Tag, TagBuilder } from "./Tag";
 
 const debug = require('debug')('backend:mock');
 
@@ -50,6 +51,16 @@ if (process.env.DEBUG) {
         .addContent(faker.hacker.phrase())
         .build();
       debug(`Task created: ${JSON.stringify(smailTask)}`)
+
+      // Create fake tags for the just now created task
+      for (let j = 0; j < Math.round(5 * Math.random()); j++) {
+        const tag: Tag = new TagBuilder()
+          .addTaskUuid(smailTask.uuid)
+          .addName(faker.word.noun())
+          .addColor(Math.random() < 0.8 ? faker.internet.color() : null)
+          .build();
+        debug(`Tag created: ${JSON.stringify(tag)}`);
+      }
     }
 
     // Add created mock elements to users array
