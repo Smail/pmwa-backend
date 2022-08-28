@@ -2,6 +2,7 @@ import { v4 as uuidv4, validate as isValidUUID } from "uuid";
 import * as Database from "./database";
 import { NetworkError } from "./NetworkError";
 import { StatusCodes } from "http-status-codes";
+import { Tag } from "./Tag";
 
 export class Task {
   public readonly uuid: string;
@@ -43,6 +44,13 @@ export class Task {
   public get isDone(): boolean {
     const stmt = Database.db.prepare(Database.queries['selectTaskIsDone']);
     return stmt.get({uuid: this.uuid}).isDone == 1;
+  }
+
+  public get tags(): Tag[] {
+    const stmt = Database.db.prepare(Database.queries['selectAllTagsOfTask']);
+    const rows = stmt.all({taskUuid: this.uuid});
+
+    return rows.map(row => new Tag(row.uuid));
   }
 
   // Don't remove. This is used internally by JSON.stringify
