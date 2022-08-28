@@ -48,6 +48,10 @@ export class Tag {
       if (info.changes === 0) throw new NetworkError('No rows were deleted.', StatusCodes.NOT_FOUND);
     })();
   }
+
+  public static getAllTagNames(): string[] {
+    return Database.db.prepare(Database.queries['selectAllTagNames']).all().map(row => row.name);
+  }
 }
 
 export class TagBuilder {
