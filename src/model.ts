@@ -3,10 +3,15 @@ import { User } from './User';
 
 import * as Database from './database';
 
-// Create tables
-Database.db.prepare(Database.queries['createTableUsers']).run();
-Database.db.prepare(Database.queries['createTableRefreshTokens']).run();
-Database.db.prepare(Database.queries['createTableTasks']).run();
+// Create all tables
+for (const queryName in Database.queries) {
+  if (queryName.toLowerCase().startsWith('createTable'.toLowerCase())) {
+    if (!queryName.startsWith('createTable')) {
+      console.warn(`File ${queryName} doesn't match camelCase naming convention.`);
+    }
+    Database.db.prepare(Database.queries[queryName]).run();
+  }
+}
 
 const users: User[] = [];
 // Observe push method on users array.
