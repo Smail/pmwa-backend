@@ -92,6 +92,7 @@ export class TagBuilder {
 
     if (this.color != null) {
       bindings['color'] = this.color;
+    } else {
       queryName += '___DEFAULTS' + '_color';
     }
 
