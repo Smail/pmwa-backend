@@ -19,12 +19,7 @@ export class Task {
   }
 
   public set name(v: string) {
-    Database.db.transaction(() => {
-      const stmt = Database.db.prepare(Database.queries['updateTaskName']);
-      const info = stmt.run({uuid: this.uuid, name: v});
-      if (info.changes > 1) throw new NetworkError(`Too many rows updated. Expected 1, but updated ${info.changes}`, StatusCodes.CONFLICT);
-      if (info.changes == 0) throw new NetworkError('No rows were updated.', StatusCodes.NOT_FOUND);
-    })();
+    Database.updateColumns('updateTaskName', { uuid: this.uuid, name: v }, 1);
   }
 
   public get name(): string {
@@ -33,12 +28,7 @@ export class Task {
   }
 
   public set content(v: string) {
-    Database.db.transaction(() => {
-      const stmt = Database.db.prepare(Database.queries['updateTaskContent']);
-      const info = stmt.run({uuid: this.uuid, content: v});
-      if (info.changes > 1) throw new NetworkError(`Too many rows updated. Expected 1, but updated ${info.changes}`, StatusCodes.CONFLICT);
-      if (info.changes == 0) throw new NetworkError('No rows were updated.', StatusCodes.NOT_FOUND);
-    })();
+    Database.updateColumns('updateTaskContent', { uuid: this.uuid, content: v }, 1);
   }
 
   public get content(): string {
@@ -47,12 +37,7 @@ export class Task {
   }
 
   public set isDone(v: boolean) {
-    Database.db.transaction(() => {
-      const stmt = Database.db.prepare(Database.queries['updateTaskIsDone']);
-      const info = stmt.run({uuid: this.uuid, isDone: (v ? 1 : 0)});
-      if (info.changes > 1) throw new NetworkError(`Too many rows updated. Expected 1, but updated ${info.changes}`, StatusCodes.CONFLICT);
-      if (info.changes == 0) throw new NetworkError('No rows were updated.', StatusCodes.NOT_FOUND);
-    })();
+    Database.updateColumns('updateTaskIsDone', { uuid: this.uuid, isDone: (v ? 1 : 0) }, 1);
   }
 
   public get isDone(): boolean {

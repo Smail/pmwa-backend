@@ -2,6 +2,8 @@ const fs = require('fs');
 const { join } = require('path');
 const sqlite3 = require('better-sqlite3');
 const debug = require('debug')('backend:database');
+import { NetworkError } from "./NetworkError";
+import { StatusCodes } from "http-status-codes";
 
 // Remove database
 if (process.env.DEBUG) {
@@ -51,11 +53,21 @@ function loadAllSqlQueries(): {} {
   return queries;
 }
 
+const queries = loadAllSqlQueries();
+
+function updateColumns(queryName: string, bindings: object, expectedNumberOfChanges: number) {
+  db.transaction(() => {
+    const stmt = db.prepare(queries[queryName]);
+    const info = stmt.run(bindings);
+    if (info.changes === 0 && expectedNumberOfChanges !== 0) throw new NetworkError('No rows were updated.', StatusCodes.NOT_FOUND);
+    if (info.changes > expectedNumberOfChanges) throw new NetworkError(`Too many rows were updated. Expected ${expectedNumberOfChanges}, but updated ${info.changes}`, StatusCodes.CONFLICT);
+    if (info.changes < expectedNumberOfChanges) throw new NetworkError(`Too few rows were updated. Expected ${expectedNumberOfChanges}, but updated ${info.changes}`, StatusCodes.CONFLICT);
+  })();
+}
+
 process.on('exit', () => db.close());
 process.on('SIGHUP', () => process.exit(128 + 1));
 process.on('SIGINT', () => process.exit(128 + 2));
 process.on('SIGTERM', () => process.exit(128 + 15));
 
-const queries = loadAllSqlQueries();
-
-export { queries, db  };
+export { queries, db, updateColumns };
