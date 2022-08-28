@@ -43,4 +43,4 @@ function existsUsername(username: string): boolean {
   return getUserFromUsername(username) != null;
 }
 
-export { users,getUserFromUsername,existsUsername };
+export { users, getUserFromUsername, existsUsername };
