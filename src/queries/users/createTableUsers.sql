@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
   lastName TEXT NOT NULL,
   email TEXT NOT NULL,
   passwordHash TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 
 -- constraint lowercase username
