@@ -65,7 +65,7 @@ export class TaskBuilder {
   private userUuid: string;
   private name: string;
   private content: string | null;
-  private isConsumed: boolean;
+  private isConsumed: boolean = false;
 
   public constructor() {
     this.uuid = uuidv4();
