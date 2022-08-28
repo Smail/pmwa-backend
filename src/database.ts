@@ -56,6 +56,8 @@ function loadAllSqlQueries(): {} {
 const queries = loadAllSqlQueries();
 
 function updateColumns(queryName: string, bindings: object, expectedNumberOfChanges: number) {
+  if (!queries[queryName]) throw new Error('Unknown query');
+
   db.transaction(() => {
     const stmt = db.prepare(queries[queryName]);
     const info = stmt.run(bindings);
