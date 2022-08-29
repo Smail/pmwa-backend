@@ -2,7 +2,7 @@ import fs from 'fs';
 import { join } from 'path';
 import sqlite3 from 'better-sqlite3';
 import Debug from 'debug';
-import { NetworkError } from "./NetworkError";
+import { NetworkError } from "./utils/errors/NetworkError";
 import { StatusCodes } from "http-status-codes";
 
 const debug = Debug('backend:database');

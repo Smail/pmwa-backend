@@ -1,9 +1,9 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { requireAccessToken, loadAuthenticatedUser } from './auth';
-import { User } from "../src/User";
-import { Task, TaskBuilder } from "../src/Task";
-import { NetworkError } from "../src/NetworkError";
+import { requireAccessToken, loadAuthenticatedUser } from '@routes/auth';
+import { User } from "@models/User";
+import { Task, TaskBuilder } from "@models/Task";
+import { NetworkError } from "@utils/errors/NetworkError";
 import { validate as isValidUUID } from 'uuid';
 import { router as tagsRouter } from './tags';
 

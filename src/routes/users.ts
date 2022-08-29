@@ -1,7 +1,7 @@
 import express from 'express';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import * as Model from '../src/Model';
-import { NetworkError } from '../src/NetworkError';
+import * as Model from '../Model';
+import { NetworkError } from '../utils/errors/NetworkError';
 import { requireAccessToken } from './auth';
 
 const router = express.Router();

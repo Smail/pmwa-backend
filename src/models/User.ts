@@ -3,8 +3,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4, validate as isValidUUID } from 'uuid';
-import { Task } from './Task';
-import * as Database from "./Database";
+import { Task } from '@models/Task';
+import * as Database from "../Database";
 
 function isValidBcryptHash(hash: string): boolean {
   return /^\$2[aby]?\$\d{1,2}\$[.\/A-Za-z0-9]{53}$/.test(hash);

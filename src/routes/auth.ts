@@ -1,9 +1,9 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
-import { NetworkError } from '../src/NetworkError';
-import { users, getUserFromUsername, existsUsername } from '../src/Model';
-import { User, UserBuilder } from '../src/User';
+import { NetworkError } from '@utils/errors/NetworkError';
+import { users, getUserFromUsername, existsUsername } from '../Model';
+import { User, UserBuilder } from '@models/User';
 
 const router = express.Router();
 

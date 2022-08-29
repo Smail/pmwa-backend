@@ -1,4 +1,4 @@
-import { User } from './User';
+import { User } from '@models/User';
 import * as Database from './Database';
 
 // Create all tables

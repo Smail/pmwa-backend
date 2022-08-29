@@ -8,19 +8,19 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 import Debug from 'debug';
-import { NetworkError } from './src/NetworkError';
+import { NetworkError } from '@utils/errors/NetworkError';
 
 const debug = Debug('backend:app');
 const app = express();
 
 if (process.env.DEBUG) {
-  require('./src/mock');
+  require('./Mock');
 }
 
 // Routes
-import { router as usersRouter } from './routes/users';
-import { router as authRouter } from './routes/auth';
-import { router as tasksRouter } from './routes/tasks';
+import { router as usersRouter } from '@routes/users';
+import { router as authRouter } from '@routes/auth';
+import { router as tasksRouter } from '@routes/tasks';
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -74,4 +74,9 @@ app.use(function (err: Error, req, res, next) {
   }
 });
 
-export { app };
+const port = process.env.PORT || '3000';
+app.set('port', port);
+
+app.listen(port, () => {
+  debug(`Listening on port ${port}`);
+});

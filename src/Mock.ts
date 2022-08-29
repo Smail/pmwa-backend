@@ -1,8 +1,8 @@
 import * as Model from './Model';
-import { User, UserBuilder } from './User';
+import { User, UserBuilder } from '@models/User';
 import { faker } from "@faker-js/faker/locale/en_US";
-import { Task, TaskBuilder } from "./Task";
-import { Tag, TagBuilder } from "./Tag";
+import { Task, TaskBuilder } from "@models/Task";
+import { Tag, TagBuilder } from "@models/Tag";
 import Debug from "debug";
 
 const debug = Debug('backend:mock');
