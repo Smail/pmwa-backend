@@ -1,4 +1,3 @@
-const { assert } = require('console');
 import { User } from './User';
 import * as Database from './Database';
 
@@ -33,12 +32,12 @@ users.push = function () {
 };
 
 function getUserFromUsername(username: string): User | undefined {
-  assert(username, new Error('Username is null'));
+  if (username) new Error('Username is null');
   return users.find(user => user.username.toLowerCase() === username.toLowerCase());
 }
 
 function existsUsername(username: string): boolean {
-  assert(username, new Error('Username is null'));
+  if (username) new Error('Username is null');
   return getUserFromUsername(username) != null;
 }
 
