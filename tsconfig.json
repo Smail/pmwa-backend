@@ -18,6 +18,9 @@
       "@routes/*": [
         "routes/*"
       ],
+      "@middleware/*": [
+        "middleware/*"
+      ],
       "@models/*": [
         "models/*"
       ],
