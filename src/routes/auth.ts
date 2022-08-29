@@ -1,9 +1,9 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
-import { NetworkError } from '@utils/errors/NetworkError';
 import { users, getUserFromUsername, existsUsername } from 'Model';
 import { User, UserBuilder } from '@models/User';
+import { decodeRefreshToken } from "@middleware/auth";
+import createError from "http-errors";
 
 const router = express.Router();
 
@@ -14,204 +14,70 @@ function createAccessAndRefreshToken(user) {
   return { accessToken, refreshToken };
 }
 
-function decodeToken(token, encKey) {
-  try {
-    return jwt.verify(token, encKey);
-  } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      throw new NetworkError('jwt: ' + error.message, StatusCodes.BAD_REQUEST);
-    } else {
-      throw error;
-    }
-  }
-}
-
-function decodeAccessToken(accessToken) {
-  return decodeToken(accessToken, process.env.ACCESS_TOKEN_PASSPHRASE);
-}
-
-function decodeRefreshToken(refreshToken) {
-  return decodeToken(refreshToken, process.env.REFRESH_TOKEN_PASSPHRASE);
-}
-
-function requireAccessToken(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (authHeader == null) {
-    throw new NetworkError('Missing Authorization header.', StatusCodes.UNAUTHORIZED);
-  }
-
-  const authHeaderComponents = authHeader.split(' ').map((str) => str.trim());
-  if (authHeaderComponents.length !== 2) {
-    throw new NetworkError('Unknown Authorization header syntax.', StatusCodes.BAD_REQUEST);
-  } else if (authHeaderComponents[0] !== 'Bearer') {
-    throw new NetworkError(`Expected 'Bearer' got ${authHeaderComponents[0]}.`, StatusCodes.BAD_REQUEST);
-  }
-
-  const accessToken = authHeaderComponents[1];
-  let tokenContent;
-
-  // Rethrow possible errors like "jwt expired" as a NetworkError with a proper HTTP code,
-  // i.e., not simply 500.
-  try {
-    tokenContent = decodeAccessToken(accessToken);
-    req.accessTokenContent = tokenContent;
-  } catch (error) {
-    throw new NetworkError(error.message, StatusCodes.UNAUTHORIZED);
-  }
-
-  next();
-}
-
-function loadAuthenticatedUser(req, res, next) {
-  const accessTokenContent = req.accessTokenContent;
-  const username = accessTokenContent.username;
-
-  // Token does not contain a username, which is really weird, but is theoretically possible,
-  // but *currently* not done by us.
-  if (!username) throw new NetworkError('There is no username specified in the access token :O', StatusCodes.UNPROCESSABLE_ENTITY);
-
-  const user = getUserFromUsername(username);
-
-  // If the user is null, then it was deleted between the issument of the token and now. 
-  if (!user) throw new NetworkError('User does not exist anymore.', StatusCodes.GONE);
-
-  req.user = user;
-  next();
-}
-
-function existKeysThrow(object, keys) {
-  for (const key of keys) {
-    if (!object[key]) {
-      throw new NetworkError(`Missing key '${key}'.`, StatusCodes.BAD_REQUEST);
-    }
-  }
-}
-
-function isValidSignUpUserObject(req, res, next) {
-  // Checks if all required keys exist or throws an error.
-  existKeysThrow(req.body, ["username", "firstName", "lastName", "email", "password", "repeatedPassword"]);
-  next();
-}
-
-function validateEmail(req, res, next) {
-  const user = req.body;
-
-  // User and user.email should have been already checked for null by previous middleware.
-  if (user == null) {
-    throw new Error('User is null');
-  } else if (user.email == null) {
-    throw new Error('User email is null');
-  } else if (!User.isValidEmail(user.email)) {
-    throw new NetworkError('Invalid email', StatusCodes.BAD_REQUEST);
-  }
-
-  next();
-}
-
 // Create a new user
-router.post('/signup', isValidSignUpUserObject, validateEmail, async (req, res, next) => {
-  try {
-    // User object
-    const { username, firstName, lastName, email, password, repeatedPassword } = req.body;
+router.post('/signup', async (req, res, next) => {
+  const { username, firstName, lastName, email, password, repeatedPassword } = req.body;
 
-    // TODO regex test for first and last name, i.e., no special characters like '@' in name.
-    if (password !== repeatedPassword) {
-      throw new NetworkError("Password and repeated Password don't match", StatusCodes.UNPROCESSABLE_ENTITY);
-    }
-    if (User.isPasswordWeak(password)) {
-      throw new NetworkError("Password is too weak", StatusCodes.BAD_REQUEST);
-    }
-    if (existsUsername(username)) {
-      throw new NetworkError('Username already exists', StatusCodes.CONFLICT);
-    }
-
-    // Create new user
-    const user: User = new UserBuilder()
-      .addUsername(username)
-      .addFirstName(firstName)
-      .addLastName(lastName)
-      .addEmail(email)
-      .addPassword(password)
-      .build();
-
-    users.push(user);
-    res.status(StatusCodes.CREATED).send({ id: user.uuid });
-  } catch (error) {
-    next(error);
+  for (const key of ["username", "firstName", "lastName", "email", "password", "repeatedPassword"]) {
+    if (!req.body[key]) return next(createError(StatusCodes.BAD_REQUEST, `Missing key '${key}'`));
   }
+
+  // TODO regex test for first and last name, i.e., no special characters like '@' in name.
+  if (User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, 'Invalid email'));
+  if (password !== repeatedPassword) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, "Passwords don't match"));
+  if (User.isPasswordWeak(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, 'Password is too weak'));
+  if (existsUsername(username)) return next(createError(StatusCodes.CONFLICT, 'Username already exists'));
+
+  // Create new user
+  const user: User = new UserBuilder()
+    .addUsername(username)
+    .addFirstName(firstName)
+    .addLastName(lastName)
+    .addEmail(email)
+    .addPassword(password)
+    .build();
+
+  users.push(user);
+  res.status(StatusCodes.CREATED).send({ id: user.uuid });
 });
 
 router.post('/signin', async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
+  const user = getUserFromUsername(username);
 
-    if (username == null) throw new NetworkError('Missing username', StatusCodes.UNPROCESSABLE_ENTITY);
-    if (password == null) throw new NetworkError('Missing password', StatusCodes.UNPROCESSABLE_ENTITY);
+  if (username == null) return next(createError(StatusCodes.UNAUTHORIZED, 'Missing username'));
+  if (password == null) return next(createError(StatusCodes.UNAUTHORIZED, 'Missing password'));
+  if (user == null) return next(createError(StatusCodes.NOT_FOUND, 'Username does not exist'));
+  if (!await (user.verifyPassword(password))) return next(createError(StatusCodes.UNAUTHORIZED, 'Wrong password'));
 
-    const user = getUserFromUsername(username);
-    if (user == null) throw new NetworkError('Username does not exist', StatusCodes.UNAUTHORIZED);
-
-    // Returns a promise. Let it do its thing in the background.
-    const isPasswordVerified = user.verifyPassword(password);
-    if (!await isPasswordVerified) throw new NetworkError('Wrong password', StatusCodes.UNAUTHORIZED);
-
-    // Issue tokens.
-    const tokens = createAccessAndRefreshToken(user);
-    res.status(StatusCodes.OK).send(tokens);
-  } catch (error) {
-    next(error);
-  }
+  res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(user));
 });
 
 // Issue new access and refresh token with a provided refresh token.
 router.post('/refresh-token', async (req, res, next) => {
-  try {
-    const { username, refreshToken } = req.body;
+  const { username, refreshToken } = req.body;
+  const user = getUserFromUsername(username);
 
-    if (username == null) throw new NetworkError('Missing username', StatusCodes.UNPROCESSABLE_ENTITY);
-    if (refreshToken == null) throw new NetworkError('Missing refresh token', StatusCodes.UNPROCESSABLE_ENTITY);
+  if (username == null) return next(createError(StatusCodes.UNAUTHORIZED, 'Missing username'));
+  if (refreshToken == null) return next(createError(StatusCodes.UNAUTHORIZED, 'Missing refresh token'));
+  if (user == null) return next(createError(StatusCodes.NOT_FOUND, 'Username does not exist'));
+  if (!user.hasRefreshToken(refreshToken)) return next(createError(StatusCodes.FORBIDDEN, 'Unknown refresh token'));
 
-    const user = getUserFromUsername(username);
-
-    if (user == null) throw new NetworkError('Username does not exist', StatusCodes.NOT_FOUND);
-    if (user.numberOfRefreshTokens === 0) {
-      throw new NetworkError('User does not own any refresh tokens', StatusCodes.NOT_FOUND);
-    }
-
-    const tokenContent = decodeRefreshToken(refreshToken);
-
-    // Does the user even own this token?
-    if (!user.hasRefreshToken(refreshToken)) {
-      throw new NetworkError('Unknown refresh token.', StatusCodes.NOT_FOUND);
-    }
-
-    // Paranoia: This should always be false, because a user should have a token saved,
-    // that contains a different username.
-    // Make sure if username is token matches the requested username
-    if (tokenContent.username.toLowerCase() !== user.username.toLowerCase()) {
-      console.error(
-        `Username in token payload does not match the requested username.
-        This SHOULD absolutely NEVER happen here,
-        because we previously checked if the user has the token in its refresh token list. 
-        Since it returned true, an injection attack MUST be happening here!
-        Exiting process...`.replace('\n', ' '));
-      // Fatally exit the server, because something horrible is going on here.
-      process.exit(1);
-    }
-
-    // Remove used refresh token.
-    if (!user.deleteRefreshToken(refreshToken)) {
-      throw new NetworkError(
-        `SERIOUS BUG: Refresh token could not be removed (id = ${user.uuid}) even though it exists.`,
-        StatusCodes.INTERNAL_SERVER_ERROR);
-    }
-
-    // Issue new tokens
-    const tokens = createAccessAndRefreshToken(user);
-    res.status(StatusCodes.OK).send(tokens);
-  } catch (error) {
-    next(error);
+  // Paranoia: This should always be false, since a user should have a token saved, that contains their username.
+  const tokenContent = decodeRefreshToken(refreshToken);
+  if (tokenContent.username.toLowerCase() !== user.username.toLowerCase()) {
+    // This is a seriously dangerous error. Somehow another user got a token from a different user.
+    // An attack might be happening here.
+    return next(createError(StatusCodes.FORBIDDEN, 'Username in token payload does not match the requested username'));
   }
+
+  // Remove used refresh token.
+  if (!user.deleteRefreshToken(refreshToken)) {
+    const errorMsg = `Refresh token for user ID ${user.uuid} could not be removed even though it exists.`;
+    return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, errorMsg));
+  }
+
+  res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(user));
 });
 
-export { router, requireAccessToken, loadAuthenticatedUser };
+export { router };

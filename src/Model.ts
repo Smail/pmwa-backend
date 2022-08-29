@@ -31,13 +31,13 @@ users.push = function () {
   return Array.prototype.push.apply(this, arguments);
 };
 
-function getUserFromUsername(username: string): User | undefined {
-  if (username) new Error('Username is null');
+function getUserFromUsername(username: string | null): User | undefined {
+  if (!username) return undefined;
   return users.find(user => user.username.toLowerCase() === username.toLowerCase());
 }
 
-function existsUsername(username: string): boolean {
-  if (username) new Error('Username is null');
+function existsUsername(username: string | null): boolean {
+  if (!username) return false;
   return getUserFromUsername(username) != null;
 }
 
