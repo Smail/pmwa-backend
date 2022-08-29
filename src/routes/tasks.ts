@@ -1,10 +1,8 @@
 import express from 'express';
-import { StatusCodes } from 'http-status-codes';
-import { requireAccessToken, loadAuthenticatedUser } from '@middleware/auth';
-import { User } from "@models/User";
-import { Task, TaskBuilder } from "@models/Task";
-import { validate as isValidUUID } from 'uuid';
 import { router as tagsRouter } from '@routes/tags';
+import { requireTaskUuid } from "@middleware/requireTaskUuid";
+import { requireTaskName } from "@middleware/requireTaskName";
+import { loadAuthenticatedUser, requireAccessToken } from '@middleware/auth';
 import createError from "http-errors";
 
 const router = express.Router();
