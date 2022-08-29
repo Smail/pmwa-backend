@@ -1,11 +1,11 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { requireAccessToken, loadAuthenticatedUser } from '@routes/auth';
+import { requireAccessToken, loadAuthenticatedUser } from '@middleware/auth';
 import { User } from "@models/User";
 import { Task, TaskBuilder } from "@models/Task";
-import { NetworkError } from "@utils/errors/NetworkError";
 import { validate as isValidUUID } from 'uuid';
 import { router as tagsRouter } from '@routes/tags';
+import createError from "http-errors";
 
 const router = express.Router();
 
@@ -14,12 +14,11 @@ router.use(loadAuthenticatedUser);
 router.use('/tags', tagsRouter);
 
 function requireTaskUuid(req, res, next) {
-  if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
-  if (!req.body.uuid) throw new NetworkError('No UUID provided', StatusCodes.BAD_REQUEST);
-  if (!isValidUUID(req.body.uuid)) throw new NetworkError('Invalid UUID', StatusCodes.BAD_REQUEST);
+  if (!req.body) return next(createError(StatusCodes.BAD_REQUEST, 'Request body is falsy'));
+  if (!req.body.uuid) return next(createError(StatusCodes.BAD_REQUEST, 'No UUID provided'));
+  if (!isValidUUID(req.body.uuid)) return next(createError(StatusCodes.BAD_REQUEST, 'Invalid UUID'));
   if (req.task && typeof req.task !== 'object') {
-    throw new NetworkError(`Task was assigned an unexpected type ${typeof req.task}`,
-      StatusCodes.INTERNAL_SERVER_ERROR);
+    return next(createError(StatusCodes.INTERNAL_SERVER_ERROR,`Already assigned unexpected type ${typeof req.task}`));
   }
 
   if (!req.task) req.task = {};
@@ -29,12 +28,11 @@ function requireTaskUuid(req, res, next) {
 }
 
 function requireTaskName(req, res, next) {
-  if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
-  if (!req.body.name) throw new NetworkError('No name provided', StatusCodes.BAD_REQUEST);
-  if (typeof req.body.name !== 'string') throw new NetworkError('Name is not a string', StatusCodes.BAD_REQUEST);
+  if (!req.body) return next(createError(StatusCodes.BAD_REQUEST, 'Request body is falsy'));
+  if (!req.body.name) return next(createError(StatusCodes.BAD_REQUEST, 'No name provided'));
+  if (typeof req.body.name !== 'string') return next(createError(StatusCodes.BAD_REQUEST, 'Name is not a string'));
   if (req.task && typeof req.task !== 'object') {
-    throw new NetworkError(`Task was already assigned an unexpected type ${typeof req.task}`,
-      StatusCodes.INTERNAL_SERVER_ERROR);
+    return next(createError(StatusCodes.INTERNAL_SERVER_ERROR,`Already assigned unexpected type ${typeof req.task}`));
   }
 
   if (!req.task) req.task = {};
@@ -68,7 +66,7 @@ router.post('/create', requireTaskName, function (req, res, next) {
 
 /* Update user task. */
 router.post('/update', requireTaskUuid, function (req, res, next) {
-  if (!req.body) throw new NetworkError('Request body is falsy', StatusCodes.BAD_REQUEST);
+  if (!req.body)  return next(createError(StatusCodes.BAD_REQUEST,'Request body is falsy'));
 
   // @ts-ignore TODO
   const task = new Task(req.task.uuid);
@@ -82,8 +80,8 @@ router.post('/update', requireTaskUuid, function (req, res, next) {
 
 /* DELETE user task. */
 router.delete('/:uuid', function (req, res, next) {
-  if (!req.params.uuid) throw new NetworkError('No UUID provided', StatusCodes.BAD_REQUEST);
-  if (!isValidUUID(req.params.uuid)) throw new NetworkError('Invalid UUID', StatusCodes.BAD_REQUEST);
+  if (!req.params.uuid) return next(createError(StatusCodes.BAD_REQUEST,'No UUID provided'));
+  if (!isValidUUID(req.params.uuid)) return next(createError(StatusCodes.BAD_REQUEST, 'Invalid UUID'));
   // @ts-ignore TODO
   new Task(req.params.uuid).delete();
 
