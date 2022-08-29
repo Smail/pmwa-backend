@@ -1,33 +1,30 @@
 import express from 'express';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import * as Model from 'Model';
-import { NetworkError } from '@utils/errors/NetworkError';
-import { requireAccessToken } from './auth';
+import { requireAccessToken } from '@middleware/auth';
+import createError from "http-errors";
 
 const router = express.Router();
 
-/* GET user */
-router.get('/username/:username', requireAccessToken, function (req, res, next) {
-  // @ts-ignore TODO
+function checkUsername(req, res, next) {
   const tokenContent = req.accessTokenContent;
 
-  if (!(tokenContent.username === req.params.username || tokenContent.userLevel === 'admin')) {
-    throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
+  if (!tokenContent.username) return next(createError(StatusCodes.BAD_REQUEST, 'No username in token'));
+  if (tokenContent.username !== req.params.username) {
+    return next(createError(StatusCodes.FORBIDDEN, ReasonPhrases.FORBIDDEN));
   }
+  next();
+}
 
-  res.send(Model.getUserFromUsername(tokenContent.username)?.toString()); // TODO this is weird code? toString doesnt exists TODO (...)?.username
+/* GET user */
+router.get('/username/:username', requireAccessToken, checkUsername, function (req, res, next) {
+  // @ts-ignore TODO
+  res.send(Model.getUserFromUsername(req.accessTokenContent.username)?.toString()); // TODO this is weird code? toString doesnt exists TODO (...)?.username
 });
 
-router.get('/:username/display-name', requireAccessToken, function (req, res, next) {
+router.get('/:username/display-name', requireAccessToken, checkUsername, function (req, res, next) {
   // @ts-ignore TODO
-  const tokenContent = req.accessTokenContent;
-
-  if (tokenContent.username !== req.params.username) {
-    // TODO log errors in node console output / file
-    throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
-  }
-
-  res.send({ displayName: Model.getUserFromUsername(tokenContent.username)?.displayName }); // TODO null coalescing
+  res.send({ displayName: Model.getUserFromUsername(req.accessTokenContent.username)?.displayName }); // TODO null coalescing
 });
 
 export { router };
