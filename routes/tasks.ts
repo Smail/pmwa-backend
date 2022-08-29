@@ -63,7 +63,7 @@ router.post('/create', requireTaskName, function (req, res, next) {
     .addContent(req.task.content) // can be null
     .build();
 
-  res.status(StatusCodes.CREATED).send({uuid: task.uuid});
+  res.status(StatusCodes.CREATED).send({ uuid: task.uuid });
 });
 
 /* Update user task. */
