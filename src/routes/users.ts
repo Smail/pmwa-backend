@@ -18,18 +18,6 @@ router.get('/username/:username', requireAccessToken, function (req, res, next) 
   res.send(Model.getUserFromUsername(tokenContent.username)?.toString()); // TODO this is weird code? toString doesnt exists TODO (...)?.username
 });
 
-/* GET usernames */
-router.get('/usernames', requireAccessToken, function (req, res, next) {
-  // @ts-ignore TODO
-  const tokenContent = req.accessTokenContent;
-
-  if (tokenContent.userLevel !== 'admin') {
-    throw new NetworkError(ReasonPhrases.FORBIDDEN, StatusCodes.FORBIDDEN);
-  }
-
-  res.send(JSON.stringify(Model.users.map(user => user.username)));
-});
-
 router.get('/:username/display-name', requireAccessToken, function (req, res, next) {
   // @ts-ignore TODO
   const tokenContent = req.accessTokenContent;
