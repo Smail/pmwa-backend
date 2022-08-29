@@ -1,6 +1,5 @@
 const { assert } = require('console');
 import { User } from './User';
-
 import * as Database from './Database';
 
 // Create all tables

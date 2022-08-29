@@ -1,15 +1,16 @@
 // Load environment variables
 require('dotenv').config();
 
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const cors = require('cors');
-const debug = require('debug')('backend:app');
+import createError from 'http-errors';
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import cors from 'cors';
+import Debug from 'debug';
 import { NetworkError } from './src/NetworkError';
 
+const debug = Debug('backend:app');
 const app = express();
 
 if (process.env.DEBUG) {

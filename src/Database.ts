@@ -1,9 +1,11 @@
-const fs = require('fs');
-const { join } = require('path');
-const sqlite3 = require('better-sqlite3');
-const debug = require('debug')('backend:database');
+import fs from 'fs';
+import { join } from 'path';
+import sqlite3 from 'better-sqlite3';
+import Debug from 'debug';
 import { NetworkError } from "./NetworkError";
 import { StatusCodes } from "http-status-codes";
+
+const debug = Debug('backend:database');
 
 // Remove database
 if (process.env.DEBUG) {

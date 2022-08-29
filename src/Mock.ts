@@ -3,8 +3,9 @@ import { User, UserBuilder } from './User';
 import { faker } from "@faker-js/faker/locale/en_US";
 import { Task, TaskBuilder } from "./Task";
 import { Tag, TagBuilder } from "./Tag";
+import Debug from "debug";
 
-const debug = require('debug')('backend:mock');
+const debug = Debug('backend:mock');
 
 // Add faker.js data if in debug mode
 if (process.env.DEBUG) {
