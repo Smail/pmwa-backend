@@ -5,7 +5,7 @@ import { User } from "@models/User";
 import { Task, TaskBuilder } from "@models/Task";
 import { NetworkError } from "@utils/errors/NetworkError";
 import { validate as isValidUUID } from 'uuid';
-import { router as tagsRouter } from './tags';
+import { router as tagsRouter } from '@routes/tags';
 
 const router = express.Router();
 
