@@ -1,6 +1,6 @@
 import express from 'express';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import * as Model from '../src/model';
+import * as Model from '../src/Model';
 import { NetworkError } from '../src/NetworkError';
 import { requireAccessToken } from './auth';
 

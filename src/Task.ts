@@ -1,5 +1,5 @@
 import { v4 as uuidv4, validate as isValidUUID } from "uuid";
-import * as Database from "./database";
+import * as Database from "./Database";
 import { NetworkError } from "./NetworkError";
 import { StatusCodes } from "http-status-codes";
 import { Tag } from "./Tag";

@@ -1,4 +1,4 @@
-import * as Model from './model';
+import * as Model from './Model';
 import { User, UserBuilder } from './User';
 import { faker } from "@faker-js/faker/locale/en_US";
 import { Task, TaskBuilder } from "./Task";

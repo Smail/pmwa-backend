@@ -2,7 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
 import { NetworkError } from '../src/NetworkError';
-import { users, getUserFromUsername, existsUsername } from '../src/model';
+import { users, getUserFromUsername, existsUsername } from '../src/Model';
 import { User, UserBuilder } from '../src/User';
 
 const router = express.Router();
