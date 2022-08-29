@@ -1,6 +1,6 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { requireAccessToken, loadAuthenticatedUser } from '@routes/auth';
+import { requireAccessToken, loadAuthenticatedUser } from '@middleware/auth';
 import { Task } from "@models/Task";
 import { Tag } from "@models/Tag";
 
