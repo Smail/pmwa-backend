@@ -1,8 +1,8 @@
 import express from 'express';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import * as Model from 'Model';
 import { requireAccessToken } from '@middleware/auth';
 import createError from "http-errors";
+import { get_display_name, get_user } from "@controllers/usersController";
 
 const router = express.Router();
 
@@ -17,14 +17,8 @@ function checkUsername(req, res, next) {
 }
 
 /* GET user */
-router.get('/username/:username', requireAccessToken, checkUsername, function (req, res, next) {
-  // @ts-ignore TODO
-  res.send(Model.getUserFromUsername(req.accessTokenContent.username)?.toString()); // TODO this is weird code? toString doesnt exists TODO (...)?.username
-});
+router.get('/username/:username', requireAccessToken, checkUsername, get_user);
 
-router.get('/:username/display-name', requireAccessToken, checkUsername, function (req, res, next) {
-  // @ts-ignore TODO
-  res.send({ displayName: Model.getUserFromUsername(req.accessTokenContent.username)?.displayName }); // TODO null coalescing
-});
+router.get('/:username/display-name', requireAccessToken, checkUsername, get_display_name);
 
 export { router };
