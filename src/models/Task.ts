@@ -1,21 +1,21 @@
 import { v4 as uuidv4, validate as isValidUUID } from "uuid";
 import * as Database from "../Database";
-import { NetworkError } from "@utils/errors/NetworkError";
 import { StatusCodes } from "http-status-codes";
 import { Tag } from "./Tag";
+import createError from "http-errors";
 
 export class Task {
   public readonly uuid: string;
   public readonly userUuid: string;
 
   constructor(uuid: string) {
-    if (!isValidUUID(uuid)) throw new NetworkError(`${uuid} is not a valid UUID`, StatusCodes.BAD_REQUEST);
+    if (!isValidUUID(uuid)) throw createError(StatusCodes.BAD_REQUEST, `${uuid} is not a valid UUID`);
     this.uuid = uuid;
 
     const stmt = Database.db.prepare(Database.queries['selectTask']);
-    const task = stmt.get({uuid: this.uuid});
+    const task = stmt.get({ uuid: this.uuid });
 
-    if (task == null) throw new NetworkError(`No task exists with ${uuid}`, StatusCodes.NOT_FOUND);
+    if (task == null) throw createError(StatusCodes.NOT_FOUND, `No task exists with ${uuid}`);
     this.userUuid = task.userUuid;
   }
 
@@ -25,7 +25,7 @@ export class Task {
 
   public get name(): string {
     const stmt = Database.db.prepare(Database.queries['selectTaskName']);
-    return stmt.get({uuid: this.uuid}).name;
+    return stmt.get({ uuid: this.uuid }).name;
   }
 
   public set content(v: string) {
@@ -34,7 +34,7 @@ export class Task {
 
   public get content(): string {
     const stmt = Database.db.prepare(Database.queries['selectTaskContent']);
-    return stmt.get({uuid: this.uuid}).content;
+    return stmt.get({ uuid: this.uuid }).content;
   }
 
   public set isDone(v: boolean) {
@@ -43,27 +43,28 @@ export class Task {
 
   public get isDone(): boolean {
     const stmt = Database.db.prepare(Database.queries['selectTaskIsDone']);
-    return stmt.get({uuid: this.uuid}).isDone == 1;
+    return stmt.get({ uuid: this.uuid }).isDone == 1;
   }
 
   public get tags(): Tag[] {
     const stmt = Database.db.prepare(Database.queries['selectAllTagsOfTask']);
-    const rows = stmt.all({taskUuid: this.uuid});
+    const rows = stmt.all({ taskUuid: this.uuid });
 
     return rows.map(row => new Tag(row.uuid));
   }
 
   // Don't remove. This is used internally by JSON.stringify
+  // noinspection JSUnusedGlobalSymbols
   public toJSON(): {} {
-    return {uuid: this.uuid, userUuid: this.userUuid, name: this.name, content: this.content, isDone: this.isDone};
+    return { uuid: this.uuid, userUuid: this.userUuid, name: this.name, content: this.content, isDone: this.isDone };
   }
 
   public delete(): void {
     Database.db.transaction(() => {
       const stmt = Database.db.prepare(Database.queries['deleteTask']);
-      const info = stmt.run({uuid: this.uuid});
-      if (info.changes > 1) throw new NetworkError(`Too many rows deleted. Expected 1, but removed ${info.changes}`, StatusCodes.CONFLICT);
-      if (info.changes == 0) throw new NetworkError('No rows were deleted.', StatusCodes.NOT_FOUND);
+      const info = stmt.run({ uuid: this.uuid });
+      if (info.changes > 1) throw createError(StatusCodes.CONFLICT, `Too many rows deleted. Expected 1, but removed ${info.changes}`);
+      if (info.changes == 0) throw createError(StatusCodes.NOT_FOUND, 'No rows were deleted');
     })();
   }
 

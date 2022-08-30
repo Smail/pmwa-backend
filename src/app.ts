@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 import Debug from 'debug';
-import { NetworkError } from '@utils/errors/NetworkError';
 
 const debug = Debug('backend:app');
 const app = express();
@@ -48,17 +47,10 @@ app.use(function (err: Error, req, res, next) {
 
   debug(req.app.get('env'));
   debug(err);
-  let statusCode: number;
 
-  if (err instanceof NetworkError) {
-    if (err.httpCode >= 500) console.error(err);
-    statusCode = err.httpCode;
-  } else {
-    // @ts-ignore TODO
-    if (err.status >= 500) console.error(err);
-    // @ts-ignore TODO
-    statusCode = err.status || 500;
-  }
+  // @ts-ignore TODO
+  const statusCode = err.status || 500;
+  if (statusCode >= 500) console.error(err);
 
   res.status(statusCode);
 

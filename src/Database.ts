@@ -2,8 +2,8 @@ import fs from 'fs';
 import { join } from 'path';
 import sqlite3 from 'better-sqlite3';
 import Debug from 'debug';
-import { NetworkError } from "./utils/errors/NetworkError";
 import { StatusCodes } from "http-status-codes";
+import createError from "http-errors";
 
 const debug = Debug('backend:database');
 
@@ -63,9 +63,9 @@ function updateColumns(queryName: string, bindings: object, expectedNumberOfChan
   db.transaction(() => {
     const stmt = db.prepare(queries[queryName]);
     const info = stmt.run(bindings);
-    if (info.changes === 0 && expectedNumberOfChanges !== 0) throw new NetworkError('No rows were updated.', StatusCodes.NOT_FOUND);
-    if (info.changes > expectedNumberOfChanges) throw new NetworkError(`Too many rows were updated. Expected ${expectedNumberOfChanges}, but updated ${info.changes}`, StatusCodes.CONFLICT);
-    if (info.changes < expectedNumberOfChanges) throw new NetworkError(`Too few rows were updated. Expected ${expectedNumberOfChanges}, but updated ${info.changes}`, StatusCodes.CONFLICT);
+    if (info.changes === 0 && expectedNumberOfChanges !== 0) throw createError(StatusCodes.NOT_FOUND, 'No rows were updated');
+    if (info.changes > expectedNumberOfChanges) throw createError(StatusCodes.CONFLICT, `Too many rows were updated. Expected ${expectedNumberOfChanges}, but updated ${info.changes}`);
+    if (info.changes < expectedNumberOfChanges) throw createError(StatusCodes.CONFLICT, `Too few rows were updated. Expected ${expectedNumberOfChanges}, but updated ${info.changes}`);
   })();
 }
 

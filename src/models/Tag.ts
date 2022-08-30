@@ -1,6 +1,6 @@
 import { v4 as uuidv4, validate as isValidUUID } from "uuid";
 import * as Database from "../Database";
-import { NetworkError } from "@utils/errors/NetworkError";
+import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 
 export class Tag {
@@ -8,13 +8,13 @@ export class Tag {
   public readonly taskUuid: string;
 
   constructor(uuid: string) {
-    if (!isValidUUID(uuid)) throw new NetworkError(`${uuid} is not a valid UUID`, StatusCodes.BAD_REQUEST);
+    if (!isValidUUID(uuid)) throw createError(StatusCodes.BAD_REQUEST,`${uuid} is not a valid UUID`);
     this.uuid = uuid;
 
     const stmt = Database.db.prepare(Database.queries['selectTag']);
     const tag = stmt.get({ uuid: this.uuid });
 
-    if (tag == null) throw new NetworkError(`No tag exists with ${uuid}`, StatusCodes.NOT_FOUND);
+    if (tag == null) throw createError(StatusCodes.NOT_FOUND, `No tag exists with ${uuid}`);
     this.taskUuid = tag.taskUuid;
   }
 
@@ -44,8 +44,8 @@ export class Tag {
     Database.db.transaction(() => {
       const stmt = Database.db.prepare(Database.queries['deleteTag']);
       const info = stmt.run({ uuid: this.uuid });
-      if (info.changes > 1) throw new NetworkError(`Too many rows deleted. Expected 1, but removed ${info.changes}`, StatusCodes.CONFLICT);
-      if (info.changes === 0) throw new NetworkError('No rows were deleted.', StatusCodes.NOT_FOUND);
+      if (info.changes > 1) throw createError(StatusCodes.CONFLICT, `Too many rows deleted. Expected 1, but removed ${info.changes}`);
+      if (info.changes === 0) throw createError(StatusCodes.NOT_FOUND, 'No rows were deleted');
     })();
   }
 
