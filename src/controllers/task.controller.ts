@@ -29,7 +29,7 @@ export const update_task = (req, res, next) => {
   if (!req.body) return next(createError(StatusCodes.BAD_REQUEST, "Request body is falsy"));
 
   // @ts-ignore TODO
-  const task = new Task(req.task.uuid);
+  const task = new Task(req.body.uuid);
 
   if (req.body.name && typeof req.body.name === "string") task.name = req.body.name;
   if (req.body.isDone && typeof req.body.isDone === "boolean") task.isDone = req.body.isDone;

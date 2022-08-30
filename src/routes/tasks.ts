@@ -1,6 +1,6 @@
 import express from "express";
 import { router as tagsRouter } from "@routes/tags";
-import { requireTaskUuid } from "@middleware/requireTaskUuid";
+import { requireUuid } from "@middleware/requireUuid";
 import { requireTaskName } from "@middleware/requireTaskName";
 import { loadAuthenticatedUser, requireAccessToken } from "@middleware/auth";
 import { create_task, delete_task, get_tasks, update_task } from "@controllers/task.controller";
@@ -18,7 +18,7 @@ router.get("/", get_tasks);
 router.post("/create", requireTaskName, create_task);
 
 /* Update user task. */
-router.post("/update", requireTaskUuid, update_task);
+router.post("/update", requireUuid, update_task);
 
 /* DELETE user task. */
 router.delete("/:uuid", delete_task);
