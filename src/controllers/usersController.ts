@@ -34,6 +34,42 @@ export const create_user = async (req, res, next) => {
   res.status(StatusCodes.CREATED).send({ id: user.uuid });
 }
 
+export const update_user = (req, res, next) => {
+  // TODO very inefficient. Use repository
+  const { username, firstName, lastName, email, password } = req.body;
+
+  const user: User = new User(req.uuid);
+  const bUsername = user.username;
+  const bFirstName = user.firstName;
+  const bLastName = user.lastName;
+  const bEmail = user.email;
+  const bPasswordHash = user.passwordHash;
+
+  try {
+    if (username) user.username = username;
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (email) user.email = email;
+    if (password) user.password = password;
+
+    res.sendStatus(StatusCodes.OK);
+  } catch (error) {
+    // Restore
+    try {
+      user.username = bUsername;
+      user.firstName = bFirstName;
+      user.lastName = bLastName;
+      user.email = bEmail;
+      user.passwordHash = bPasswordHash;
+
+      createError(StatusCodes.BAD_REQUEST, error.message);
+    } catch (error2) {
+      createError(StatusCodes.INTERNAL_SERVER_ERROR,
+        'Could not restore state.\nFirst error: ' + error.message + '\nSecond error: ' + error2.message);
+    }
+  }
+}
+
 export const get_display_name = (req, res, next) => {
   // @ts-ignore TODO
   res.send({ displayName: Model.getUserFromUsername(req.accessTokenContent.username)?.displayName }); // TODO null coalescing

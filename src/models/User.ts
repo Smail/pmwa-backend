@@ -187,12 +187,12 @@ class User {
     this.passwordHash = User.hashPassword(v);
   }
 
-  private set passwordHash(v: string) {
+  public set passwordHash(v: string) {
     if (!isValidBcryptHash(v)) throw new Error('Not a bcrypt hash');
     this.updateDatabaseValue('updatePasswordHash', { passwordHash: v });
   }
 
-  private get passwordHash(): string {
+  public get passwordHash(): string {
     return this.getDatabaseValue(UserStatements.SELECT_PASSWORD_HASH).passwordHash;
   }
 
