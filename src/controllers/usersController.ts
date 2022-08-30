@@ -1,8 +1,7 @@
-import * as Model from "../Model";
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
+import * as Model from "../Model";
 import { User, UserBuilder } from "@models/User";
-import { existsUsername, users } from "../Model";
 
 export const get_user = (req, res, next) => {
   // @ts-ignore TODO
@@ -19,7 +18,7 @@ export const create_user = async (req, res, next) => {
   // TODO regex test for first and last name, i.e., no special characters like '@' in name.
   if (User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, 'Invalid email'));
   if (User.isPasswordWeak(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, 'Password is too weak'));
-  if (existsUsername(username)) return next(createError(StatusCodes.CONFLICT, 'Username already exists'));
+  if (Model.existsUsername(username)) return next(createError(StatusCodes.CONFLICT, 'Username already exists'));
 
   // Create new user
   const user: User = new UserBuilder()
@@ -30,7 +29,7 @@ export const create_user = async (req, res, next) => {
     .addPassword(password)
     .build();
 
-  users.push(user);
+  Model.users.push(user);
   res.status(StatusCodes.CREATED).send({ id: user.uuid });
 }
 
