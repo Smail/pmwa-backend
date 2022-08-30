@@ -36,6 +36,11 @@ function getUserFromUsername(username: string | null): User | undefined {
   return users.find(user => user.username.toLowerCase() === username.toLowerCase());
 }
 
+export function getUserFromUuid(uuid: string | null): User | undefined {
+  if (!uuid) return undefined;
+  return users.find(user => user.uuid === uuid);
+}
+
 function existsUsername(username: string | null): boolean {
   if (!username) return false;
   return getUserFromUsername(username) != null;
