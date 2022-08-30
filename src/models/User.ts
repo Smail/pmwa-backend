@@ -18,6 +18,7 @@ export class User implements ISerializable {
   }
 
   public set password(password: string) {
+    if (!User.isValidPassword(password)) throw new Error('Invalid password');
     this._passwordHash = bcrypt.hashSync(password, 10);
   }
 
@@ -31,6 +32,10 @@ export class User implements ISerializable {
 
   public static isValidDisplayName(displayName: string): boolean {
     return this.isValidUsername(displayName);
+  }
+
+  public static isValidPassword(password: string): boolean {
+    return true; // TODO
   }
 
   public static isValidEmail(email: string): boolean {
