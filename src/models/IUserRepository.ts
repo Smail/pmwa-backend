@@ -9,4 +9,6 @@ export interface IUserRepository extends IRepository<User, string> {
   update(user: User): void;
 
   delete(user: User): void;
+
+  findUsername(username: string): User | null;
 }

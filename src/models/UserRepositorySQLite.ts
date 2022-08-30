@@ -57,4 +57,12 @@ export class UserRepositorySQLite implements IUserRepository {
     const query = `DELETE FROM users WHERE uuid = $userId`;
     runTransaction(this.db, query, { userId: user.id });
   }
+
+  public findUsername(username: string): User | null {
+    const query = `SELECT uuid as id FROM users WHERE username = $username`;
+    const row = this.db.prepare(query).get({ username: username });
+
+    // TODO assert row.length === 1
+    return (row.length > 0) ? this.read(row.id) : null;
+  }
 }
