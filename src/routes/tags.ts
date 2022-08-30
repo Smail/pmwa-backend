@@ -2,13 +2,13 @@ import express from "express";
 import { StatusCodes } from "http-status-codes";
 import { Task } from "@models/Task";
 import { Tag } from "@models/Tag";
-import { loadAuthenticatedUser } from "@middleware/auth";
 import { requireAccessToken } from "@middleware/requireAccessToken";
+import { requireAuthenticatedUser } from "@middleware/requireAuthenticatedUser";
 
 const router = express.Router({ mergeParams: true });
 
 router.use(requireAccessToken);
-router.use(loadAuthenticatedUser);
+router.use(requireAuthenticatedUser);
 
 /* GET all available tag names. */
 router.get("/names", function (req, res, next) {
