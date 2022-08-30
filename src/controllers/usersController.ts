@@ -6,7 +6,7 @@ import { User, UserBuilder } from "@models/User";
 export const get_user = (req, res, next) => {
   // @ts-ignore TODO
   res.send(Model.getUserFromUuid(req.body.uuid)?.toString()); // TODO this is weird code? toString doesnt exists TODO (...)?.username
-}
+};
 
 export const create_user = async (req, res, next) => {
   const { username, firstName, lastName, email, password } = req.body;
@@ -16,9 +16,9 @@ export const create_user = async (req, res, next) => {
   }
 
   // TODO regex test for first and last name, i.e., no special characters like '@' in name.
-  if (User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, 'Invalid email'));
-  if (User.isPasswordWeak(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, 'Password is too weak'));
-  if (Model.existsUsername(username)) return next(createError(StatusCodes.CONFLICT, 'Username already exists'));
+  if (User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid email"));
+  if (User.isPasswordWeak(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, "Password is too weak"));
+  if (Model.existsUsername(username)) return next(createError(StatusCodes.CONFLICT, "Username already exists"));
 
   // Create new user
   const user: User = new UserBuilder()
@@ -31,7 +31,7 @@ export const create_user = async (req, res, next) => {
 
   Model.users.push(user);
   res.status(StatusCodes.CREATED).send({ id: user.uuid });
-}
+};
 
 export const update_user = (req, res, next) => {
   // TODO very inefficient. Use repository
@@ -64,12 +64,12 @@ export const update_user = (req, res, next) => {
       createError(StatusCodes.BAD_REQUEST, error.message);
     } catch (error2) {
       createError(StatusCodes.INTERNAL_SERVER_ERROR,
-        'Could not restore state.\nFirst error: ' + error.message + '\nSecond error: ' + error2.message);
+        "Could not restore state.\nFirst error: " + error.message + "\nSecond error: " + error2.message);
     }
   }
-}
+};
 
 export const get_display_name = (req, res, next) => {
   // @ts-ignore TODO
   res.send({ displayName: Model.getUserFromUsername(req.accessTokenContent.username)?.displayName }); // TODO null coalescing
-}
+};

@@ -1,10 +1,10 @@
-import { User } from '@models/User';
-import * as Database from './Database';
+import { User } from "@models/User";
+import * as Database from "./Database";
 
 // Create all tables
 for (const queryName in Database.queries) {
-  if (queryName.toLowerCase().startsWith('createTable'.toLowerCase())) {
-    if (!queryName.startsWith('createTable')) {
+  if (queryName.toLowerCase().startsWith("createTable".toLowerCase())) {
+    if (!queryName.startsWith("createTable")) {
       console.warn(`File ${queryName} doesn't match camelCase naming convention.`);
     }
     Database.db.prepare(Database.queries[queryName]).run();
@@ -20,11 +20,11 @@ users.push = function () {
     const value = arguments[key];
 
     if (!(value instanceof User)) {
-      throw new Error('Element pushed into users array is not of Type User. ' + JSON.stringify(value));
+      throw new Error("Element pushed into users array is not of Type User. " + JSON.stringify(value));
     }
 
     if (users.filter(user => user.username.toLowerCase() === value.username.toLowerCase()).length > 0) {
-      throw new Error('Username already exists');
+      throw new Error("Username already exists");
     }
   }
 

@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import { getUserFromUsername } from "../Model";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import createError from "http-errors";
+import { getUserFromUsername } from "../Model";
 
 function decodeAccessToken(accessToken) {
   return jwt.verify(accessToken, process.env.ACCESS_TOKEN_PASSPHRASE);
@@ -13,11 +13,11 @@ function decodeRefreshToken(refreshToken) {
 
 function requireAccessToken(req, res, next) {
   const authHeader = req.headers.authorization;
-  if (authHeader == null) return next(createError(StatusCodes.UNAUTHORIZED, 'Missing Authorization header'));
+  if (authHeader == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing Authorization header"));
 
-  const authHeaderComponents = authHeader.split(' ').map((str) => str.trim());
-  if (authHeaderComponents.length !== 2) return next(createError(StatusCodes.BAD_REQUEST, 'Unknown Authorization header syntax'));
-  if (authHeaderComponents[0] !== 'Bearer') return next(createError(StatusCodes.BAD_REQUEST, `Expected 'Bearer' got ${authHeaderComponents[0]}`));
+  const authHeaderComponents = authHeader.split(" ").map((str) => str.trim());
+  if (authHeaderComponents.length !== 2) return next(createError(StatusCodes.BAD_REQUEST, "Unknown Authorization header syntax"));
+  if (authHeaderComponents[0] !== "Bearer") return next(createError(StatusCodes.BAD_REQUEST, `Expected 'Bearer' got ${authHeaderComponents[0]}`));
 
   try {
     const accessToken = authHeaderComponents[1];
@@ -38,9 +38,9 @@ function loadAuthenticatedUser(req, res, next) {
 
   // Token does not contain a username, which is really weird, but is theoretically possible,
   // but *currently* not done by us.
-  if (!username) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, 'No username in the access token'));
+  if (!username) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, "No username in the access token"));
   // If the user is null, then it was deleted between the creation of the token and now.
-  if (!user) return next(createError(StatusCodes.GONE, 'User does not exist'));
+  if (!user) return next(createError(StatusCodes.GONE, "User does not exist"));
 
   req.user = user;
   next();

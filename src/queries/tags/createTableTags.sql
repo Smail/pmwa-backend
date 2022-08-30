@@ -1,5 +1,4 @@
-CREATE TABLE IF NOT EXISTS tags
-(
+CREATE TABLE IF NOT EXISTS tags (
     uuid       TEXT PRIMARY KEY NOT NULL,
     taskUuid   TEXT             NOT NULL,
     name       TEXT             NOT NULL,

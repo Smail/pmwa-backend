@@ -1,22 +1,22 @@
-import * as Model from './Model';
-import { User, UserBuilder } from '@models/User';
+import Debug from "debug";
+import * as Model from "./Model";
+import { User, UserBuilder } from "@models/User";
 import { faker } from "@faker-js/faker/locale/en_US";
 import { Task, TaskBuilder } from "@models/Task";
 import { Tag, TagBuilder } from "@models/Tag";
-import Debug from "debug";
 
-const debug = Debug('backend:mock');
+const debug = Debug("backend:mock");
 
 // Add faker.js data if in debug mode
 if (process.env.DEBUG) {
   const usersTmp: User[] = [];
   (async () => {
-    const { faker } = require('@faker-js/faker/locale/en_US');
+    const { faker } = require("@faker-js/faker/locale/en_US");
 
     for (let i = 0; i < 20; i++) {
       const randomName = faker.name.findName(); // Jane Doe
-      const firstName = randomName.split(' ')[0]; // Jane
-      const lastName = randomName.split(' ')[1]; // Doe
+      const firstName = randomName.split(" ")[0]; // Jane
+      const lastName = randomName.split(" ")[1]; // Doe
       const username = faker.internet.userName(firstName, lastName);
 
       const user: User = new UserBuilder()
@@ -30,12 +30,12 @@ if (process.env.DEBUG) {
     }
 
     const smail: User = new UserBuilder()
-      .addUsername('smail')
-      .addDisplayName('Smail')
-      .addFirstName('Smail')
-      .addLastName('Mustermann')
-      .addEmail('smail@example.com')
-      .addPassword('Smail1234')
+      .addUsername("smail")
+      .addDisplayName("Smail")
+      .addFirstName("Smail")
+      .addLastName("Mustermann")
+      .addEmail("smail@example.com")
+      .addPassword("Smail1234")
       .build();
     debug(`UUID: ${smail.uuid}`);
     debug(`Username: ${smail.username}`);
@@ -52,7 +52,7 @@ if (process.env.DEBUG) {
         .addName(faker.hacker.phrase())
         .addContent(faker.hacker.phrase())
         .build();
-      debug(`Task created: ${JSON.stringify(smailTask)}`)
+      debug(`Task created: ${JSON.stringify(smailTask)}`);
 
       // Create fake tags for the just now created task
       for (let j = 0; j < Math.round(5 * Math.random()); j++) {

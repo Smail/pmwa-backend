@@ -1,5 +1,4 @@
-CREATE TABLE IF NOT EXISTS refreshTokens
-(
+CREATE TABLE IF NOT EXISTS refreshTokens (
     uuid        TEXT PRIMARY KEY NOT NULL,
     tokenCipher TEXT UNIQUE      NOT NULL,
     userUuid    TEXT             NOT NULL,

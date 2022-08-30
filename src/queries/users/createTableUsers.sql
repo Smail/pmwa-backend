@@ -1,5 +1,4 @@
-CREATE TABLE IF NOT EXISTS users
-(
+CREATE TABLE IF NOT EXISTS users (
     uuid         TEXT PRIMARY KEY,
     username     TEXT UNIQUE NOT NULL,
     displayName  TEXT,
