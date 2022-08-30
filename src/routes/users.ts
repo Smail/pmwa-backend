@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/username/:username', requireAccessToken, checkUsername, get_user);
 
 /* CREATE user */
-router.post('/signup', create_user);
+router.post('/', create_user);
 
 router.get('/:username/display-name', requireAccessToken, checkUsername, get_display_name);
 
