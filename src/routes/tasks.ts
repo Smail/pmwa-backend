@@ -3,7 +3,7 @@ import { router as tagsRouter } from "@routes/tags";
 import { requireTaskUuid } from "@middleware/requireTaskUuid";
 import { requireTaskName } from "@middleware/requireTaskName";
 import { loadAuthenticatedUser, requireAccessToken } from "@middleware/auth";
-import { create_task, delete_task, get_tasks, update_task } from "@controllers/taskController";
+import { create_task, delete_task, get_tasks, update_task } from "@controllers/task.controller";
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import express from "express";
 import { requireAccessToken } from "@middleware/auth";
-import { create_user, get_user, update_user } from "@controllers/usersController";
+import { create_user, get_user, update_user } from "@controllers/users.controller";
 import { requireUuid } from "@middleware/requireUuid";
 
 const router = express.Router();
