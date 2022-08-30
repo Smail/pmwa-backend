@@ -1,7 +1,7 @@
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 import * as Model from "../Model";
-import { User, UserBuilder } from "@models/User";
+import { UserBuilder, UserDepreciated } from "@models/User.depreciated";
 
 export const get_user = (req, res, next) => {
   // @ts-ignore TODO
@@ -16,12 +16,12 @@ export const create_user = async (req, res, next) => {
   }
 
   // TODO regex test for first and last name, i.e., no special characters like '@' in name.
-  if (User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid email"));
-  if (User.isPasswordWeak(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, "Password is too weak"));
+  if (UserDepreciated.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid email"));
+  if (UserDepreciated.isPasswordWeak(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, "Password is too weak"));
   if (Model.existsUsername(username)) return next(createError(StatusCodes.CONFLICT, "Username already exists"));
 
   // Create new user
-  const user: User = new UserBuilder()
+  const user: UserDepreciated = new UserBuilder()
     .addUsername(username)
     .addFirstName(firstName)
     .addLastName(lastName)
@@ -37,7 +37,7 @@ export const update_user = (req, res, next) => {
   // TODO very inefficient. Use repository
   const { username, firstName, lastName, email, password } = req.body;
 
-  const user: User = new User(req.uuid);
+  const user: UserDepreciated = new UserDepreciated(req.uuid);
   const bUsername = user.username;
   const bFirstName = user.firstName;
   const bLastName = user.lastName;

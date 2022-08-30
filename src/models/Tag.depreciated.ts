@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4, validate as isValidUUID } from "uuid";
 import * as Database from "../Database";
 
-export class Tag {
+export class TagDepreciated {
   public readonly uuid: string;
   public readonly taskUuid: string;
 
@@ -82,7 +82,7 @@ export class TagBuilder {
     return this;
   }
 
-  public build(): Tag {
+  public build(): TagDepreciated {
     if (this.isConsumed) throw new Error("IllegalState: Builder was already consumed.");
     if (!this.name) throw new Error("No name provided");
     this.isConsumed = true;
@@ -101,6 +101,6 @@ export class TagBuilder {
     }
 
     Database.db.prepare(Database.queries[queryName]).run(bindings);
-    return new Tag(this.uuid);
+    return new TagDepreciated(this.uuid);
   }
 }

@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4, validate as isValidUUID } from "uuid";
-import { Task } from "@models/Task";
+import { TaskDepreciated } from "@models/Task.depreciated";
 import * as Database from "../Database";
 
 function isValidBcryptHash(hash: string): boolean {
@@ -67,14 +67,14 @@ class UserBuilder {
 
   public addEmail(v: string): UserBuilder {
     if (!v) throw new Error("Argument is falsy");
-    if (!User.isValidEmail(v)) throw new Error("Invalid email syntax");
+    if (!UserDepreciated.isValidEmail(v)) throw new Error("Invalid email syntax");
     this.email = v;
     return this;
   }
 
   public addPassword(v: string): UserBuilder {
     if (!v) throw new Error("Argument is falsy");
-    this.passwordHash = User.hashPassword(v);
+    this.passwordHash = UserDepreciated.hashPassword(v);
     return this;
   }
 
@@ -85,7 +85,7 @@ class UserBuilder {
     return this;
   }
 
-  public build(): User {
+  public build(): UserDepreciated {
     const stmt = Database.db.prepare(UserStatements.INSERT_USER);
     stmt.run({
       uuid: this.uuid,
@@ -96,16 +96,16 @@ class UserBuilder {
       email: this.email,
       passwordHash: this.passwordHash,
     });
-    return User.fromUUID(this.uuid);
+    return UserDepreciated.fromUUID(this.uuid);
   }
 }
 
-class User {
+class UserDepreciated {
   private readonly _uuid: string;
 
   constructor(uuid) {
     if (!isValidUUID(uuid)) throw new Error("Not a valid UUID");
-    if (!User.existsUUID(uuid)) throw new Error("User with such UUID does not exists");
+    if (!UserDepreciated.existsUUID(uuid)) throw new Error("User with such UUID does not exists");
     this._uuid = uuid;
   }
 
@@ -123,7 +123,7 @@ class User {
 
   public set username(v: string) {
     if (!v) throw new Error("Argument is falsy");
-    if (User.existsUsername(v)) throw new Error("Username already exists");
+    if (UserDepreciated.existsUsername(v)) throw new Error("Username already exists");
     this.updateDatabaseValue("updateUsername", { username: v.toLowerCase() });
   }
 
@@ -154,13 +154,13 @@ class User {
   }
 
   public set email(v: string) {
-    if (!User.isValidEmail(v)) throw new Error("Invalid email syntax");
-    if (User.existsEmail(v)) throw new Error("Email already exists");
+    if (!UserDepreciated.isValidEmail(v)) throw new Error("Invalid email syntax");
+    if (UserDepreciated.existsEmail(v)) throw new Error("Email already exists");
     this.updateDatabaseValue("updateEmail", { email: v });
   }
 
   public set password(v: string) {
-    this.passwordHash = User.hashPassword(v);
+    this.passwordHash = UserDepreciated.hashPassword(v);
   }
 
   public get passwordHash(): string {
@@ -172,14 +172,14 @@ class User {
     this.updateDatabaseValue("updatePasswordHash", { passwordHash: v });
   }
 
-  public get tasks(): Task[] {
+  public get tasks(): TaskDepreciated[] {
     const query = Database.queries["selectTaskUUIDsFromUserUUID"];
     const stmt = Database.db.prepare(query, { uuid: this.uuid });
     const rows = stmt.all({ userUuid: this.uuid });
-    const tasks: Task[] = [];
+    const tasks: TaskDepreciated[] = [];
 
     for (const row of rows) {
-      tasks.push(new Task(row.uuid));
+      tasks.push(new TaskDepreciated(row.uuid));
     }
 
     return tasks;
@@ -210,15 +210,15 @@ class User {
     );
   }
 
-  public static fromUsername(username: string): User {
+  public static fromUsername(username: string): UserDepreciated {
     if (!username) throw new Error("Not a valid UUID");
     const stmt = Database.db.prepare(UserStatements.SELECT_UUID_FROM_USERNAME);
     const row = stmt.get({ username: username });
-    return new User(row.uuid);
+    return new UserDepreciated(row.uuid);
   }
 
-  public static fromUUID(uuid: string): User {
-    return new User(uuid);
+  public static fromUUID(uuid: string): UserDepreciated {
+    return new UserDepreciated(uuid);
   }
 
   public static existsUsername(username: string): boolean {
@@ -370,4 +370,4 @@ class User {
   }
 }
 
-export { User, UserBuilder };
+export { UserDepreciated, UserBuilder };

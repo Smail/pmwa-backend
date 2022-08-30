@@ -1,10 +1,10 @@
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4, validate as isValidUUID } from "uuid";
-import { Tag } from "./Tag";
+import { TagDepreciated } from "./Tag.depreciated";
 import * as Database from "../Database";
 
-export class Task {
+export class TaskDepreciated {
   public readonly uuid: string;
   public readonly userUuid: string;
 
@@ -46,11 +46,11 @@ export class Task {
     Database.updateColumns("updateTaskIsDone", { uuid: this.uuid, isDone: (v ? 1 : 0) }, 1);
   }
 
-  public get tags(): Tag[] {
+  public get tags(): TagDepreciated[] {
     const stmt = Database.db.prepare(Database.queries["selectAllTagsOfTask"]);
     const rows = stmt.all({ taskUuid: this.uuid });
 
-    return rows.map(row => new Tag(row.uuid));
+    return rows.map(row => new TagDepreciated(row.uuid));
   }
 
   // Don't remove. This is used internally by JSON.stringify
@@ -123,7 +123,7 @@ export class TaskBuilder {
     return this;
   }
 
-  public build(): Task {
+  public build(): TaskDepreciated {
     if (this.isConsumed) throw new Error("IllegalState: Builder was already consumed.");
     if (!this.name) throw new Error("No name provided");
     this.isConsumed = true;
@@ -136,6 +136,6 @@ export class TaskBuilder {
     };
 
     Database.db.prepare(Database.queries["insertTask"]).run(bindings);
-    return new Task(this.uuid);
+    return new TaskDepreciated(this.uuid);
   }
 }

@@ -1,15 +1,15 @@
 import Debug from "debug";
 import * as Model from "./Model";
-import { User, UserBuilder } from "@models/User";
+import { UserBuilder, UserDepreciated } from "@models/User.depreciated";
 import { faker } from "@faker-js/faker/locale/en_US";
-import { Task, TaskBuilder } from "@models/Task";
-import { Tag, TagBuilder } from "@models/Tag";
+import { TaskBuilder, TaskDepreciated } from "@models/Task.depreciated";
+import { TagBuilder, TagDepreciated } from "@models/Tag.depreciated";
 
 const debug = Debug("backend:mock");
 
 // Add faker.js data if in debug mode
 if (process.env.DEBUG) {
-  const usersTmp: User[] = [];
+  const usersTmp: UserDepreciated[] = [];
   (async () => {
     const { faker } = require("@faker-js/faker/locale/en_US");
 
@@ -19,7 +19,7 @@ if (process.env.DEBUG) {
       const lastName = randomName.split(" ")[1]; // Doe
       const username = faker.internet.userName(firstName, lastName);
 
-      const user: User = new UserBuilder()
+      const user: UserDepreciated = new UserBuilder()
         .addUsername(username)
         .addFirstName(firstName)
         .addLastName(lastName)
@@ -29,7 +29,7 @@ if (process.env.DEBUG) {
       usersTmp.push(user);
     }
 
-    const smail: User = new UserBuilder()
+    const smail: UserDepreciated = new UserBuilder()
       .addUsername("smail")
       .addDisplayName("Smail")
       .addFirstName("Smail")
@@ -47,7 +47,7 @@ if (process.env.DEBUG) {
     // Create fake tasks for smail
     const tags = [faker.word.noun(), faker.word.noun(), faker.word.noun()];
     for (let i = 0; i < 10; i++) {
-      const smailTask: Task = new TaskBuilder()
+      const smailTask: TaskDepreciated = new TaskBuilder()
         .addUserUuid(smail.uuid)
         .addName(faker.hacker.phrase())
         .addContent(faker.hacker.phrase())
@@ -56,7 +56,7 @@ if (process.env.DEBUG) {
 
       // Create fake tags for the just now created task
       for (let j = 0; j < Math.round(5 * Math.random()); j++) {
-        const tag: Tag = new TagBuilder()
+        const tag: TagDepreciated = new TagBuilder()
           .addTaskUuid(smailTask.uuid)
           .addName(tags[Math.floor(tags.length * Math.random())])
           .addColor(Math.random() < 0.8 ? faker.internet.color() : null)

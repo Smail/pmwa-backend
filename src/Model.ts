@@ -1,4 +1,4 @@
-import { User } from "@models/User";
+import { UserDepreciated } from "@models/User.depreciated";
 import * as Database from "./Database";
 
 // Create all tables
@@ -11,7 +11,7 @@ for (const queryName in Database.queries) {
   }
 }
 
-const users: User[] = [];
+const users: UserDepreciated[] = [];
 // Observe push method on users array.
 // Automatically serialize users array.
 users.push = function () {
@@ -19,7 +19,7 @@ users.push = function () {
   for (const key in arguments) {
     const value = arguments[key];
 
-    if (!(value instanceof User)) {
+    if (!(value instanceof UserDepreciated)) {
       throw new Error("Element pushed into users array is not of Type User. " + JSON.stringify(value));
     }
 
@@ -31,12 +31,12 @@ users.push = function () {
   return Array.prototype.push.apply(this, arguments);
 };
 
-function getUserFromUsername(username: string | null): User | undefined {
+function getUserFromUsername(username: string | null): UserDepreciated | undefined {
   if (!username) return undefined;
   return users.find(user => user.username.toLowerCase() === username.toLowerCase());
 }
 
-export function getUserFromUuid(uuid: string | null): User | undefined {
+export function getUserFromUuid(uuid: string | null): UserDepreciated | undefined {
   if (!uuid) return undefined;
   return users.find(user => user.uuid === uuid);
 }
