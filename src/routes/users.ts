@@ -14,6 +14,4 @@ router.post('/', create_user);
 /* UPDATE user */
 router.patch('/', requireAccessToken, requireUuid, update_user);
 
-router.get('/:username/display-name', requireAccessToken, checkUsername, get_display_name);
-
 export { router };
