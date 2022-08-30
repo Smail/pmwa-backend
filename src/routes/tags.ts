@@ -1,8 +1,9 @@
 import express from "express";
 import { StatusCodes } from "http-status-codes";
-import { loadAuthenticatedUser, requireAccessToken } from "@middleware/auth";
 import { Task } from "@models/Task";
 import { Tag } from "@models/Tag";
+import { loadAuthenticatedUser } from "@middleware/auth";
+import { requireAccessToken } from "@middleware/requireAccessToken";
 
 const router = express.Router({ mergeParams: true });
 

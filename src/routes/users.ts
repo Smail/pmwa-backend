@@ -1,5 +1,5 @@
 import express from "express";
-import { requireAccessToken } from "@middleware/auth";
+import { requireAccessToken } from "@middleware/requireAccessToken";
 import { create_user, get_user, update_user } from "@controllers/users.controller";
 import { requireUuid } from "@middleware/requireUuid";
 
