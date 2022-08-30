@@ -1,3 +1,1 @@
-SELECT isDone
-FROM tasks
-WHERE uuid = $uuid
+SELECT isDone FROM tasks WHERE uuid = $uuid

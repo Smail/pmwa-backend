@@ -1,3 +1,1 @@
-SELECT name
-FROM tasks
-WHERE uuid = $uuid
+SELECT name FROM tasks WHERE uuid = $uuid

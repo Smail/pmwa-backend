@@ -1,3 +1,1 @@
-SELECT *
-FROM tags
-WHERE uuid = $uuid;
+SELECT * FROM tags WHERE uuid = $uuid;

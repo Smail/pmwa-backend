@@ -1,3 +1,1 @@
-SELECT taskUuid
-FROM tags
-WHERE name = $name;
+SELECT taskUuid FROM tags WHERE name = $name;

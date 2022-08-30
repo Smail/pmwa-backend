@@ -1,3 +1,1 @@
-INSERT
-INTO tags(uuid, taskUuid, name)
-VALUES ($uuid, $taskUuid, $name);
+INSERT INTO tags(uuid, taskUuid, name) VALUES ($uuid, $taskUuid, $name);

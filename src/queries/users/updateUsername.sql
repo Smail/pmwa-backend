@@ -1,3 +1,1 @@
-UPDATE users
-SET username = $username
-WHERE uuid = $uuid
+UPDATE users SET username = $username WHERE uuid = $uuid

@@ -1,2 +1,1 @@
-SELECT DISTINCT name
-FROM tags
+SELECT DISTINCT name FROM tags

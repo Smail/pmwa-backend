@@ -1,3 +1,1 @@
-UPDATE tasks
-SET content = $content
-WHERE uuid = $uuid
+UPDATE tasks SET content = $content WHERE uuid = $uuid

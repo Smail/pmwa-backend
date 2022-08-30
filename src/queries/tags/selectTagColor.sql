@@ -1,3 +1,1 @@
-SELECT color
-FROM tags
-WHERE uuid = $uuid;
+SELECT color FROM tags WHERE uuid = $uuid;

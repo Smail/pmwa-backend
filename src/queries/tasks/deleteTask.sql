@@ -1,3 +1,1 @@
-DELETE
-FROM tasks
-WHERE uuid = $uuid
+DELETE FROM tasks WHERE uuid = $uuid

@@ -232,9 +232,7 @@ class UserDepreciated {
   public static existsEmail(email: string): boolean {
     if (!email) throw new Error("Invalid argument");
     const stmt = Database.db.prepare(`
-        SELECT COUNT(*) AS numberOfEmails
-        FROM users
-        WHERE email = $email
+      SELECT COUNT(*) AS numberOfEmails FROM users WHERE email = $email
     `);
     const row = stmt.get({ email: email });
 
