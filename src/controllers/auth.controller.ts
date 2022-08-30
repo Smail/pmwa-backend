@@ -1,7 +1,7 @@
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 import { getUserFromUsername } from "../Model";
-import { decodeRefreshToken } from "@auth/decodeRefreshToken";
+import { decodeRefreshToken } from "../util/jwt/decodeRefreshToken";
 
 function createAccessAndRefreshToken(user) {
   const accessToken = user.createAccessToken();

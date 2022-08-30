@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
-import { decodeAccessToken } from "@auth/decodeAccessToken";
+import { decodeAccessToken } from "../util/jwt/decodeAccessToken";
 
 export function requireAccessToken(req, res, next) {
   const authHeader = req.headers.authorization;
