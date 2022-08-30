@@ -10,15 +10,14 @@ export const get_user = (req, res, next) => {
 }
 
 export const create_user = async (req, res, next) => {
-  const { username, firstName, lastName, email, password, repeatedPassword } = req.body;
+  const { username, firstName, lastName, email, password } = req.body;
 
-  for (const key of ["username", "firstName", "lastName", "email", "password", "repeatedPassword"]) {
+  for (const key of ["username", "firstName", "lastName", "email", "password"]) {
     if (!req.body[key]) return next(createError(StatusCodes.BAD_REQUEST, `Missing key '${key}'`));
   }
 
   // TODO regex test for first and last name, i.e., no special characters like '@' in name.
   if (User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, 'Invalid email'));
-  if (password !== repeatedPassword) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, "Passwords don't match"));
   if (User.isPasswordWeak(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, 'Password is too weak'));
   if (existsUsername(username)) return next(createError(StatusCodes.CONFLICT, 'Username already exists'));
 
