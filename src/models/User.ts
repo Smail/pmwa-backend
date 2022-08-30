@@ -176,6 +176,7 @@ class User {
 
   public set email(v: string) {
     if (!User.isValidEmail(v)) throw new Error('Invalid email syntax');
+    if (User.existsEmail(v)) throw new Error('Email already exists');
     this.updateDatabaseValue('updateEmail', { email: v });
   }
 
@@ -314,6 +315,18 @@ class User {
     const row = stmt.get({ username: username.toLowerCase() });
 
     return parseInt(row[0]) > 0;
+  }
+
+  public static existsEmail(email: string): boolean {
+    if (!email) throw new Error('Invalid argument');
+    const stmt = Database.db.prepare(`
+        SELECT COUNT(*) AS numberOfEmails
+        FROM users
+        WHERE email = $email
+    `);
+    const row = stmt.get({ email: email });
+
+    return parseInt(row.numberOfEmails) > 0;
   }
 
   public static existsUUID(uuid: string): boolean {
