@@ -311,6 +311,7 @@ class User {
   }
 
   public static existsUsername(username: string): boolean {
+    if (!username) throw new Error('Invalid argument');
     const stmt = Database.db.prepare(UserStatements.COUNT_USERNAMES);
     const row = stmt.get({ username: username.toLowerCase() });
 
