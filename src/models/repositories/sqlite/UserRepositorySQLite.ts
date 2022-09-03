@@ -40,7 +40,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
   }
 
   public read(userId: string): User {
-    const query = `SELECT uuid AS id, username, displayName, firstName, lastName, email
+    const query = `SELECT uuid AS userId, username, displayName, firstName, lastName, email
                    FROM users
                    WHERE uuid = $userId`;
     const row = this.db.prepare(query).get({ userId: userId });
