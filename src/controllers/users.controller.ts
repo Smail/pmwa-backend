@@ -8,31 +8,6 @@ export const get_user = (req, res, next) => {
   res.send(Model.userRepository.read(req.uuid)?.serializeToObject());
 };
 
-export const create_user = async (req, res, next) => {
-  const { username, firstName, lastName, email, password } = req.body;
-
-  for (const key of ["username", "firstName", "lastName", "email", "password"]) {
-    if (!req.body[key]) return next(createError(StatusCodes.BAD_REQUEST, `Missing key '${key}'`));
-  }
-
-  // TODO regex test for first and last name, i.e., no special characters like '@' in name.
-  if (!User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid email"));
-  if (!User.isValidPassword(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, "Invalid password"));
-  if (Model.userRepository.findUsername(username)) return next(createError(StatusCodes.CONFLICT, "Username already exists"));
-
-  const user = new User();
-
-  user.id = uuidv4();
-  user.username = username;
-  user.firstName = firstName;
-  user.lastName = lastName;
-  user.email = email;
-  user.password = password;
-
-  Model.userRepository.create(user);
-  res.status(StatusCodes.CREATED).send({ id: user.id });
-};
-
 export const update_user = (req, res, next) => {
   const { username, firstName, lastName, email, password } = req.body;
   const user = Model.userRepository.read(req.uuid);
