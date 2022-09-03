@@ -7,5 +7,5 @@ export function runTransaction(db: sqlite3, query: string, bindings: Object, exp
     if (info.changes !== expectedEdits) {
       throw new Error(`Expected ${expectedEdits} edited rows, but got ${info.changes}`);
     }
-  });
+  })();
 }
