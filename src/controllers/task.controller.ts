@@ -1,6 +1,6 @@
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
-import { validate as isValidUUID } from "uuid";
+import { validate as isValidUuid } from "uuid";
 import { Task } from "@models/Task";
 import { Model } from "../Model";
 
@@ -21,7 +21,7 @@ export const create_task = (req, res) => {
 
 export const update_task = (req, res, next) => {
   if (!req.body) return next(createError(StatusCodes.BAD_REQUEST, "Request body is falsy"));
-  if (!isValidUUID(req.body.uuid)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid UUID"));
+  if (!isValidUuid(req.body.uuid)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid UUID"));
 
   const task: Task = new Task();
   // TODO throw error if exists but type is wrong
@@ -36,7 +36,7 @@ export const update_task = (req, res, next) => {
 
 export const delete_task = (req, res, next) => {
   if (!req.params.uuid) return next(createError(StatusCodes.BAD_REQUEST, "No UUID provided"));
-  if (!isValidUUID(req.params.uuid)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid UUID"));
+  if (!isValidUuid(req.params.uuid)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid UUID"));
   const task: Task = new Task();
   task.id = req.params.uuid;
 
