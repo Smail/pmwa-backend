@@ -1,4 +1,4 @@
-import { validate as isValidUuid } from "uuid";
+import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import jwt from "jsonwebtoken";
 import * as _ from "lodash";
 import { ISerializable } from "@models/repositories/ISerializable";
@@ -39,6 +39,10 @@ export class UserAccessTokenPayload extends AuthTokenPayload implements IUserTok
     super();
     if (!User.isValidId(userId)) throw new Error("Invalid user ID");
     this.userId = userId;
+  }
+
+  public assignUniqueId(): void {
+    this.tokenId = uuidV4();
   }
 }
 
