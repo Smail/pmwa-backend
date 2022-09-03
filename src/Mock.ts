@@ -53,7 +53,6 @@ if (process.env.DEBUG) {
     smail.firstName = "Smail";
     smail.lastName = "Doe";
     usersTmp.push(smail);
-    debug("User created: " + JSON.stringify(smail));
 
     // Create fake tasks for smail
     const tags = [faker.word.noun(), faker.word.noun(), faker.word.noun()];
@@ -78,6 +77,7 @@ if (process.env.DEBUG) {
     for (const user of usersTmp) {
       // Only add unique usernames
       Model.userRepository.create(user);
+      debug("User created: " + JSON.stringify(user));
     }
   })();
 }
