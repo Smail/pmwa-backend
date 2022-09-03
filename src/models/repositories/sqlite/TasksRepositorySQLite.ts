@@ -4,6 +4,7 @@ import { sqlite3 } from "better-sqlite3";
 import { ISQLiteTable } from "@models/ISQLiteTable";
 import { runTransaction } from "../../../util/db/runTransaction";
 import * as ISerializable from "@models/repositories/ISerializable";
+import { User } from "@models/User";
 
 export class TasksRepositorySQLite implements ITasksRepository {
   public static readonly table: ISQLiteTable = {
@@ -57,5 +58,10 @@ export class TasksRepositorySQLite implements ITasksRepository {
   public delete(task: Task): void {
     const query = `DELETE FROM tasks WHERE uuid = $taskId AND userUuid = $userId`;
     runTransaction(this.db, query, { taskId: task.id, userId: task.userId });
+  }
+
+  public getUserTasks(userId: User) {
+    const query = `SELECT uuid AS taskId, userUuid AS userId, name, content, isDone FROM tasks WHERE userId = $userId`;
+    return this.db.prepare(query).all({ userId: userId }).map(row => ISerializable.deserialize(Task, row));
   }
 }

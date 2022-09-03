@@ -1,39 +1,35 @@
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 import { validate as isValidUUID } from "uuid";
-import { TaskBuilder, TaskDepreciated } from "@models/Task.depreciated";
-import { UserDepreciated } from "@models/User.depreciated";
+import { Task } from "@models/Task";
+import { Model } from "../Model";
 
 export const get_tasks = (req, res) => {
-  // @ts-ignore TODO
-  const user: UserDepreciated = req.user;
-  const tasks: TaskDepreciated[] = user.tasks;
-
-  res.status(StatusCodes.OK).send(JSON.stringify(tasks));
+  res.status(StatusCodes.OK).send(Model.tasksRepository.getUserTasks(req.user));
 };
 
 export const create_task = (req, res) => {
-  const task: TaskDepreciated = new TaskBuilder()
-    // @ts-ignore TODO
-    .addUserUuid(req.user.uuid)
-    // @ts-ignore TODO
-    .addName(req.task.name)
-    // @ts-ignore TODO
-    .addContent(req.task.content) // can be null
-    .build();
+  const task: Task = new Task();
+  task.assignUniqueId();
+  task.userId = req.user.uuid;
+  task.name = req.task.name;
+  task.content = req.task.content;
 
-  res.status(StatusCodes.CREATED).send({ uuid: task.uuid });
+  Model.tasksRepository.create(task);
+  res.status(StatusCodes.CREATED).send({ uuid: task.id });
 };
 
 export const update_task = (req, res, next) => {
   if (!req.body) return next(createError(StatusCodes.BAD_REQUEST, "Request body is falsy"));
+  if (!isValidUUID(req.body.uuid)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid UUID"));
 
-  // @ts-ignore TODO
-  const task = new TaskDepreciated(req.body.uuid);
-
+  const task: Task = new Task();
+  // TODO throw error if exists but type is wrong
   if (req.body.name && typeof req.body.name === "string") task.name = req.body.name;
   if (req.body.isDone && typeof req.body.isDone === "boolean") task.isDone = req.body.isDone;
   if (req.body.content && typeof req.body.content === "string") task.content = req.body.content;
+
+  Model.tasksRepository.update(task);
 
   res.sendStatus(StatusCodes.OK);
 };
@@ -41,8 +37,10 @@ export const update_task = (req, res, next) => {
 export const delete_task = (req, res, next) => {
   if (!req.params.uuid) return next(createError(StatusCodes.BAD_REQUEST, "No UUID provided"));
   if (!isValidUUID(req.params.uuid)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid UUID"));
-  // @ts-ignore TODO
-  new TaskDepreciated(req.params.uuid).delete();
+  const task: Task = new Task();
+  task.id = req.params.uuid;
+
+  Model.tasksRepository.delete(task);
 
   res.sendStatus(StatusCodes.OK);
 };
