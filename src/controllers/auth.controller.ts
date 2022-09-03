@@ -16,9 +16,10 @@ export const sign_in_user = async (req, res, next) => {
   if (password == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing password"));
 
   const user = Model.userRepository.read(req.uuid);
-  if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User does not exist"));
-  if (!Model.userRepository.checkPassword(user, password, User.checkPassword))
+  if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User ID not found"));
+  if (!Model.userRepository.checkPassword(user, password, User.checkPassword)) {
     return next(createError(StatusCodes.UNAUTHORIZED, "Wrong password"));
+  }
 
   res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(user));
 };
