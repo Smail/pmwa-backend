@@ -25,8 +25,8 @@ process.on("SIGTERM", () => process.exit(128 + 15));
 
 export class Model {
   private static readonly db: sqlite3 = sqlite3(dbPath);
-  public static readonly userRepository: IUserRepository = new UserRepositorySQLite(this.db);
-  public static readonly tasksRepository: ITasksRepository = new TasksRepositorySQLite(this.db);
-  public static readonly tagRepository: ITagsRepository = new TagsRepositorySQLite(this.db);
-  public static readonly refreshTokenRepository: IRefreshTokenRepository = new RefreshTokenRepositorySQLite(this.db);
+  public static readonly userRepository: IUserRepository = new UserRepositorySQLite(Model.db);
+  public static readonly tasksRepository: ITasksRepository = new TasksRepositorySQLite(Model.db);
+  public static readonly tagRepository: ITagsRepository = new TagsRepositorySQLite(Model.db);
+  public static readonly refreshTokenRepository: IRefreshTokenRepository = new RefreshTokenRepositorySQLite(Model.db);
 }
