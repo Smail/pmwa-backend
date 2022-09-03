@@ -44,7 +44,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
                    FROM users
                    WHERE uuid = $userId`;
     const row = this.db.prepare(query).get({ userId: userId });
-    if (row.length === 0) throw new Error("User not found: no such ID");
+    if (row == null) throw new Error("User not found: no such ID");
 
     return ISerializable.deserialize(User, row);
   }
