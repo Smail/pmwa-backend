@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 import Debug from "debug";
+
 // Routes
 import { router as usersRouter } from "@routes/users";
 import { router as authRouter } from "@routes/auth";
