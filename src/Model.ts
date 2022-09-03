@@ -8,12 +8,16 @@ import { TasksRepositorySQLite } from "@models/repositories/sqlite/TasksReposito
 import { TagsRepositorySQLite } from "@models/repositories/sqlite/TagsRepositorySQLite";
 import { RefreshTokenRepositorySQLite } from "@models/repositories/sqlite/RefreshTokenRepositorySQLite";
 
+let dbPath: string;
 if (process.env.DEBUG) {
   import("./Mock");
+  if (!process.env.DEBUG_DB_PATH) throw new Error("Missing environment variable DEBUG_DB_PATH");
+  dbPath = process.env.DEBUG_DB_PATH;
+} else {
+  if (!process.env.DB_PATH) throw new Error("Missing environment variable DB_PATH");
+  dbPath = process.env.DB_PATH;
 }
 
-if (!process.env.DB_PATH) throw new Error("Missing environment variable DB_PATH");
-const dbPath: string = !process.env.DEBUG ? process.env.DB_PATH : ":memory:";
 const db = sqlite3(dbPath);
 
 process.on("exit", () => db.close());
