@@ -48,17 +48,7 @@ app.use(function (err: Error, req, res, next) {
   if (statusCode >= 500) console.error(err);
 
   res.status(statusCode);
-
-  // Render the error page
-  if (req.is("application/json")) {
-    res.send(JSON.stringify({
-        statusCode: statusCode,
-        message: err.message,
-      }),
-    );
-  } else {
-    res.send(err.message);
-  }
+  res.send(err.message);
 });
 
 const port = process.env.PORT || "3000";
