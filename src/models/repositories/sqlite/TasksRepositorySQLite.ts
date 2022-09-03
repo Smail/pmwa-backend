@@ -9,14 +9,14 @@ export class TasksRepositorySQLite implements ITasksRepository {
   public static readonly table: ISQLiteTable = {
     table(): string {
       return `CREATE TABLE IF NOT EXISTS tasks (
-        uuid       TEXT UNIQUE NOT NULL,
-        userUuid   TEXT        NOT NULL,
-        name       TEXT        NOT NULL,
-        content    TEXT,
-        isDone     INT                  DEFAULT 0 NOT NULL CHECK ( isDone == 0 OR isDone == 1),
-        created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (uuid, userUuid),
-        FOREIGN KEY (userUuid) REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE
+          uuid       TEXT UNIQUE NOT NULL,
+          userUuid   TEXT        NOT NULL,
+          name       TEXT        NOT NULL,
+          content    TEXT,
+          isDone     INT                  DEFAULT 0 NOT NULL CHECK ( isDone == 0 OR isDone == 1),
+          created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (uuid, userUuid),
+          FOREIGN KEY (userUuid) REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE
       )`;
     },
   };

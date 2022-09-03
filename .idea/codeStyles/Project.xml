@@ -8,6 +8,17 @@
       <option name="SPACES_WITHIN_IMPORTS" value="true" />
       <option name="SPACES_WITHIN_INTERPOLATION_EXPRESSIONS" value="true" />
     </JSCodeStyleSettings>
+    <SqlCodeStyleSettings version="6">
+      <option name="KEYWORD_CASE" value="2" />
+      <option name="TYPE_CASE" value="3" />
+      <option name="CUSTOM_TYPE_CASE" value="3" />
+      <option name="QUERY_IN_ONE_STRING" value="3" />
+      <option name="INSERT_COLLAPSE_MULTI_ROW_VALUES" value="true" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="2" />
+      <option name="TABLE_COLLAPSE" value="true" />
+    </SqlCodeStyleSettings>
     <TypeScriptCodeStyleSettings version="0">
       <option name="FORCE_SEMICOLON_STYLE" value="true" />
       <option name="USE_PUBLIC_MODIFIER" value="true" />
@@ -24,6 +35,13 @@
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
         <option name="CONTINUATION_INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="SQL">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="4" />
         <option name="TAB_SIZE" value="2" />
       </indentOptions>
     </codeStyleSettings>

@@ -9,13 +9,13 @@ export class TagsRepositorySQLite implements ITagsRepository {
   public static readonly table: ISQLiteTable = {
     table(): string {
       return `CREATE TABLE IF NOT EXISTS tags (
-        uuid       TEXT UNIQUE NOT NULL,
-        taskUuid   TEXT        NOT NULL,
-        name       TEXT        NOT NULL,
-        color      TEXT        NOT NULL DEFAULT 'red',
-        created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (uuid, taskUuid),
-        FOREIGN KEY (taskUuid) REFERENCES tasks (uuid)
+          uuid       TEXT UNIQUE NOT NULL,
+          taskUuid   TEXT        NOT NULL,
+          name       TEXT        NOT NULL,
+          color      TEXT        NOT NULL DEFAULT 'red',
+          created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (uuid, taskUuid),
+          FOREIGN KEY (taskUuid) REFERENCES tasks (uuid)
       )
 
       -- TODO: Make name UNIQUE for each user, but this requires a refactoring,

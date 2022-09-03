@@ -11,12 +11,12 @@ export class RefreshTokenRepositorySQLite implements IRefreshTokenRepository {
   public static readonly table: ISQLiteTable = {
     table(): string {
       return `CREATE TABLE IF NOT EXISTS refreshTokens (
-        uuid        TEXT UNIQUE NOT NULL,
-        userUuid    TEXT        NOT NULL,
-        tokenCipher TEXT UNIQUE NOT NULL,
-        created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (uuid, userUuid),
-        FOREIGN KEY (userUuid) REFERENCES users (uuid)
+          uuid        TEXT UNIQUE NOT NULL,
+          userUuid    TEXT        NOT NULL,
+          tokenCipher TEXT UNIQUE NOT NULL,
+          created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (uuid, userUuid),
+          FOREIGN KEY (userUuid) REFERENCES users (uuid)
       )`;
     },
   };
