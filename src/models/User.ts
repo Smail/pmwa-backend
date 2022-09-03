@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { ISerializable } from "@models/repositories/ISerializable";
-import { v4 as uuidv4, validate as isValidUuid } from "uuid";
+import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import { Token, UserAccessTokenPayload, UserRefreshTokenPayload } from "@models/Token";
 
 export class User implements ISerializable {
@@ -62,7 +62,7 @@ export class User implements ISerializable {
   }
 
   public assignUniqueId(): void {
-    this.id = uuidv4();
+    this.id = uuidV4();
   }
 
   // Note: this function won't deserialize any password or password hash
