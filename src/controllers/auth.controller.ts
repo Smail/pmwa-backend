@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { Model } from "../Model";
 import { decodeRefreshToken } from "../util/jwt/decodeRefreshToken";
 import { User } from "@models/User";
+import { v4 as uuidV4 } from "uuid";
 
 function createAccessAndRefreshToken(user) {
   const accessToken = user.createAccessToken();
@@ -10,6 +11,38 @@ function createAccessAndRefreshToken(user) {
 
   return { accessToken: accessToken.encoding, refreshToken: refreshToken.encoding };
 }
+
+function createUser(req, next): User {
+  const { username, firstName, lastName, email, password } = req.body;
+
+  for (const key of ["username", "firstName", "lastName", "email", "password"]) {
+    if (!req.body[key]) return next(createError(StatusCodes.BAD_REQUEST, `Missing key '${key}'`));
+  }
+
+  // TODO regex test for first and last name, i.e., no special characters like '@' in name.
+  if (!User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid email"));
+  if (!User.isValidPassword(password)) return next(createError(StatusCodes.UNPROCESSABLE_ENTITY, "Invalid password"));
+  if (Model.userRepository.findUsername(username)) return next(createError(StatusCodes.CONFLICT, "Username already exists"));
+
+  const user = new User();
+
+  user.id = uuidV4();
+  user.username = username;
+  user.firstName = firstName;
+  user.lastName = lastName;
+  user.email = email;
+  user.password = password;
+
+  Model.userRepository.create(user);
+
+  return user;
+}
+
+export const sign_up_user = async (req, res, next) => {
+  const user = createUser(req, next);
+
+  res.status(StatusCodes.CREATED).send({ userId: user.id, ...createAccessAndRefreshToken(user) });
+};
 
 export const sign_in_user = async (req, res, next) => {
   const { password } = req.body;
