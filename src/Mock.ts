@@ -31,7 +31,7 @@ if (process.env.DEBUG) {
   (async () => {
     const { faker } = require("@faker-js/faker/locale/en_US");
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 3; i++) {
       const user = new User();
       const randomName = faker.name.findName(); // Jane Doe
       user.assignUniqueId();
