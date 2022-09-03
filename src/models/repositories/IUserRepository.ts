@@ -6,7 +6,7 @@ import { Token } from "@models/Token";
 export interface IUserRepository extends IRepository<User, string> {
   create(user: User): void;
 
-  read(userId: string): User;
+  read(userId: string): User | null;
 
   readAll(): User[];
 

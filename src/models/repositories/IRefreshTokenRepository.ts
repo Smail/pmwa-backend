@@ -4,7 +4,7 @@ import { Token } from "@models/Token";
 export interface IRefreshTokenRepository extends IRepository<Token, string> {
   create(refreshToken: Token): void;
 
-  read(refreshTokenId: string): Token;
+  read(refreshTokenId: string): Token | null;
 
   readAll(): Token[];
 

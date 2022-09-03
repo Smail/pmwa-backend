@@ -5,7 +5,7 @@ import { User } from "@models/User";
 export interface ITasksRepository extends IRepository<Task, string> {
   create(task: Task): void;
 
-  read(taskId: string): Task;
+  read(taskId: string): Task | null;
 
   readAll(): Task[];
 

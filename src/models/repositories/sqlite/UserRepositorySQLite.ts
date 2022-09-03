@@ -70,8 +70,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
     const query = `SELECT uuid AS id FROM users WHERE username = $username`;
     const row = this.db.prepare(query).get({ username: username });
 
-    // TODO assert row.length === 1
-    return (row.length > 0) ? this.read(row.id) : null;
+    return (row != null) ? this.read(row.id) : null;
   }
 
   public checkPassword(user: User, password: string, comparePasswords: (password, passwordHash) => boolean): boolean {

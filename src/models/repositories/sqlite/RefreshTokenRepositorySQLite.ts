@@ -43,10 +43,11 @@ export class RefreshTokenRepositorySQLite extends SQLiteTable implements IRefres
     runTransaction(this.db, query, { tokenId: token.id, userId: token.payload["userId"], tokenCipher: tokenCipher });
   }
 
-  public read(tokenId: string): Token {
+  public read(tokenId: string): Token | null {
     const query = `SELECT uuid AS taskId, userUuid AS userId, tokenCipher FROM refreshTokens WHERE uuid = $tokenId`;
     const row = this.db.prepare(query).get({ tokenId: tokenId });
-    if (row.length != 1) throw new Error(`Invalid row length. Expected 1, got ${row.length}`);
+
+    if (row == null) return null;
     const encoding = RefreshTokenRepositorySQLite.decryptToken(row.tokenCipher);
 
     return ISerializable.deserialize(Token, { encoding: encoding });

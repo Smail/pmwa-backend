@@ -30,9 +30,11 @@ export class TagsRepositorySQLite extends SQLiteTable implements ITagsRepository
     runTransaction(this.db, (tag.color != null ? queryColor : queryNoColor), tag.serializeToObject());
   }
 
-  public read(tagId: string): Tag {
+  public read(tagId: string): Tag | null {
     const query = `SELECT uuid AS id, taskUuid AS taskId, name, color FROM tags WHERE uuid = $tagId`;
-    return ISerializable.deserialize(Tag, this.db.prepare(query).get({ tagId: tagId }));
+    const row = this.db.prepare(query).get({ tagId: tagId });
+
+    return (row != null) ? ISerializable.deserialize(Tag, row) : null;
   }
 
   public readAll(): Tag[] {

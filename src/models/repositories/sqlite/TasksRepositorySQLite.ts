@@ -29,9 +29,11 @@ export class TasksRepositorySQLite extends SQLiteTable implements ITasksReposito
     runTransaction(this.db, query, task.serializeToObject());
   }
 
-  public read(taskId: string): Task {
+  public read(taskId: string): Task | null {
     const query = `SELECT uuid AS taskId, userUuid AS userId, name, content, isDone FROM tasks WHERE uuid = $taskId`;
-    return ISerializable.deserialize(Task, this.db.prepare(query).get({ taskId: taskId }));
+    const row = this.db.prepare(query).get({ taskId: taskId });
+
+    return (row != null) ? ISerializable.deserialize(Task, row) : null;
   }
 
   public readAll(): Task[] {

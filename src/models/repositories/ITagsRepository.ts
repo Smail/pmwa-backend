@@ -4,7 +4,7 @@ import { Tag } from "@models/Tag";
 export interface ITagsRepository extends IRepository<Tag, string> {
   create(tag: Tag): void;
 
-  read(tagId: string): Tag;
+  read(tagId: string): Tag | null;
 
   readAll(): Tag[];
 
