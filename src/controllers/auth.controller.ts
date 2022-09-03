@@ -45,11 +45,13 @@ export const sign_up_user = async (req, res, next) => {
 };
 
 export const sign_in_user = async (req, res, next) => {
-  const { password } = req.body;
-  if (password == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing password"));
+  const { username, password } = req.body;
+  if (password == null) return next(createError(StatusCodes.BAD_REQUEST, "Missing password"));
+  if (username == null) return next(createError(StatusCodes.BAD_REQUEST, "Missing username"));
+  if (!User.isValidUsername(username)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid username"));
 
-  const user = Model.userRepository.read(req.uuid);
-  if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User ID not found"));
+  const user = Model.userRepository.findUsername(username);
+  if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User not found"));
   if (!Model.userRepository.checkPassword(user, password, User.checkPassword)) {
     return next(createError(StatusCodes.UNAUTHORIZED, "Wrong password"));
   }
