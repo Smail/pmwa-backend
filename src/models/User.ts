@@ -97,8 +97,12 @@ export class User implements ISerializable {
   public createAccessToken(): Token {
     if (!process.env.ACCESS_TOKEN_PASSPHRASE) throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in .env");
     const token = new Token();
+    const payload = new UserAccessTokenPayload(this.id);
+
+    payload.assignUniqueId();
+    token.lifetimeDuration = 60 * 10; // 10 mins
     token.tokenPassphrase = process.env.ACCESS_TOKEN_PASSPHRASE;
-    token.payload = new UserAccessTokenPayload(this.id);
+    token.payload = payload;
 
     return token;
   }
@@ -106,8 +110,12 @@ export class User implements ISerializable {
   public createRefreshToken(): Token {
     if (!process.env.REFRESH_TOKEN_PASSPHRASE) throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in .env");
     const token = new Token();
+    const payload = new UserAccessTokenPayload(this.id);
+
+    payload.assignUniqueId();
+    token.lifetimeDuration = 60 * 60 * 24 * 14; // 2 weeks
     token.tokenPassphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
-    token.payload = new UserRefreshTokenPayload(this.id);
+    token.payload = payload;
 
     return token;
   }
