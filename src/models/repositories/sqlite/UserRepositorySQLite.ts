@@ -3,31 +3,25 @@ import { User } from "@models/User";
 import { sqlite3 } from "better-sqlite3";
 import { runTransaction } from "../../../util/db/runTransaction";
 import * as ISerializable from "@models/repositories/ISerializable";
-import { ISQLiteTable } from "@models/ISQLiteTable";
 import { Token } from "@models/Token";
 import { IRefreshTokenRepository } from "../IRefreshTokenRepository";
+import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
-export class UserRepositorySQLite implements IUserRepository {
-  public static readonly table: ISQLiteTable = {
-    table(): string {
-      return `CREATE TABLE IF NOT EXISTS users (
-          uuid         TEXT PRIMARY KEY,
-          username     TEXT UNIQUE NOT NULL,
-          displayName  TEXT,
-          firstName    TEXT        NOT NULL,
-          lastName     TEXT        NOT NULL,
-          email        TEXT UNIQUE NOT NULL,
-          passwordHash TEXT        NOT NULL,
-          created_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
-      )
-
-      -- TODO constraint lowercase username`;
-    },
-  };
-  private readonly db: sqlite3;
+export class UserRepositorySQLite extends SQLiteTable implements IUserRepository {
+  public static readonly tableSchema: string =
+    `CREATE TABLE IF NOT EXISTS users (
+        uuid         TEXT PRIMARY KEY,
+        username     TEXT UNIQUE NOT NULL,
+        displayName  TEXT,
+        firstName    TEXT        NOT NULL,
+        lastName     TEXT        NOT NULL,
+        email        TEXT UNIQUE NOT NULL,
+        passwordHash TEXT        NOT NULL,
+        created_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`;
 
   public constructor(db: sqlite3) {
-    this.db = db;
+    super(db, UserRepositorySQLite.tableSchema);
   }
 
   public readAll(): User[] {

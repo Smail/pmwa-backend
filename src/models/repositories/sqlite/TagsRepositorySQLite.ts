@@ -1,31 +1,27 @@
 import { sqlite3 } from "better-sqlite3";
 import { ITagsRepository } from "@models/repositories/ITagsRepository";
 import { Tag } from "@models/Tag";
-import { ISQLiteTable } from "@models/ISQLiteTable";
 import * as ISerializable from "@models/repositories/ISerializable";
 import { runTransaction } from "../../../util/db/runTransaction";
+import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
-export class TagsRepositorySQLite implements ITagsRepository {
-  public static readonly table: ISQLiteTable = {
-    table(): string {
-      return `CREATE TABLE IF NOT EXISTS tags (
-          uuid       TEXT UNIQUE NOT NULL,
-          taskUuid   TEXT        NOT NULL,
-          name       TEXT        NOT NULL,
-          color      TEXT        NOT NULL DEFAULT 'red',
-          created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          PRIMARY KEY (uuid, taskUuid),
-          FOREIGN KEY (taskUuid) REFERENCES tasks (uuid)
-      )
+export class TagsRepositorySQLite extends SQLiteTable implements ITagsRepository {
+  public static readonly tableSchema: string =
+    `CREATE TABLE IF NOT EXISTS tags (
+        uuid       TEXT UNIQUE NOT NULL,
+        taskUuid   TEXT        NOT NULL,
+        name       TEXT        NOT NULL,
+        color      TEXT        NOT NULL DEFAULT 'red',
+        created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (uuid, taskUuid),
+        FOREIGN KEY (taskUuid) REFERENCES tasks (uuid)
+    )
 
-      -- TODO: Make name UNIQUE for each user, but this requires a refactoring,
-      --  because it would currently prevent another user from creating the same tag. Do the same for tasks`;
-    },
-  };
-  private readonly db: sqlite3;
+    -- TODO: Make name UNIQUE for each user, but this requires a refactoring,
+    --  because it would currently prevent another user from creating the same tag. Do the same for tasks`;
 
   public constructor(db: sqlite3) {
-    this.db = db;
+    super(db, TagsRepositorySQLite.tableSchema);
   }
 
   public create(tag: Tag): void {

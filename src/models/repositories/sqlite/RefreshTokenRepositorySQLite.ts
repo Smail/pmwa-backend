@@ -1,30 +1,26 @@
 import CryptoJS from "crypto-js";
 import { IRefreshTokenRepository } from "@models/repositories/IRefreshTokenRepository";
 import { Token } from "@models/Token";
-import { ISQLiteTable } from "@models/ISQLiteTable";
 import { sqlite3 } from "better-sqlite3";
 import * as ISerializable from "@models/repositories/ISerializable";
 import { runTransaction } from "../../../util/db/runTransaction";
 import { User } from "@models/User";
+import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
-export class RefreshTokenRepositorySQLite implements IRefreshTokenRepository {
-  public static readonly table: ISQLiteTable = {
-    table(): string {
-      return `CREATE TABLE IF NOT EXISTS refreshTokens (
-          uuid        TEXT UNIQUE NOT NULL,
-          userUuid    TEXT        NOT NULL,
-          tokenCipher TEXT UNIQUE NOT NULL,
-          created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          PRIMARY KEY (uuid, userUuid),
-          FOREIGN KEY (userUuid) REFERENCES users (uuid)
-      )`;
-    },
-  };
-  private readonly db: sqlite3;
+export class RefreshTokenRepositorySQLite extends SQLiteTable implements IRefreshTokenRepository {
+  public static readonly tableSchema: string =
+    `CREATE TABLE IF NOT EXISTS refreshTokens (
+        uuid        TEXT UNIQUE NOT NULL,
+        userUuid    TEXT        NOT NULL,
+        tokenCipher TEXT UNIQUE NOT NULL,
+        created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (uuid, userUuid),
+        FOREIGN KEY (userUuid) REFERENCES users (uuid)
+    )`;
 
   public constructor(db: sqlite3) {
+    super(db, RefreshTokenRepositorySQLite.tableSchema);
     if (!process.env.AES_KEY) throw new Error("Missing environment variable AES_KEY");
-    this.db = db;
   }
 
   private static encryptToken(token: string): string {

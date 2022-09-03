@@ -1,30 +1,26 @@
 import { ITasksRepository } from "@models/repositories/ITasksRepository";
 import { Task } from "@models/Task";
 import { sqlite3 } from "better-sqlite3";
-import { ISQLiteTable } from "@models/ISQLiteTable";
 import { runTransaction } from "../../../util/db/runTransaction";
 import * as ISerializable from "@models/repositories/ISerializable";
 import { User } from "@models/User";
+import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
-export class TasksRepositorySQLite implements ITasksRepository {
-  public static readonly table: ISQLiteTable = {
-    table(): string {
-      return `CREATE TABLE IF NOT EXISTS tasks (
-          uuid       TEXT UNIQUE NOT NULL,
-          userUuid   TEXT        NOT NULL,
-          name       TEXT        NOT NULL,
-          content    TEXT,
-          isDone     INT                  DEFAULT 0 NOT NULL CHECK ( isDone == 0 OR isDone == 1),
-          created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          PRIMARY KEY (uuid, userUuid),
-          FOREIGN KEY (userUuid) REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE
-      )`;
-    },
-  };
-  private readonly db: sqlite3;
+export class TasksRepositorySQLite extends SQLiteTable implements ITasksRepository {
+  public static readonly tableSchema: string =
+    `CREATE TABLE IF NOT EXISTS tasks (
+        uuid       TEXT UNIQUE NOT NULL,
+        userUuid   TEXT        NOT NULL,
+        name       TEXT        NOT NULL,
+        content    TEXT,
+        isDone     INT                  DEFAULT 0 NOT NULL CHECK ( isDone == 0 OR isDone == 1),
+        created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (uuid, userUuid),
+        FOREIGN KEY (userUuid) REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE
+    )`;
 
   public constructor(db: sqlite3) {
-    this.db = db;
+    super(db, TasksRepositorySQLite.tableSchema);
   }
 
   public create(task: Task): void {
