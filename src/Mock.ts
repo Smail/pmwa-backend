@@ -26,7 +26,7 @@ if (process.env.DEBUG) {
 
   process.on("exit", removeDebugDatabase);
 
-// Add faker.js data if in debug mode
+  // Add faker.js data if in debug mode
   const usersTmp: User[] = [];
   (async () => {
     const { faker } = require("@faker-js/faker/locale/en_US");
