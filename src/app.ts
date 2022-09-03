@@ -26,7 +26,7 @@ app.use(cors({ origin: true, credentials: true }));
 
 // Add routes
 app.use("/users", usersRouter);
-app.use("/jwt", authRouter);
+app.use("/auth", authRouter);
 app.use("/tasks", tasksRouter);
 
 // Catch 404 and forward to error handler
