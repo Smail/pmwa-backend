@@ -56,7 +56,6 @@ export class UserRefreshTokenPayload extends AuthTokenPayload implements IUserTo
 
 export class Token {
   public tokenPassphrase: string;
-  public toJSON = this.serializeToObject();
   public payload: ITokenPayload;
   public lifetimeDuration: number;
   private lastState: object;
@@ -95,6 +94,10 @@ export class Token {
 
   public serializeToObject(): Object {
     return { encoding: this.encoding };
+  }
+
+  public toJSON(): object {
+    return this.serializeToObject();
   }
 
   private updateLastState(): void {
