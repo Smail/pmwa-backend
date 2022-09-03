@@ -11,7 +11,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
   public static readonly tableSchema: string =
     `CREATE TABLE IF NOT EXISTS users (
         uuid         TEXT PRIMARY KEY,
-        username     TEXT UNIQUE NOT NULL,
+        username     TEXT UNIQUE NOT NULL CHECK (username == lower(username)),
         displayName  TEXT,
         firstName    TEXT        NOT NULL,
         lastName     TEXT        NOT NULL,
@@ -35,7 +35,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
 
   public create(user: User): void {
     const query = `INSERT INTO users(uuid, username, displayName, firstName, lastName, email, passwordHash)
-                   VALUES ($userId, $username, $displayName, $firstName, $lastName, $email, $passwordHash)`;
+                   VALUES ($userId, lower($username), $displayName, $firstName, $lastName, $email, $passwordHash)`;
     runTransaction(this.db, query, user.serializeToObject());
   }
 
@@ -51,7 +51,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
 
   public update(user: User): void {
     const query = `UPDATE users
-                   SET username     = $username,
+                   SET username     = lower($username),
                        displayName  = $displayName,
                        firstName    = $firstName,
                        lastName     = $lastName,
@@ -67,7 +67,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
   }
 
   public findUsername(username: string): User | null {
-    const query = `SELECT uuid AS id FROM users WHERE username = $username`;
+    const query = `SELECT uuid AS id FROM users WHERE username = lower($username)`;
     const row = this.db.prepare(query).get({ username: username });
 
     return (row != null) ? this.read(row.id) : null;
