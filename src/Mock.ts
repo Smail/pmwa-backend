@@ -77,11 +77,7 @@ if (process.env.DEBUG) {
     // Add created mock elements to users array
     for (const user of usersTmp) {
       // Only add unique usernames
-      try {
-        Model.userRepository.create(user);
-      } catch (_) {
-        // Do nothing
-      }
+      Model.userRepository.create(user);
     }
   })();
 }
