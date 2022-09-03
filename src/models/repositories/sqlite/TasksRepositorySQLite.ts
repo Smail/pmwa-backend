@@ -37,6 +37,11 @@ export class TasksRepositorySQLite implements ITasksRepository {
     return ISerializable.deserialize(Task, this.db.prepare(query).get({ taskId: taskId }));
   }
 
+  public readAll(): Task[] {
+    const query = `SELECT uuid AS taskId, userUuid AS userId, name, content, isDone FROM tasks`;
+    return this.db.prepare(query).all().map(row => ISerializable.deserialize(Task, row));
+  }
+
   public update(task: Task): void {
     const query = `UPDATE tasks
                    SET uuid     = $username,

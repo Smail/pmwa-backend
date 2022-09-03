@@ -6,6 +6,8 @@ export interface IRefreshTokenRepository extends IRepository<Token, string> {
 
   read(refreshTokenId: string): Token;
 
+  readAll(): Token[];
+
   update(refreshToken: Token): void;
 
   delete(refreshToken: Token): void;

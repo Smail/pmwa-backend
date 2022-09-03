@@ -39,6 +39,11 @@ export class TagsRepositorySQLite implements ITagsRepository {
     return ISerializable.deserialize(Tag, this.db.prepare(query).get({ tagId: tagId }));
   }
 
+  public readAll(): Tag[] {
+    const query = `SELECT uuid AS id, taskUuid AS taskId, name, color FROM tags`;
+    return this.db.prepare(query).all().map(row => ISerializable.deserialize(Tag, row));
+  }
+
   public update(tag: Tag): void {
     const query = `UPDATE tags SET name = $name, color = $color WHERE uuid = $tagId AND taskUuid = $taskId`;
     runTransaction(this.db, query, { tagId: tag.id, taskId: tag.taskId });

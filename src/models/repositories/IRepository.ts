@@ -5,7 +5,7 @@ export interface IRepository<T extends ISerializable, K> {
 
   read(key: K): T;
 
-  readAll(key: K): T[];
+  readAll(): T[];
 
   update(value: T): void;
 

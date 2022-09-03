@@ -6,7 +6,7 @@ export interface ITagsRepository extends IRepository<Tag, string> {
 
   read(tagId: string): Tag;
 
-  readAll(tagId: string): Tag[];
+  readAll(): Tag[];
 
   update(tag: Tag): void;
 

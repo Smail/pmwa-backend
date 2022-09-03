@@ -6,7 +6,7 @@ export interface ITasksRepository extends IRepository<Task, string> {
 
   read(taskId: string): Task;
 
-  readAll(taskId: string): Task[];
+  readAll(): Task[];
 
   update(task: Task): void;
 

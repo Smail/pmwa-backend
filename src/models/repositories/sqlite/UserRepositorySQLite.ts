@@ -30,6 +30,11 @@ export class UserRepositorySQLite implements IUserRepository {
     this.db = db;
   }
 
+  public readAll(): User[] {
+    const query = `SELECT uuid AS id, username, displayName, firstName, lastName, email FROM users`;
+    return this.db.prepare(query).all().map(row => ISerializable.deserialize(User, row));
+  }
+
   public getTokens(user: User, refreshTokenRepository: IRefreshTokenRepository): Token[] {
     throw new Error("Method not implemented.");
   }
@@ -45,7 +50,7 @@ export class UserRepositorySQLite implements IUserRepository {
                    FROM users
                    WHERE uuid = $userId`;
     const row = this.db.prepare(query).get({ userId: userId });
-    if (row.length === 0) throw new Error('User not found: no such ID');
+    if (row.length === 0) throw new Error("User not found: no such ID");
 
     return ISerializable.deserialize(User, row);
   }
@@ -78,7 +83,7 @@ export class UserRepositorySQLite implements IUserRepository {
   public checkPassword(user: User, password: string, comparePasswords: (password, passwordHash) => boolean): boolean {
     const query = `SELECT passwordHash FROM users WHERE uuid = $userId`;
     const row = this.db.prepare(query).get({ userId: user.id });
-    if (row.length === 0) throw new Error('User not found: no such ID');
+    if (row.length === 0) throw new Error("User not found: no such ID");
 
     return comparePasswords(password, row.passwordHash);
   }

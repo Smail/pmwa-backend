@@ -8,6 +8,8 @@ export interface IUserRepository extends IRepository<User, string> {
 
   read(userId: string): User;
 
+  readAll(): User[];
+
   update(user: User): void;
 
   delete(user: User): void;

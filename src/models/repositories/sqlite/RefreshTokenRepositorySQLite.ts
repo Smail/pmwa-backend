@@ -56,6 +56,11 @@ export class RefreshTokenRepositorySQLite implements IRefreshTokenRepository {
     return ISerializable.deserialize(Token, { encoding: encoding });
   }
 
+  public readAll(): Token[] {
+    const query = `SELECT uuid AS taskId, userUuid AS userId, tokenCipher FROM refreshTokens`;
+    return this.db.prepare(query).all().map(row => ISerializable.deserialize(Token, row));
+  }
+
   public update(token: Token): void {
     throw new Error("Updating refresh tokens is forbidden. Delete and create a new one");
   }
