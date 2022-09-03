@@ -54,6 +54,13 @@ if (process.env.DEBUG) {
     smail.lastName = "Doe";
     usersTmp.push(smail);
 
+    // Add created mock elements to users array
+    for (const user of usersTmp) {
+      // Only add unique usernames
+      Model.userRepository.create(user);
+      debug("User created: " + JSON.stringify(user));
+    }
+
     // Create fake tasks for smail
     const tags = [faker.word.noun(), faker.word.noun(), faker.word.noun()];
     for (let i = 0; i < 10; i++) {
@@ -71,13 +78,6 @@ if (process.env.DEBUG) {
         tag.color = (Math.random() < 0.8) ? faker.internet.color() : null;
         debug("Tag created: " + JSON.stringify(tag));
       }
-    }
-
-    // Add created mock elements to users array
-    for (const user of usersTmp) {
-      // Only add unique usernames
-      Model.userRepository.create(user);
-      debug("User created: " + JSON.stringify(user));
     }
   })();
 }
