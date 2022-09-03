@@ -61,7 +61,7 @@ export const sign_in_user = async (req, res, next) => {
 
 export const refresh_token = async (req, res, next) => {
   const { refreshToken } = req.body;
-  const user = Model.userRepository.read(req.uuid);
+  const user = Model.userRepository.read(req.body.uuid);
 
   if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User does not exist"));
   if (refreshToken == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing refresh token"));
