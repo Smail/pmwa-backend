@@ -52,6 +52,7 @@ if (process.env.DEBUG) {
     smail.displayName = "Smail";
     smail.firstName = "Smail";
     smail.lastName = "Doe";
+    usersTmp.push(smail);
     debug("User created: " + JSON.stringify(smail));
 
     // Create fake tasks for smail
