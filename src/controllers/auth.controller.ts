@@ -8,7 +8,7 @@ function createAccessAndRefreshToken(user) {
   const accessToken = user.createAccessToken();
   const refreshToken = user.createRefreshToken();
 
-  return { accessToken, refreshToken };
+  return { accessToken: accessToken.encoding, refreshToken: refreshToken.encoding };
 }
 
 export const sign_in_user = async (req, res, next) => {
