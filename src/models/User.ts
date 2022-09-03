@@ -67,12 +67,12 @@ export class User implements ISerializable {
 
   // Note: this function won't deserialize any password or password hash
   public deserializeFromObject({ userId, username, displayName, firstName, lastName, email }): void {
-    if (!User.isValidId(userId)) throw new Error("Invalid argument: id");
-    if (!User.isValidUsername(username)) throw new Error("Invalid argument: username");
-    if (!User.isValidDisplayName(displayName)) throw new Error("Invalid argument: username");
-    if (!User.isValidEmail(email)) throw new Error("Invalid argument: email");
-    if (!User.isValidNaturalName(firstName)) throw new Error("Invalid argument: firstName");
-    if (!User.isValidNaturalName(lastName)) throw new Error("Invalid argument: lastName");
+    if (!User.isValidId(userId)) throw new Error(`Invalid argument: userId = ${userId}`);
+    if (!User.isValidUsername(username)) throw new Error(`Invalid argument: username = ${username}`);
+    if (!User.isValidDisplayName(displayName)) throw new Error(`Invalid argument: displayName = ${displayName}`);
+    if (!User.isValidNaturalName(firstName)) throw new Error(`Invalid argument: firstName = ${firstName}`);
+    if (!User.isValidNaturalName(lastName)) throw new Error(`Invalid argument: lastName = ${lastName}`);
+    if (!User.isValidEmail(email)) throw new Error(`Invalid argument: email = ${email}`);
 
     this.id = userId;
     this.username = username;
