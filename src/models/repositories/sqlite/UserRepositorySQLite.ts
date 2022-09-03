@@ -1,9 +1,11 @@
-import { IUserRepository } from "@models/IUserRepository";
+import { IUserRepository } from "@models/repositories/IUserRepository";
 import { User } from "@models/User";
 import { sqlite3 } from "better-sqlite3";
-import { runTransaction } from "../util/db/runTransaction";
-import * as ISerializable from "@models/ISerializable";
+import { runTransaction } from "../../../util/db/runTransaction";
+import * as ISerializable from "@models/repositories/ISerializable";
 import { ISQLiteTable } from "@models/ISQLiteTable";
+import { Token } from "@models/Token";
+import { IRefreshTokenRepository } from "../IRefreshTokenRepository";
 
 export class UserRepositorySQLite implements IUserRepository {
   public static readonly table: ISQLiteTable = {
@@ -28,6 +30,10 @@ export class UserRepositorySQLite implements IUserRepository {
     this.db = db;
   }
 
+  public getTokens(user: User, refreshTokenRepository: IRefreshTokenRepository): Token[] {
+    throw new Error("Method not implemented.");
+  }
+
   public create(user: User): void {
     const query = `INSERT INTO users(uuid, username, displayName, firstName, lastName, email, passwordHash)
                    VALUES ($userId, $username, $displayName, $firstName, $lastName, $email, $passwordHash)`;
@@ -38,7 +44,10 @@ export class UserRepositorySQLite implements IUserRepository {
     const query = `SELECT uuid AS id, username, displayName, firstName, lastName, email
                    FROM users
                    WHERE uuid = $userId`;
-    return ISerializable.deserialize(User, this.db.prepare(query).get({ userId: userId }));
+    const row = this.db.prepare(query).get({ userId: userId });
+    if (row.length === 0) throw new Error('User not found: no such ID');
+
+    return ISerializable.deserialize(User, row);
   }
 
   public update(user: User): void {
@@ -59,10 +68,18 @@ export class UserRepositorySQLite implements IUserRepository {
   }
 
   public findUsername(username: string): User | null {
-    const query = `SELECT uuid as id FROM users WHERE username = $username`;
+    const query = `SELECT uuid AS id FROM users WHERE username = $username`;
     const row = this.db.prepare(query).get({ username: username });
 
     // TODO assert row.length === 1
     return (row.length > 0) ? this.read(row.id) : null;
+  }
+
+  public checkPassword(user: User, password: string, comparePasswords: (password, passwordHash) => boolean): boolean {
+    const query = `SELECT passwordHash FROM users WHERE uuid = $userId`;
+    const row = this.db.prepare(query).get({ userId: user.id });
+    if (row.length === 0) throw new Error('User not found: no such ID');
+
+    return comparePasswords(password, row.passwordHash);
   }
 }

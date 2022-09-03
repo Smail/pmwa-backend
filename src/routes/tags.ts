@@ -1,7 +1,5 @@
 import express from "express";
 import { StatusCodes } from "http-status-codes";
-import { TaskDepreciated } from "@models/Task.depreciated";
-import { TagDepreciated } from "@models/Tag.depreciated";
 import { requireAccessToken } from "@middleware/requireAccessToken";
 import { requireAuthenticatedUser } from "@middleware/requireAuthenticatedUser";
 
@@ -10,8 +8,9 @@ const router = express.Router({ mergeParams: true });
 router.use(requireAccessToken);
 router.use(requireAuthenticatedUser);
 
-/* GET all available tag names. */
-router.get("/names", function (req, res, next) {
+/* GET all available tags. */
+router.get("/", function (req, res, next) {
+  Model.tagRepository.readAll();
   res.status(StatusCodes.OK).send(TagDepreciated.getAllTagNames());
 });
 

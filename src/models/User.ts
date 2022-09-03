@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
-import { ISerializable } from "@models/ISerializable";
-import { validate as isValidUuid } from "uuid";
+import { ISerializable } from "@models/repositories/ISerializable";
+import { v4 as uuidv4, validate as isValidUuid } from "uuid";
+import { Token, UserAccessTokenPayload, UserRefreshTokenPayload } from "@models/Token";
 
 export class User implements ISerializable {
   public id: string;
@@ -9,7 +10,6 @@ export class User implements ISerializable {
   public firstName: string;
   public lastName: string;
   public email: string;
-  public toJSON = this.serializeToObject();
 
   private _passwordHash: string;
 
@@ -18,8 +18,16 @@ export class User implements ISerializable {
   }
 
   public set password(password: string) {
-    if (!User.isValidPassword(password)) throw new Error('Invalid password');
+    if (!User.isValidPassword(password)) throw new Error("Invalid password");
     this._passwordHash = bcrypt.hashSync(password, 10);
+  }
+
+  public static hashPassword(password): string {
+    return bcrypt.hashSync(password, 10);
+  }
+
+  public static checkPassword(password, passwordHash): boolean {
+    return bcrypt.compareSync(password, passwordHash);
   }
 
   public static isValidId(id: string): boolean {
@@ -49,6 +57,14 @@ export class User implements ISerializable {
     return /^[A-Z]?[a-z]+$/.test(name || "");
   }
 
+  public toJSON(): object {
+    return this.serializeToObject();
+  }
+
+  public assignUniqueId(): void {
+    this.id = uuidv4();
+  }
+
   // Note: this function won't deserialize any password or password hash
   public deserializeFromObject({ userId, username, displayName, firstName, lastName, email }): void {
     if (!User.isValidId(userId)) throw new Error("Invalid argument: id");
@@ -76,5 +92,23 @@ export class User implements ISerializable {
       email: this.email,
       passwordHash: this.passwordHash,
     };
+  }
+
+  public createAccessToken(): Token {
+    if (!process.env.ACCESS_TOKEN_PASSPHRASE) throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in .env");
+    const token = new Token();
+    token.tokenPassphrase = process.env.ACCESS_TOKEN_PASSPHRASE;
+    token.payload = new UserAccessTokenPayload(this.id);
+
+    return token;
+  }
+
+  public createRefreshToken(): Token {
+    if (!process.env.REFRESH_TOKEN_PASSPHRASE) throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in .env");
+    const token = new Token();
+    token.tokenPassphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
+    token.payload = new UserRefreshTokenPayload(this.id);
+
+    return token;
   }
 }

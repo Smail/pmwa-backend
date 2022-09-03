@@ -1,10 +1,12 @@
-import { IRepository } from "@models/IRepository";
+import { IRepository } from "@models/repositories/IRepository";
 import { Tag } from "@models/Tag";
 
 export interface ITagsRepository extends IRepository<Tag, string> {
   create(tag: Tag): void;
 
-  read(id: string): Tag;
+  read(tagId: string): Tag;
+
+  readAll(tagId: string): Tag[];
 
   update(tag: Tag): void;
 

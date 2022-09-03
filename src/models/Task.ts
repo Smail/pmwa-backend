@@ -1,13 +1,21 @@
-import { ISerializable } from "@models/ISerializable";
+import { ISerializable } from "@models/repositories/ISerializable";
+import { v4 as uuidv4 } from "uuid";
 
 export class Task implements ISerializable {
+  // TODO default values
   public id: string;
   public userId: string;
   public name: string;
   public content: string;
   public isDone: boolean;
-  // TODO default values
-  public toJSON = this.serializeToObject();
+
+  public assignUniqueId(): void {
+    this.id = uuidv4();
+  }
+
+  public toJSON(): object {
+    return this.serializeToObject();
+  }
 
   // TODO assign only if not null else default value
   public deserializeFromObject({ taskId, userId, name, content, isDone }): void {

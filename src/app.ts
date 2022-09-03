@@ -16,10 +16,6 @@ import { router as tasksRouter } from "@routes/tasks";
 const debug = Debug("backend:app");
 const app = express();
 
-if (process.env.DEBUG) {
-  require("./Mock");
-}
-
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

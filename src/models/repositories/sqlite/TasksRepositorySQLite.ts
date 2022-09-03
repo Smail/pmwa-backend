@@ -1,9 +1,9 @@
-import { ITasksRepository } from "@models/ITasksRepository";
+import { ITasksRepository } from "@models/repositories/ITasksRepository";
 import { Task } from "@models/Task";
 import { sqlite3 } from "better-sqlite3";
 import { ISQLiteTable } from "@models/ISQLiteTable";
-import { runTransaction } from "../util/db/runTransaction";
-import * as ISerializable from "@models/ISerializable";
+import { runTransaction } from "../../../util/db/runTransaction";
+import * as ISerializable from "@models/repositories/ISerializable";
 
 export class TasksRepositorySQLite implements ITasksRepository {
   public static readonly table: ISQLiteTable = {

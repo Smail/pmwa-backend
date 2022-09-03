@@ -1,11 +1,19 @@
-import { ISerializable } from "@models/ISerializable";
+import { ISerializable } from "@models/repositories/ISerializable";
+import { v4 as uuidv4 } from "uuid";
 
 export class Tag implements ISerializable {
   public id: string;
   public taskId: string;
   public name: string;
   public color: string | null;
-  public toJSON = this.serializeToObject();
+
+  public assignUniqueId(): void {
+    this.id = uuidv4();
+  }
+
+  public toJSON(): object {
+    return this.serializeToObject();
+  }
 
   public deserializeFromObject({ tagId, taskId, name, color }): void {
     // TODO check if values are valid

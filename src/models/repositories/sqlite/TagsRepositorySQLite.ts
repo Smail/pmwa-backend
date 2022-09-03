@@ -1,9 +1,9 @@
 import { sqlite3 } from "better-sqlite3";
-import { ITagsRepository } from "@models/ITagsRepository";
+import { ITagsRepository } from "@models/repositories/ITagsRepository";
 import { Tag } from "@models/Tag";
 import { ISQLiteTable } from "@models/ISQLiteTable";
-import * as ISerializable from "@models/ISerializable";
-import { runTransaction } from "../util/db/runTransaction";
+import * as ISerializable from "@models/repositories/ISerializable";
+import { runTransaction } from "../../../util/db/runTransaction";
 
 export class TagsRepositorySQLite implements ITagsRepository {
   public static readonly table: ISQLiteTable = {
