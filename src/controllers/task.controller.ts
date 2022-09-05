@@ -20,17 +20,17 @@ export const create_task = (req, res) => {
 };
 
 export const update_task = (req, res, next) => {
-  if (!req.body) return next(createError(StatusCodes.BAD_REQUEST, "Request body is falsy"));
-  if (!isValidUuid(req.body.uuid)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid UUID"));
+  const { name, content, isDone } = req.body;
+  const task = Model.tasksRepository.read(req.body.uuid);
 
-  const task: Task = new Task();
-  // TODO throw error if exists but type is wrong
-  if (req.body.name && typeof req.body.name === "string") task.name = req.body.name;
-  if (req.body.isDone && typeof req.body.isDone === "boolean") task.isDone = req.body.isDone;
-  if (req.body.content && typeof req.body.content === "string") task.content = req.body.content;
+  if (task == null) return next(createError(StatusCodes.NOT_FOUND, "Task not found"));
+
+  // TODO validity checks
+  if (name) task.name = name;
+  if (content) task.content = content;
+  if (isDone) task.isDone = isDone;
 
   Model.tasksRepository.update(task);
-
   res.sendStatus(StatusCodes.OK);
 };
 
