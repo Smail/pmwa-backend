@@ -6,5 +6,5 @@ export const get_tags = (req, res) => {
 }
 
 export const get_tag = (req, res) => {
-  res.status(StatusCodes.OK).send(Model.tagRepository.read(req.params.taskUuid));
+  res.status(StatusCodes.OK).send(Model.tagRepository.read(req.body.uuid));
 }

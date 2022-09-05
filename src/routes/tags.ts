@@ -2,6 +2,7 @@ import express from "express";
 import { requireAccessToken } from "@middleware/requireAccessToken";
 import { requireAuthenticatedUser } from "@middleware/requireAuthenticatedUser";
 import { get_tag, get_tags } from "@controllers/tags.controller";
+import { requireUuid } from "@middleware/requireUuid";
 
 const router = express.Router({ mergeParams: true });
 
@@ -12,6 +13,6 @@ router.use(requireAuthenticatedUser);
 router.get("/", get_tags);
 
 /* GET task */
-router.get("/:taskUuid", get_tag);
+router.get("/", requireUuid, get_tag);
 
 export { router };
