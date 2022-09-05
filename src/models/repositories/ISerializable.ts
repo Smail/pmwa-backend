@@ -1,13 +1,13 @@
 export interface ISerializable {
-  serializeToObject(): Object;
+  serializeToObject(): object;
 
-  deserializeFromObject(serialized: Object): void;
+  deserializeFromObject(serialized: object): void;
 
   // This is used internally by JSON.stringify TODO
   // toJSON(): {};
 }
 
-export function deserialize<T extends ISerializable>(TCreator: new() => T, serializedObject: Object): T {
+export function deserialize<T extends ISerializable>(TCreator: new() => T, serializedObject: object): T {
   const o = new TCreator();
   o.deserializeFromObject(serializedObject);
   return o;

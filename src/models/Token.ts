@@ -25,7 +25,7 @@ export abstract class AuthTokenPayload implements ITokenPayload, ITokenGrantType
     if (grantType !== this.grantType) throw new Error("Invalid grant type");
   }
 
-  public serializeToObject(): Object {
+  public serializeToObject(): object {
     return structuredClone(this);
   }
 }

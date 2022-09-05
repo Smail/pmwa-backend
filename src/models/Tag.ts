@@ -23,7 +23,7 @@ export class Tag implements ISerializable {
     this.color = (typeof color === "string") ? color : null;
   }
 
-  public serializeToObject(): Object {
+  public serializeToObject(): object {
     return { tagId: this.id, taskId: this.taskId, name: this.name, color: this.color };
   }
 }

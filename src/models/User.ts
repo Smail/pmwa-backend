@@ -82,7 +82,7 @@ export class User implements ISerializable {
     this.email = email;
   }
 
-  public serializeToObject(): Object {
+  public serializeToObject(): object {
     return {
       userId: this.id,
       username: this.username,

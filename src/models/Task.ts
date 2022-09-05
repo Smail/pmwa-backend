@@ -27,7 +27,7 @@ export class Task implements ISerializable {
     this.isDone = isDone;
   }
 
-  public serializeToObject(): Object {
+  public serializeToObject(): object {
     return { taskId: this.id, userId: this.userId, name: this.name, content: this.content, isDone: this.isDone };
   }
 }
