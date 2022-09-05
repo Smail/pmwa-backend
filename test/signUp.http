@@ -13,7 +13,9 @@ Accept: application/json
 
 > {%
 client.test("Request executed successfully", function() {
-  client.assert(response.status === 204, "Response status is not 204");
+  client.assert(response.status === 204,
+    `Expected status code 204, got ${response.status}.
+    Please restart the development server and try again. Message: "${response.body}"`);
   client.assert(response.body.id != null, "Missing value: id");
   client.assert(response.body.accessToken != null, "Missing value: accessToken");
   client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
