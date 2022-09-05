@@ -12,7 +12,7 @@ router.use(requireAuthenticatedUser);
 /* GET all available tags. */
 router.get("/", get_tags);
 
-/* GET task */
+/* GET tag. */
 router.get("/", requireUuid, get_tag);
 
 export { router };
