@@ -1,0 +1,38 @@
+### Check successfull sign up
+POST http://{{host}}/auth/sign-up
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "Smail",
+  "password": "Smail1234",
+  "firstName": "Max",
+  "lastName": "Mustermann",
+  "email": "example@example.com"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 204, "Response status is not 204");
+  client.assert(response.body.id != null, "Missing value: id");
+  client.assert(response.body.accessToken != null, "Missing value: accessToken");
+  client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
+});
+%}
+
+### Check successfull sign in
+POST http://{{host}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "username": "Smail",
+  "password": "Smail1234"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.body.accessToken != null, "Missing value: accessToken");
+  client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
+});
+%}
