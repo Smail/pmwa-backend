@@ -1,6 +1,5 @@
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
-import { validate as isValidUuid } from "uuid";
 import { Task } from "@models/Task";
 import { Model } from "../Model";
 
@@ -34,13 +33,12 @@ export const update_task = (req, res, next) => {
   res.sendStatus(StatusCodes.OK);
 };
 
-export const delete_task = (req, res, next) => {
-  if (!req.params.uuid) return next(createError(StatusCodes.BAD_REQUEST, "No UUID provided"));
-  if (!isValidUuid(req.params.uuid)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid UUID"));
-  const task: Task = new Task();
-  task.id = req.params.uuid;
+export const delete_task = (req, res) => {
+  const uuid = req.body.uuid;
+  const task = new Task();
+
+  task.id = uuid;
 
   Model.tasksRepository.delete(task);
-
   res.sendStatus(StatusCodes.OK);
 };

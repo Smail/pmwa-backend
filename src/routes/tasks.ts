@@ -22,6 +22,6 @@ router.post("/", requireTaskName, create_task);
 router.patch("/", requireUuid, update_task);
 
 /* DELETE user task. */
-router.delete("/:uuid", delete_task);
+router.delete("/", requireUuid, delete_task);
 
 export { router };
