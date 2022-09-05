@@ -16,10 +16,10 @@ router.use("/tags", tagsRouter);
 router.get("/", get_tasks);
 
 /* POST Create new user task. */
-router.post("/create", requireTaskName, create_task);
+router.post("/", requireTaskName, create_task);
 
 /* Update user task. */
-router.post("/update", requireUuid, update_task);
+router.patch("/", requireUuid, update_task);
 
 /* DELETE user task. */
 router.delete("/:uuid", delete_task);
