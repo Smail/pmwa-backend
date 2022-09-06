@@ -64,7 +64,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
     const query = `SELECT userId FROM Users WHERE username = LOWER($username)`;
     const row = this.db.prepare(query).get({ username: username });
 
-    return (row != null) ? this.read(row.id) : null;
+    return (row != null) ? this.read(row.userId) : null;
   }
 
   public checkPassword(user: User, password: string, comparePasswords: (password, passwordHash) => boolean): boolean {
