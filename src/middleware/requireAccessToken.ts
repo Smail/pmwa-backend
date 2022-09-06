@@ -18,8 +18,19 @@ export function requireAccessToken(req, res, next) {
 
     next();
   } catch (error) {
-    // Rethrow possible errors like "jwt expired" as a NetworkError with a proper HTTP code, i.e., not simply 500.
-    const code = (error instanceof jwt.JsonWebTokenError) ? StatusCodes.BAD_REQUEST : StatusCodes.INTERNAL_SERVER_ERROR;
-    throw (createError(code, error.message));
+    if (error instanceof jwt.JsonWebTokenError) {
+      let errMsg = error.message;
+
+      // Lowercase error messages are annoying
+      if (error.message.toLowerCase() === "invalid token") {
+        errMsg = "Invalid token";
+      } else if (error.message.toLowerCase() === "jwt expired") {
+        errMsg = "JWT expired";
+      }
+
+      // Rethrow possible errors like "jwt expired" as a NetworkError with a proper HTTP code, i.e., not simply 500.
+      error = createError(StatusCodes.FORBIDDEN, errMsg);
+    }
+    throw error;
   }
 }
