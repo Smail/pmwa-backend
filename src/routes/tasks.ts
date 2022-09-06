@@ -24,4 +24,6 @@ router.patch("/:taskId", update_task);
 /* DELETE user task. */
 router.delete("/:taskId", delete_task);
 
+router.use("/tags", tagsRouter);
+
 export { router };
