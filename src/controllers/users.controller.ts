@@ -11,22 +11,30 @@ export const get_users = (req, res) => {
 }
 
 export const get_user = (req, res, next) => {
+  const username: string = req.params.username;
+  if (username == null) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "No username is URL parameters"));
+  if (!User.isValidUsername(username)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid ID syntax"));
+
   if (req.authLevel === AUTH_LEVEL_PRIVATE) {
-    requireAccessToken(req, res, next);
-    requireAuthenticatedUser(req, res, next);
+    try {
+      requireAccessToken(req, res, function (err) {
+        if (err != null) throw err;
 
-    const user: User = req.user;
-    if (user.username.toLowerCase() !== req.params.username.toLowerCase()) {
-      return createError(StatusCodes.BAD_REQUEST,
-        "Username mismatch: The username contained in the access token is not the same as the one provided in the URL");
+        requireAuthenticatedUser(req, res, function (err) {
+          if (err != null) throw err;
+          const user: User = req.user;
+          if (user.username.toLowerCase() !== username.toLowerCase()) {
+            return createError(StatusCodes.BAD_REQUEST,
+              "Username mismatch: The username contained in the access token is not the same as the one provided in the URL");
+          }
+
+          res.send(user.serializeToObject());
+        });
+      });
+    } catch (error) {
+      return next(error);
     }
-
-    res.send(user.serializeToObject());
   } else if (req.authLevel === AUTH_LEVEL_PUBLIC) {
-    const username = req.params.username;
-    if (username == null) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "No user ID in URL parameters"));
-    if (!User.isValidUsername(username)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid ID syntax"));
-
     const user = Model.userRepository.findUsername(username);
     if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User not found"));
 
