@@ -3,8 +3,6 @@ import { User } from "@models/User";
 import { sqlite3 } from "better-sqlite3";
 import { runTransaction } from "../../../util/db/runTransaction";
 import * as ISerializable from "@models/repositories/ISerializable";
-import { Token } from "@models/Token";
-import { IRefreshTokenRepository } from "../IRefreshTokenRepository";
 import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
 export class UserRepositorySQLite extends SQLiteTable implements IUserRepository {
@@ -75,9 +73,5 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
     if (row.length === 0) throw new Error("User not found: no such ID");
 
     return comparePasswords(password, row.passwordHash);
-  }
-
-  public getTokens(user: User, refreshTokenRepository: IRefreshTokenRepository): Token[] {
-    throw new Error("Method not implemented.");
   }
 }
