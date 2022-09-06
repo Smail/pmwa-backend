@@ -20,31 +20,31 @@ export class TagsRepositorySQLite extends SQLiteTable implements ITagsRepository
   }
 
   public create(tag: Tag): void {
-    const queryNoColor = `INSERT INTO tags(tagId, taskId, name) VALUES ($tagId, $taskId, $name)`;
-    const queryColor = `INSERT INTO tags(tagId, taskId, name, color) VALUES ($tagId, $taskId, $name, $color)`;
+    const queryNoColor = `INSERT INTO Tags(tagId, name) VALUES ($tagId, $name)`;
+    const queryColor = `INSERT INTO Tags(tagId, name, color) VALUES ($tagId, $name, $color)`;
     runTransaction(this.db, (tag.color != null ? queryColor : queryNoColor), tag.serializeToObject());
   }
 
   public read(tagId: string): Tag | null {
-    const query = `SELECT tagId, taskId, name, color FROM tags WHERE tagId = $tagId`;
+    const query = `SELECT * FROM Tags WHERE tagId = $tagId`;
     const row = this.db.prepare(query).get({ tagId: tagId });
 
     return (row != null) ? ISerializable.deserialize(Tag, row) : null;
   }
 
   public readAll(): Tag[] {
-    const query = `SELECT tagId, taskId, name, color FROM tags`;
+    const query = `SELECT * FROM Tags`;
     return this.db.prepare(query).all().map(row => ISerializable.deserialize(Tag, row));
   }
 
   public update(tag: Tag): void {
-    const query = `UPDATE tags SET name = $name, color = $color WHERE tagId = $tagId AND taskId = $taskId`;
-    runTransaction(this.db, query, { tagId: tag.id, taskId: tag.taskId });
+    const query = `UPDATE Tags SET name = $name, color = $color WHERE tagId = $tagId`;
+    runTransaction(this.db, query, { tagId: tag.id });
   }
 
   public delete(tag: Tag): void {
-    const query = `DELETE FROM tags WHERE tagId = $tagId AND taskId = $taskId`;
-    runTransaction(this.db, query, { tagId: tag.id, taskId: tag.taskId });
+    const query = `DELETE FROM Tags WHERE tagId = $tagId`;
+    runTransaction(this.db, query, { tagId: tag.id });
   }
 
   public getTaskTags(task: Task): Tag[] {
