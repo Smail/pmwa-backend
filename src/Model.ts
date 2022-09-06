@@ -19,6 +19,7 @@ if (process.env.DEBUG) {
 }
 
 const db = sqlite3(dbPath);
+db.pragma("foreign_keys = ON");
 
 process.on("exit", () => db.close());
 process.on("SIGHUP", () => process.exit(128 + 1));
