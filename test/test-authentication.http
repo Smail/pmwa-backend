@@ -36,5 +36,9 @@ client.test("Request executed successfully", function() {
   client.assert(response.status === 201, "Response status is not 201");
   client.assert(response.body.accessToken != null, "Missing value: accessToken");
   client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
+  client.assert(response.body.userId != null, "Missing value: userId");
+  client.global.set("user_id", response.body.userId);
+  client.global.set("access_token", response.body.accessToken);
+  client.global.set("refresh_token", response.body.refreshToken);
 });
 %}

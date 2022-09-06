@@ -1,0 +1,83 @@
+### GET all users
+GET http://{{host}}/users
+
+> {%
+client.test("Request executed successfully", function() {
+  const expectedCode = 200;
+  client.assert(response.status === expectedCode,
+    `Expected status code ${expectedCode}, but got ${response.status}. Message: "${response.body}"`);
+  const users = response.body;
+  client.assert(users.length > 0, "No users");
+  client.global.set("public_users", JSON.stringify(users));
+  client.global.set("public_user_id", users[0].userId);
+  client.log(users[0].userId)
+});
+%}
+
+### GET a public user account
+GET http://{{host}}/users/{{public_user_id}}
+
+### POST new user
+POST http://{{host}}/auth/sign-up
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}",
+  "firstName": "Max",
+  "lastName": "Mustermann",
+  "email": "example@example.com"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  const expectedCode = 201;
+  client.assert(response.status === expectedCode, `Expected status code ${expectedCode}, got ${response.status}.
+    Please restart the server and try again. Message: "${response.body}"`);
+  client.assert(response.body.userId != null, "Missing value: userId");
+  client.assert(response.body.accessToken != null, "Missing value: accessToken");
+  client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
+});
+%}
+
+### POST login and get tokens
+POST http://{{host}}/auth/sign-in
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  const expectedCode = 201;
+  client.assert(response.status === expectedCode, `Expected status code ${expectedCode}, but got ${response.status}`);
+  client.assert(response.body.accessToken != null, "Missing value: accessToken");
+  client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
+  client.assert(response.body.userId != null, "Missing value: userId");
+  client.global.set("user_id", response.body.userId);
+  client.global.set("access_token", response.body.accessToken);
+  client.global.set("refresh_token", response.body.refreshToken);
+});
+%}
+
+### GET private user account
+GET http://{{host}}/users/{{public_user_id}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  const expectedCode = 200;
+  client.assert(response.status === expectedCode, `Expected status code ${expectedCode}, but got ${response.status}`);
+  client.assert(response.body.accessToken != null, "Missing value: accessToken");
+  client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
+  client.assert(response.body.userId != null, "Missing value: userId");
+  client.global.set("user_id", response.body.userId);
+  client.global.set("access_token", response.body.accessToken);
+  client.global.set("refresh_token", response.body.refreshToken);
+});
+%}

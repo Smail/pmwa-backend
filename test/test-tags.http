@@ -1,0 +1,72 @@
+### POST make sure our user exists. Either creates the user or returns a conflict meaning the user already exists
+POST http://{{host}}/auth/sign-up
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "Smail",
+  "password": "Smail1234",
+  "firstName": "Max",
+  "lastName": "Mustermann",
+  "email": "example@example.com"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 204 || response.status === 409,
+    `Expected status code 204 or 409, but got ${response.status}. Message: "${response.body}"`);
+  // Check if the response contains a user ID, access token and refresh token.
+  client.log(response.body)
+  client.assert(response.body.userId != null, "Missing value: userId");
+  client.assert(response.body.accessToken != null, "Missing value: accessToken");
+  client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
+});
+%}
+
+### GET token
+POST http://{{host}}/auth/sign-in
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "Smail",
+  "password": "Smail1234"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  const expectedCode = 201;
+  client.assert(response.status === expectedCode,
+    `Expected status code ${expectedCode}, but got ${response.status}. Message: "${response.body}"`);
+  client.assert(response.body.accessToken != null, "Missing value: accessToken");
+  client.assert(response.body.refreshToken != null, "Missing value: refreshToken");
+});
+
+client.global.set("auth_token", response.body.accessToken);
+%}
+
+### GET all tasks of user
+GET http://{{host}}/tags/1ee21c0e-7768-45f7-bba9-577d9c113294
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.assert(client.global.get("auth_token") != null, "No auth token provided");
+client.test("Request executed successfully", function() {
+  const expectedCode = 200;
+  client.assert(response.status === expectedCode,
+    `Expected status code ${expectedCode}, but got ${response.status}. Message: "${response.body}"`);
+});
+%}
+
+### GET all task tags
+GET http://{{host}}/tags/1ee21c0e-7768-45f7-bba9-577d9c113294
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.assert(client.global.get("auth_token") != null, "No auth token provided");
+client.test("Request executed successfully", function() {
+  const expectedCode = 200;
+  client.assert(response.status === expectedCode,
+    `Expected status code ${expectedCode}, but got ${response.status}. Message: "${response.body}"`);
+});
+%}
