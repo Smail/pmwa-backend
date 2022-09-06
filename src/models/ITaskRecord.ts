@@ -2,6 +2,6 @@ export interface ITaskRecord {
   taskId: string,
   userId: string,
   name: string,
-  content: string,
+  content: string | null,
   isDone: boolean,
 }

@@ -8,7 +8,7 @@ export class Task implements ISerializable {
   public id: string;
   public userId: string;
   public name: string;
-  public content: string;
+  public content: string | null;
   public isDone: boolean;
 
   public static isValidId(taskId: string) {
