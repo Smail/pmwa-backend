@@ -1,7 +1,7 @@
 import { Task } from "@models/Task";
 import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 import { sqlite3 } from "better-sqlite3";
-import { ITaskTagsRepository } from "@models/repositories/sqlite/ITaskTagsRepository";
+import { ITaskTagsRepository } from "@models/repositories/ITaskTagsRepository";
 import { Tag } from "@models/Tag";
 import { runTransaction } from "../../../util/db/runTransaction";
 import * as ISerializable from "@models/repositories/ISerializable";
