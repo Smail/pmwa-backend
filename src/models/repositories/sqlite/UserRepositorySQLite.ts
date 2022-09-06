@@ -28,14 +28,13 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
     runTransaction(this.db, query, user.serializeToObject());
   }
 
-  public read(userId: string): User {
+  public read(userId: string): User | null {
     const query = `SELECT userId, username, displayName, firstName, lastName, email
                    FROM Users
                    WHERE userId = $userId`;
     const row = this.db.prepare(query).get({ userId: userId });
-    if (row == null) throw new Error("User not found: no such ID");
 
-    return ISerializable.deserialize(User, row);
+    return (row != null) ? ISerializable.deserialize(User, row) : null;
   }
 
   public readAll(): User[] {
