@@ -13,7 +13,7 @@ export function requireAuthenticatedUser(req, res, next) {
 
   const user = Model.userRepository.read(userId);
   if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User ID not found"));
-  if (user.id !== userId) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "Token ID mismatch"));
+  if (user.id !== userId) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "User ID mismatch in token"));
 
   req.user = user;
   next();
