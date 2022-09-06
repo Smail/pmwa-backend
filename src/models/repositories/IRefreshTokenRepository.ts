@@ -1,14 +1,14 @@
 import { IRepository } from "@models/repositories/IRepository";
-import { Token } from "@models/Token";
+import { JWTToken } from "@models/JWTToken";
 
-export interface IRefreshTokenRepository extends IRepository<Token, string> {
-  create(refreshToken: Token): void;
+export interface IRefreshTokenRepository extends IRepository<JWTToken, string> {
+  create(refreshToken: JWTToken): void;
 
-  read(refreshTokenId: string): Token | null;
+  read(refreshTokenId: string): JWTToken | null;
 
-  readAll(): Token[];
+  readAll(): JWTToken[];
 
-  update(refreshToken: Token): void;
+  update(refreshToken: JWTToken): void;
 
-  delete(refreshToken: Token): void;
+  delete(refreshToken: JWTToken): void;
 }

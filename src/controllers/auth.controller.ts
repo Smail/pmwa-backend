@@ -1,15 +1,19 @@
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 import { Model } from "../Model";
-import { decodeRefreshToken } from "../util/jwt/decodeRefreshToken";
 import { User } from "@models/User";
 import { v4 as uuidV4 } from "uuid";
+import { UserRefreshTokensRepositorySQLite } from "@models/repositories/sqlite/UserRefreshTokensRepositorySQLite";
+import { JWTToken } from "@models/JWTToken";
 
-function createAccessAndRefreshToken(user) {
-  const accessToken = user.createAccessToken();
-  const refreshToken = user.createRefreshToken();
+function createAccessAndRefreshToken(user: User): { accessToken: string, refreshToken: string } {
+  const accessToken: JWTToken = user.createAccessToken();
+  const refreshToken: JWTToken = user.createRefreshToken();
 
-  return { accessToken: accessToken.encoding, refreshToken: refreshToken.encoding };
+  Model.refreshTokenRepository.create(refreshToken);
+  new UserRefreshTokensRepositorySQLite(Model.db, user).create(refreshToken);
+
+  return { accessToken: accessToken.encode(), refreshToken: refreshToken.encode() };
 }
 
 function createUser(req, next): User {
@@ -65,25 +69,17 @@ export const sign_in_user = async (req, res, next) => {
   res.status(StatusCodes.CREATED).send({ userId: user.id, ...createAccessAndRefreshToken(user) });
 };
 
-export const refresh_token = async (req, res, next) => {
+export const refresh_token = async (req: { body: { refreshToken: string }; user: User }, res, next) => {
   const { refreshToken } = req.body;
-  const user = Model.userRepository.read(req.body.uuid);
-
-  if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User does not exist"));
   if (refreshToken == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing refresh token"));
-  const tokens = Model.userRepository.getTokens(user, Model.refreshTokenRepository);
-  if (!tokens.includes(refreshToken)) return next(createError(StatusCodes.FORBIDDEN, "Unknown refresh token"));
 
-  // Paranoia: This should always be false, since a user should have a token saved, that contains their username.
-  const tokenContent = decodeRefreshToken(refreshToken);
-  if (tokenContent.username.toLowerCase() !== user.username.toLowerCase()) {
-    // This is a seriously dangerous error. Somehow another user got a token from a different user.
-    // An attack might be happening here.
-    return next(createError(StatusCodes.FORBIDDEN, "Username in token payload does not match the requested username"));
-  }
+  const userRefreshTokenRepository = new UserRefreshTokensRepositorySQLite(Model.db, req.user);
+  const passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
+  if (passphrase == null) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "Passphrase is null"));
+  const token = userRefreshTokenRepository.read(JWTToken.decode(refreshToken, passphrase).id);
+  if (!token) return next(createError(StatusCodes.NOT_FOUND, "Unknown refresh token"));
 
   // Remove used refresh token.
-  Model.refreshTokenRepository.delete(refreshToken);
-
-  res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(user));
+  Model.refreshTokenRepository.delete(token);
+  res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(req.user));
 };

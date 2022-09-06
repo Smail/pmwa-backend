@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { ISerializable } from "@models/repositories/ISerializable";
 import { v4 as uuidV4, validate as isValidUuid } from "uuid";
-import { Token, UserAccessTokenPayload, UserRefreshTokenPayload } from "@models/Token";
+import { JWTToken } from "@models/JWTToken";
 import { IUserRecord } from "@models/IUserRecord";
 
 export class User implements ISerializable {
@@ -95,28 +95,34 @@ export class User implements ISerializable {
     return o;
   }
 
-  public createAccessToken(): Token {
-    if (!process.env.ACCESS_TOKEN_PASSPHRASE) throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in environment variables");
-    const token = new Token();
-    const payload = new UserAccessTokenPayload(this.id);
+  public createAccessToken(): JWTToken {
+    if (!process.env.ACCESS_TOKEN_PASSPHRASE) {
+      throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in environment variables");
+    }
+    const token = new JWTToken();
+    const lifetime = 60 * 10; // 10 min
 
-    payload.assignUniqueId();
-    token.lifetimeDuration = 60 * 10; // 10 mins
-    token.tokenPassphrase = process.env.ACCESS_TOKEN_PASSPHRASE;
-    token.payload = payload;
+    token.userId = this.id;
+    token.id = uuidV4();
+    token.grantType = "access";
+    token.passphrase = process.env.ACCESS_TOKEN_PASSPHRASE;
+    token.options = { expiresIn: lifetime };
 
     return token;
   }
 
-  public createRefreshToken(): Token {
-    if (!process.env.REFRESH_TOKEN_PASSPHRASE) throw new Error("Missing key REFRESH_TOKEN_PASSPHRASE in environment variables");
-    const token = new Token();
-    const payload = new UserRefreshTokenPayload(this.id);
+  public createRefreshToken(): JWTToken {
+    if (!process.env.REFRESH_TOKEN_PASSPHRASE) {
+      throw new Error("Missing key REFRESH_TOKEN_PASSPHRASE in environment variables");
+    }
+    const token = new JWTToken();
+    const lifetime = 60 * 60 * 24 * 14; // 2 weeks
 
-    payload.assignUniqueId();
-    token.lifetimeDuration = 60 * 60 * 24 * 14; // 2 weeks
-    token.tokenPassphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
-    token.payload = payload;
+    token.userId = this.id;
+    token.id = uuidV4();
+    token.grantType = "refresh";
+    token.passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
+    token.options = { expiresIn: lifetime };
 
     return token;
   }
