@@ -23,7 +23,6 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
   }
 
   public create(task: Task): void {
-    // TODO make sure userId exists. This is achieved by making sure that PRAGMA foreign_keys = ON.
     const query = `INSERT INTO UserTasks(userId, taskId) VALUES ($userId, $taskId)`;
     runTransaction(this.db, query, { userId: this.user.id, taskId: task.id });
   }
