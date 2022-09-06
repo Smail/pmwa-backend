@@ -1,18 +1,21 @@
+import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 import { Model } from "../Model";
-import { Task } from "@models/Task";
-import { User } from "@models/User";
+import { TaskTagsRepositorySQLite } from "@models/repositories/sqlite/TaskTagsRepositorySQLite";
+import { UserTasksRepositorySQLite } from "@models/repositories/sqlite/UserTasksRepositorySQLite";
 
 export const get_tags = (req, res) => {
-  const task = new Task();
-  const user: User = req.user;
+  const userTasksRepository = new UserTasksRepositorySQLite(Model.db, req.user);
+  const task = userTasksRepository.read(req.params.taskId);
+  if (task == null) throw createError(StatusCodes.NOT_FOUND, "Task not found");
 
-  task.id = req.params.taskId;
-  task.userId = user.id;
-
-  res.status(StatusCodes.OK).send(Model.tagRepository.getTaskTags(task));
-}
+  res.status(StatusCodes.OK).send(new TaskTagsRepositorySQLite(Model.db, task).readAll());
+};
 
 export const get_tag = (req, res) => {
-  res.status(StatusCodes.OK).send(Model.tagRepository.read(req.body.uuid));
-}
+  const userTasksRepository = new UserTasksRepositorySQLite(Model.db, req.user);
+  const task = userTasksRepository.read(req.params.taskId);
+  if (task == null) throw createError(StatusCodes.NOT_FOUND, "Task not found");
+
+  res.status(StatusCodes.OK).send(new TaskTagsRepositorySQLite(Model.db, task).read(req.params.taskId));
+};
