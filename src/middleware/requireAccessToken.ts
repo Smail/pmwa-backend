@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 import { decodeAccessToken } from "../util/jwt/decodeAccessToken";
+import { convertJwtErrorToHttpErrorIfPossible } from "../util/jwt/convertJwtErrorToHttpErrorIfPossible";
 
 export function requireAccessToken(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -18,19 +18,6 @@ export function requireAccessToken(req, res, next) {
 
     next();
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      let errMsg = error.message;
-
-      // Lowercase error messages are annoying
-      if (error.message.toLowerCase() === "invalid token") {
-        errMsg = "Invalid token";
-      } else if (error.message.toLowerCase() === "jwt expired") {
-        errMsg = "JWT expired";
-      }
-
-      // Rethrow possible errors like "jwt expired" as a NetworkError with a proper HTTP code, i.e., not simply 500.
-      error = createError(StatusCodes.FORBIDDEN, errMsg);
-    }
-    throw error;
+    throw convertJwtErrorToHttpErrorIfPossible(error);
   }
 }
