@@ -47,7 +47,6 @@ function createUser(req, next): User {
 export const sign_up_user = async (req, res, next) => {
   try {
     const user = createUser(req, next);
-    console.log(user.id);
     res.status(StatusCodes.CREATED).send({ userId: user.id, ...createAccessAndRefreshToken(user) });
   } catch (error) {
     next(error);
