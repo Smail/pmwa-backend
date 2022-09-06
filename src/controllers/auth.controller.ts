@@ -45,7 +45,7 @@ function createUser(req, next): User {
   return user;
 }
 
-export const sign_up_user = async (req, res, next) => {
+export const sign_up_user = (req, res, next) => {
   try {
     const user = createUser(req, next);
     res.status(StatusCodes.CREATED).send({ userId: user.id, ...createAccessAndRefreshToken(user) });
@@ -54,7 +54,7 @@ export const sign_up_user = async (req, res, next) => {
   }
 };
 
-export const sign_in_user = async (req, res, next) => {
+export const sign_in_user = (req, res, next) => {
   const { username, password } = req.body;
   if (password == null) return next(createError(StatusCodes.BAD_REQUEST, "Missing password"));
   if (username == null) return next(createError(StatusCodes.BAD_REQUEST, "Missing username"));
@@ -69,7 +69,7 @@ export const sign_in_user = async (req, res, next) => {
   res.status(StatusCodes.CREATED).send({ userId: user.id, ...createAccessAndRefreshToken(user) });
 };
 
-export const refresh_token = async (req: { body: { refreshToken: string }; user: User }, res, next) => {
+export const refresh_token = (req: { body: { refreshToken: string } }, res, next) => {
   const { refreshToken } = req.body;
   const passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
   if (refreshToken == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing refresh token"));
