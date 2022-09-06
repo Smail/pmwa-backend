@@ -5,11 +5,11 @@ import { decodeAccessToken } from "../util/jwt/decodeAccessToken";
 
 export function requireAccessToken(req, res, next) {
   const authHeader = req.headers.authorization;
-  if (authHeader == null) throw (createError(StatusCodes.UNAUTHORIZED, "Missing Authorization header"));
+  if (authHeader == null) throw createError(StatusCodes.UNAUTHORIZED, "Missing Authorization header");
 
   const authHeaderComponents = authHeader.split(" ").map((str) => str.trim());
-  if (authHeaderComponents.length !== 2) throw (createError(StatusCodes.BAD_REQUEST, "Unknown Authorization header syntax"));
-  if (authHeaderComponents[0] !== "Bearer") throw (createError(StatusCodes.BAD_REQUEST, `Expected 'Bearer' got ${authHeaderComponents[0]}`));
+  if (authHeaderComponents.length !== 2) throw createError(StatusCodes.BAD_REQUEST, "Unknown Authorization header syntax");
+  if (authHeaderComponents[0] !== "Bearer") throw createError(StatusCodes.BAD_REQUEST, `Expected 'Bearer' got ${authHeaderComponents[0]}`);
 
   try {
     const accessToken = authHeaderComponents[1];
