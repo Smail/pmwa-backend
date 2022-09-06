@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import { ISerializable } from "@models/repositories/ISerializable";
 import { v4 as uuidV4, validate as isValidUuid } from "uuid";
-import { Token, UserAccessTokenPayload, UserRefreshTokenPayload } from "@models/Token";
+import { Token, UserAccessTokenPayload } from "@models/Token";
+import { IUserRecord } from "@models/IUserRecord";
 
 export class User implements ISerializable {
   public id: string;
@@ -38,8 +39,8 @@ export class User implements ISerializable {
     return /^[a-z0-9-_.]+$/i.test(username || "");
   }
 
-  public static isValidDisplayName(displayName: string): boolean {
-    return this.isValidUsername(displayName);
+  public static isValidDisplayName(displayName: string | null): boolean {
+    return displayName == null ? true : this.isValidUsername(displayName);
   }
 
   public static isValidPassword(password: string): boolean {
@@ -53,12 +54,16 @@ export class User implements ISerializable {
 
   public static isValidNaturalName(name: string): boolean {
     // TODO add support for non ascii chars
-    // Only first letter should be allowed to be uppercase
-    return /^[A-Z]?[a-z]+$/.test(name || "");
+    return /^[a-z]+$/i.test(name || "");
   }
 
-  public toJSON(): object {
-    return this.serializeToObject();
+  public static throwIfInvalid({ userId, username, displayName, firstName, lastName, email }: IUserRecord): void {
+    if (!User.isValidId(userId)) throw new Error(`Invalid argument: userId = ${userId}`);
+    if (!User.isValidUsername(username)) throw new Error(`Invalid argument: username = ${username}`);
+    if (!User.isValidDisplayName(displayName)) throw new Error(`Invalid argument: displayName = ${displayName}`);
+    if (!User.isValidNaturalName(firstName)) throw new Error(`Invalid argument: firstName = ${firstName}`);
+    if (!User.isValidNaturalName(lastName)) throw new Error(`Invalid argument: lastName = ${lastName}`);
+    if (!User.isValidEmail(email)) throw new Error(`Invalid argument: email = ${email}`);
   }
 
   public assignUniqueId(): void {
@@ -67,13 +72,7 @@ export class User implements ISerializable {
 
   // Note: this function won't deserialize any password or password hash
   public deserializeFromObject({ userId, username, displayName, firstName, lastName, email }): void {
-    if (!User.isValidId(userId)) throw new Error(`Invalid argument: userId = ${userId}`);
-    if (!User.isValidUsername(username)) throw new Error(`Invalid argument: username = ${username}`);
-    if (!User.isValidDisplayName(displayName)) throw new Error(`Invalid argument: displayName = ${displayName}`);
-    if (!User.isValidNaturalName(firstName)) throw new Error(`Invalid argument: firstName = ${firstName}`);
-    if (!User.isValidNaturalName(lastName)) throw new Error(`Invalid argument: lastName = ${lastName}`);
-    if (!User.isValidEmail(email)) throw new Error(`Invalid argument: email = ${email}`);
-
+    User.throwIfInvalid({ userId, username, displayName, firstName, lastName, email });
     this.id = userId;
     this.username = username;
     this.displayName = displayName;
@@ -82,8 +81,8 @@ export class User implements ISerializable {
     this.email = email;
   }
 
-  public serializeToObject(): object {
-    return {
+  public serializeToObject(): IUserRecord {
+    const o = {
       userId: this.id,
       username: this.username,
       displayName: this.displayName,
@@ -92,6 +91,8 @@ export class User implements ISerializable {
       email: this.email,
       passwordHash: this.passwordHash,
     };
+    User.throwIfInvalid(o);
+    return o;
   }
 
   public createAccessToken(): Token {
@@ -118,5 +119,14 @@ export class User implements ISerializable {
     token.payload = payload;
 
     return token;
+  }
+
+  public public(): { userId: string, username: string, displayName: string } {
+    const o = this.serializeToObject();
+    return {
+      userId: o.userId,
+      username: o.username,
+      displayName: o.displayName,
+    };
   }
 }
