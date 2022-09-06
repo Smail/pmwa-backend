@@ -5,6 +5,7 @@ import { User } from "@models/User";
 import { v4 as uuidV4 } from "uuid";
 import { UserRefreshTokensRepositorySQLite } from "@models/repositories/sqlite/UserRefreshTokensRepositorySQLite";
 import { JWTToken } from "@models/JWTToken";
+import { convertJwtErrorToHttpErrorIfPossible } from "../util/jwt/convertJwtErrorToHttpErrorIfPossible";
 
 function createAccessAndRefreshToken(user: User): { accessToken: string, refreshToken: string } {
   const accessToken: JWTToken = user.createAccessToken();
@@ -70,15 +71,27 @@ export const sign_in_user = async (req, res, next) => {
 
 export const refresh_token = async (req: { body: { refreshToken: string }; user: User }, res, next) => {
   const { refreshToken } = req.body;
-  if (refreshToken == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing refresh token"));
-
-  const userRefreshTokenRepository = new UserRefreshTokensRepositorySQLite(Model.db, req.user);
   const passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
+  if (refreshToken == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing refresh token"));
   if (passphrase == null) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "Passphrase is null"));
-  const token = userRefreshTokenRepository.read(JWTToken.decode(refreshToken, passphrase).id);
-  if (!token) return next(createError(StatusCodes.NOT_FOUND, "Unknown refresh token"));
 
-  // Remove used refresh token.
-  Model.refreshTokenRepository.delete(token);
-  res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(req.user));
+  try {
+    const token: JWTToken = JWTToken.decode(refreshToken, passphrase);
+    const userId = token.userId;
+    const user = Model.userRepository.read(userId);
+    if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User not found"));
+    if (token.grantType !== "refresh") return next(createError(StatusCodes.FORBIDDEN, "Invalid grant type"));
+
+    // Check if token exists.
+    const token2 = new UserRefreshTokensRepositorySQLite(Model.db, user).read(token.id);
+    if (token2 == null) return next(createError(StatusCodes.NOT_FOUND, "Unknown refresh token"));
+
+    // Remove used refresh token.
+    Model.refreshTokenRepository.delete(token);
+
+    // Create and return new tokens.
+    res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(user));
+  } catch (error) {
+    return next(convertJwtErrorToHttpErrorIfPossible(error));
+  }
 };
