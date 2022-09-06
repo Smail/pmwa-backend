@@ -62,7 +62,7 @@ export const sign_in_user = async (req, res, next) => {
     return next(createError(StatusCodes.UNAUTHORIZED, "Wrong password"));
   }
 
-  res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(user));
+  res.status(StatusCodes.CREATED).send({ userId: user.id, ...createAccessAndRefreshToken(user) });
 };
 
 export const refresh_token = async (req, res, next) => {

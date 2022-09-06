@@ -1,6 +1,6 @@
 import express from "express";
 import { router as tagsRouter } from "@routes/tags";
-import { requireUuid } from "@middleware/requireUuid";
+import { requireUuidInBody } from "@middleware/requireUuidInBody";
 import { requireTaskName } from "@middleware/requireTaskName";
 import { requireAccessToken } from "@middleware/requireAccessToken";
 import { requireAuthenticatedUser } from "@middleware/requireAuthenticatedUser";
@@ -10,7 +10,6 @@ const router = express.Router();
 
 router.use(requireAccessToken);
 router.use(requireAuthenticatedUser);
-router.use("/tags", tagsRouter);
 
 /* GET user's tasks. */
 router.get("/", get_tasks);
@@ -19,9 +18,9 @@ router.get("/", get_tasks);
 router.post("/", requireTaskName, create_task);
 
 /* Update user task. */
-router.patch("/", requireUuid, update_task);
+router.patch("/", requireUuidInBody, update_task);
 
 /* DELETE user task. */
-router.delete("/", requireUuid, delete_task);
+router.delete("/", requireUuidInBody, delete_task);
 
 export { router };

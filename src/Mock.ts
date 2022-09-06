@@ -33,10 +33,9 @@ if (process.env.DEBUG) {
 
     for (let i = 0; i < 3; i++) {
       const user = new User();
-      const randomName = faker.name.findName(); // Jane Doe
       user.assignUniqueId();
-      user.firstName = randomName.split(" ")[0]; // Jane
-      user.lastName = randomName.split(" ")[1]; // Doe
+      user.firstName = faker.name.firstName(); // Jane
+      user.lastName = faker.name.lastName(); // Doe
       user.username = faker.internet.userName(user.firstName, user.lastName);
       user.email = faker.internet.email();
       user.password = faker.internet.password(15);

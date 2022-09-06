@@ -13,6 +13,7 @@ import Debug from "debug";
 import { router as usersRouter } from "@routes/users";
 import { router as authRouter } from "@routes/auth";
 import { router as tasksRouter } from "@routes/tasks";
+import { router as tagsRouter } from "@routes/tags";
 
 const debug = Debug("backend:app");
 const app = express();
@@ -29,6 +30,7 @@ app.use(cors({ origin: true, credentials: true }));
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/tasks", tasksRouter);
+app.use("/tags", tagsRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
