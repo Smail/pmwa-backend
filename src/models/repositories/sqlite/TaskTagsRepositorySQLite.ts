@@ -23,7 +23,6 @@ export class TaskTagsRepositorySQLite extends SQLiteTable implements ITaskTagsRe
   }
 
   public create(tag: Tag): void {
-    // TODO make sure userId exists. This is achieved by making sure that PRAGMA foreign_keys = ON.
     const query = `INSERT INTO TaskTags(taskId, tagId) VALUES ($taskId, $tagId)`;
     runTransaction(this.db, query, { taskId: this.task.id, tagId: tag.id });
   }
