@@ -9,8 +9,8 @@ import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
 export class UserRepositorySQLite extends SQLiteTable implements IUserRepository {
   public static readonly tableSchema: string =
-    `CREATE TABLE IF NOT EXISTS users (
-        userId       TEXT PRIMARY KEY,
+    `CREATE TABLE IF NOT EXISTS Users (
+        userId       TEXT        NOT NULL PRIMARY KEY,
         username     TEXT UNIQUE NOT NULL CHECK (username == LOWER(username)),
         displayName  TEXT,
         firstName    TEXT        NOT NULL,

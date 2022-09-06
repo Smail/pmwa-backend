@@ -8,18 +8,12 @@ import { Task } from "@models/Task";
 
 export class TagsRepositorySQLite extends SQLiteTable implements ITagsRepository {
   public static readonly tableSchema: string =
-    `CREATE TABLE IF NOT EXISTS tags (
-        tagId      TEXT UNIQUE NOT NULL,
-        taskId     TEXT        NOT NULL,
-        name       TEXT        NOT NULL,
-        color      TEXT        NOT NULL DEFAULT 'red',
-        created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (tagId, taskId),
-        FOREIGN KEY (taskId) REFERENCES tasks (taskId)
-    )
-
-    -- TODO: Make name UNIQUE for each user, but this requires a refactoring,
-    --  because it would currently prevent another user from creating the same tag. Do the same for tasks`;
+    `CREATE TABLE IF NOT EXISTS Tags (
+        tagId      TEXT      NOT NULL PRIMARY KEY,
+        name       TEXT      NOT NULL,
+        color      TEXT      NOT NULL DEFAULT 'red',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`;
 
   public constructor(db: sqlite3) {
     super(db, TagsRepositorySQLite.tableSchema);

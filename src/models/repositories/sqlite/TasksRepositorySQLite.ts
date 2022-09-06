@@ -8,15 +8,12 @@ import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
 export class TasksRepositorySQLite extends SQLiteTable implements ITasksRepository {
   public static readonly tableSchema: string =
-    `CREATE TABLE IF NOT EXISTS tasks (
-        taskId     TEXT UNIQUE NOT NULL,
-        userId     TEXT        NOT NULL,
-        name       TEXT        NOT NULL,
+    `CREATE TABLE IF NOT EXISTS Tasks (
+        taskId     TEXT      NOT NULL PRIMARY KEY,
+        name       TEXT      NOT NULL,
         content    TEXT,
-        isDone     INT                  DEFAULT 0 NOT NULL CHECK (isDone == 0 OR isDone == 1),
-        created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (taskId, userId),
-        FOREIGN KEY (userId) REFERENCES users (userId) ON UPDATE CASCADE ON DELETE CASCADE
+        isDone     INT                DEFAULT 0 NOT NULL CHECK (isDone == 0 OR isDone == 1),
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`;
 
   public constructor(db: sqlite3) {
