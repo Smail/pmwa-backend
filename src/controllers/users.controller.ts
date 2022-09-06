@@ -8,7 +8,7 @@ import { AUTH_LEVEL_PRIVATE, AUTH_LEVEL_PUBLIC } from "@middleware/setAuthLevel"
 
 export const get_users = (req, res) => {
   res.send(Model.userRepository.readAll().map(user => user.public()));
-}
+};
 
 export const get_user = (req, res, next) => {
   const username: string = req.params.username;
