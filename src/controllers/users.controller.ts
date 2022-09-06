@@ -16,18 +16,18 @@ export const get_user = (req, res, next) => {
     requireAuthenticatedUser(req, res, next);
 
     const user: User = req.user;
-    if (user.id !== req.params.userId) {
+    if (user.username.toLowerCase() !== req.params.username.toLowerCase()) {
       return createError(StatusCodes.BAD_REQUEST,
-        "ID mismatch: The ID contained in the access token is not the same as the one provided in the URL");
+        "Username mismatch: The username contained in the access token is not the same as the one provided in the URL");
     }
 
     res.send(user.serializeToObject());
   } else if (req.authLevel === AUTH_LEVEL_PUBLIC) {
-    const userId = req.params.userId;
-    if (userId == null) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "No user ID in URL parameters"));
-    if (!User.isValidId(userId)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid ID syntax"));
+    const username = req.params.username;
+    if (username == null) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "No user ID in URL parameters"));
+    if (!User.isValidUsername(username)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid ID syntax"));
 
-    const user = Model.userRepository.read(userId);
+    const user = Model.userRepository.findUsername(username);
     if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User not found"));
 
     // Send a public version of the user object, that doesn't contain sensitive information

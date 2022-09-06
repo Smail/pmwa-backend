@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", setAuthLevel, requireAuthLevelPublic, get_users);
 
 /* GET user. Depending on if an access token is provided or not this returns public or private information */
-router.get("/:userId", setAuthLevel, get_user);
+router.get("/:username", setAuthLevel, get_user);
 
 /* UPDATE user */
 router.patch("/", setAuthLevel, requireAuthLevelPrivate, requireAccessToken,  requireAuthenticatedUser,
