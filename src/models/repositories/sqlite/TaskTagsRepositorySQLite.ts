@@ -49,10 +49,10 @@ export class TaskTagsRepositorySQLite extends SQLiteTable implements ITaskTagsRe
   }
 
   public update(tag: Tag): void {
-    throw new Error("Updating a relationship directly is forbidden");
+    throw new Error("Updating a relationship directly is forbidden. Updates will cascade automagically.");
   }
 
   public delete(tag: Tag): void {
-    throw new Error("Deleting a relationship directly is forbidden");
+    throw new Error("Deleting a relationship directly is forbidden. Deletions will cascade automagically.");
   }
 }

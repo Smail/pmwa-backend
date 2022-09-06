@@ -49,10 +49,10 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
   }
 
   public update(task: Task): void {
-    throw new Error("Updating a relationship directly is forbidden");
+    throw new Error("Updating a relationship directly is forbidden. Updates will cascade automagically.");
   }
 
   public delete(task: Task): void {
-    throw new Error("Deleting a relationship directly is forbidden");
+    throw new Error("Deleting a relationship directly is forbidden. Deletions will cascade automagically.");
   }
 }
