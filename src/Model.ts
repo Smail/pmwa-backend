@@ -27,7 +27,7 @@ process.on("SIGINT", () => process.exit(128 + 2));
 process.on("SIGTERM", () => process.exit(128 + 15));
 
 export class Model {
-  private static readonly db: sqlite3 = sqlite3(dbPath);
+  public static readonly db: sqlite3 = sqlite3(dbPath);
   public static readonly userRepository: IUserRepository = new UserRepositorySQLite(Model.db);
   public static readonly tasksRepository: ITasksRepository = new TasksRepositorySQLite(Model.db);
   public static readonly tagRepository: ITagsRepository = new TagsRepositorySQLite(Model.db);
