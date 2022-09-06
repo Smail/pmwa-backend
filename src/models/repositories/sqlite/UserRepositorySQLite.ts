@@ -10,8 +10,8 @@ import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 export class UserRepositorySQLite extends SQLiteTable implements IUserRepository {
   public static readonly tableSchema: string =
     `CREATE TABLE IF NOT EXISTS users (
-        uuid         TEXT PRIMARY KEY,
-        username     TEXT UNIQUE NOT NULL CHECK (username == lower(username)),
+        userId       TEXT PRIMARY KEY,
+        username     TEXT UNIQUE NOT NULL CHECK (username == LOWER(username)),
         displayName  TEXT,
         firstName    TEXT        NOT NULL,
         lastName     TEXT        NOT NULL,
@@ -25,7 +25,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
   }
 
   public readAll(): User[] {
-    const query = `SELECT uuid AS id, username, displayName, firstName, lastName, email FROM users`;
+    const query = `SELECT userId, username, displayName, firstName, lastName, email FROM users`;
     return this.db.prepare(query).all().map(row => ISerializable.deserialize(User, row));
   }
 
@@ -34,15 +34,15 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
   }
 
   public create(user: User): void {
-    const query = `INSERT INTO users(uuid, username, displayName, firstName, lastName, email, passwordHash)
-                   VALUES ($userId, lower($username), $displayName, $firstName, $lastName, $email, $passwordHash)`;
+    const query = `INSERT INTO users(userId, username, displayName, firstName, lastName, email, passwordHash)
+                   VALUES ($userId, LOWER($username), $displayName, $firstName, $lastName, $email, $passwordHash)`;
     runTransaction(this.db, query, user.serializeToObject());
   }
 
   public read(userId: string): User {
-    const query = `SELECT uuid AS userId, username, displayName, firstName, lastName, email
+    const query = `SELECT userId, username, displayName, firstName, lastName, email
                    FROM users
-                   WHERE uuid = $userId`;
+                   WHERE userId = $userId`;
     const row = this.db.prepare(query).get({ userId: userId });
     if (row == null) throw new Error("User not found: no such ID");
 
@@ -51,30 +51,30 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
 
   public update(user: User): void {
     const query = `UPDATE users
-                   SET username     = lower($username),
+                   SET username     = LOWER($username),
                        displayName  = $displayName,
                        firstName    = $firstName,
                        lastName     = $lastName,
                        passwordHash = $passwordHash,
                        email        = $email
-                   WHERE uuid = $userId`;
+                   WHERE userId = $userId`;
     runTransaction(this.db, query, user.serializeToObject());
   }
 
   public delete(user: User): void {
-    const query = `DELETE FROM users WHERE uuid = $userId`;
+    const query = `DELETE FROM users WHERE userId = $userId`;
     runTransaction(this.db, query, { userId: user.id });
   }
 
   public findUsername(username: string): User | null {
-    const query = `SELECT uuid AS id FROM users WHERE username = lower($username)`;
+    const query = `SELECT userId FROM users WHERE username = LOWER($username)`;
     const row = this.db.prepare(query).get({ username: username });
 
     return (row != null) ? this.read(row.id) : null;
   }
 
   public checkPassword(user: User, password: string, comparePasswords: (password, passwordHash) => boolean): boolean {
-    const query = `SELECT passwordHash FROM users WHERE uuid = $userId`;
+    const query = `SELECT passwordHash FROM users WHERE userId = $userId`;
     const row = this.db.prepare(query).get({ userId: user.id });
     if (row.length === 0) throw new Error("User not found: no such ID");
 

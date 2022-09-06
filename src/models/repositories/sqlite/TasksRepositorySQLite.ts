@@ -9,14 +9,14 @@ import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 export class TasksRepositorySQLite extends SQLiteTable implements ITasksRepository {
   public static readonly tableSchema: string =
     `CREATE TABLE IF NOT EXISTS tasks (
-        uuid       TEXT UNIQUE NOT NULL,
-        userUuid   TEXT        NOT NULL,
+        taskId     TEXT UNIQUE NOT NULL,
+        userId     TEXT        NOT NULL,
         name       TEXT        NOT NULL,
         content    TEXT,
-        isDone     INT                  DEFAULT 0 NOT NULL CHECK ( isDone == 0 OR isDone == 1),
+        isDone     INT                  DEFAULT 0 NOT NULL CHECK (isDone == 0 OR isDone == 1),
         created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (uuid, userUuid),
-        FOREIGN KEY (userUuid) REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE
+        PRIMARY KEY (taskId, userId),
+        FOREIGN KEY (userId) REFERENCES users (userId) ON UPDATE CASCADE ON DELETE CASCADE
     )`;
 
   public constructor(db: sqlite3) {
@@ -24,42 +24,40 @@ export class TasksRepositorySQLite extends SQLiteTable implements ITasksReposito
   }
 
   public create(task: Task): void {
-    const query = `INSERT INTO tasks(uuid, userUuid, name, content, isDone)
+    const query = `INSERT INTO tasks(taskId, userUuid, name, content, isDone)
                    VALUES ($taskId, $userId, $taskName, $taskContent, $isTaskDone)`;
     runTransaction(this.db, query, task.serializeToObject());
   }
 
   public read(taskId: string): Task | null {
-    const query = `SELECT uuid AS taskId, userUuid AS userId, name, content, isDone FROM tasks WHERE uuid = $taskId`;
+    const query = `SELECT taskId, userId, name, content, isDone FROM tasks WHERE taskId = $taskId`;
     const row = this.db.prepare(query).get({ taskId: taskId });
 
     return (row != null) ? ISerializable.deserialize(Task, row) : null;
   }
 
   public readAll(): Task[] {
-    const query = `SELECT uuid AS taskId, userUuid AS userId, name, content, isDone FROM tasks`;
+    const query = `SELECT taskId, userId, name, content, isDone FROM tasks`;
     return this.db.prepare(query).all().map(row => ISerializable.deserialize(Task, row));
   }
 
   public update(task: Task): void {
     const query = `UPDATE tasks
-                   SET uuid     = $username,
-                       userUuid = $displayName,
-                       name     = $firstName,
-                       content  = $lastName,
-                       isDone   = $passwordHash
-                   WHERE uuid = $taskId
-                     AND userUuid = $userId`;
+                   SET name    = $name,
+                       content = $content,
+                       isDone  = $isDone
+                   WHERE taskId = $taskId
+                     AND userId = $userId`;
     runTransaction(this.db, query, task.serializeToObject());
   }
 
   public delete(task: Task): void {
-    const query = `DELETE FROM tasks WHERE uuid = $taskId AND userUuid = $userId`;
+    const query = `DELETE FROM tasks WHERE taskId = $taskId AND userId = $userId`;
     runTransaction(this.db, query, { taskId: task.id, userId: task.userId });
   }
 
   public getUserTasks(userId: User) {
-    const query = `SELECT uuid AS taskId, userUuid AS userId, name, content, isDone FROM tasks WHERE userId = $userId`;
+    const query = `SELECT taskId, userId, name, content, isDone FROM tasks WHERE userId = $userId`;
     return this.db.prepare(query).all({ userId: userId }).map(row => ISerializable.deserialize(Task, row));
   }
 }
