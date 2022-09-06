@@ -6,7 +6,7 @@ import { requireAccessToken } from "@middleware/requireAccessToken";
 import { User } from "@models/User";
 import { AUTH_LEVEL_PRIVATE, AUTH_LEVEL_PUBLIC } from "@middleware/setAuthLevel";
 
-export const get_all_users = (req, res) => {
+export const get_users = (req, res) => {
   res.send(Model.userRepository.readAll().map(user => user.public()));
 }
 
