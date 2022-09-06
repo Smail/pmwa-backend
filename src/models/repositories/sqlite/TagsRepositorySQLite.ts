@@ -4,7 +4,6 @@ import { Tag } from "@models/Tag";
 import * as ISerializable from "@models/repositories/ISerializable";
 import { runTransaction } from "../../../util/db/runTransaction";
 import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
-import { Task } from "@models/Task";
 
 export class TagsRepositorySQLite extends SQLiteTable implements ITagsRepository {
   public static readonly tableSchema: string =
@@ -45,10 +44,5 @@ export class TagsRepositorySQLite extends SQLiteTable implements ITagsRepository
   public delete(tag: Tag): void {
     const query = `DELETE FROM Tags WHERE tagId = $tagId`;
     runTransaction(this.db, query, { tagId: tag.id });
-  }
-
-  public getTaskTags(task: Task): Tag[] {
-    const query = `SELECT tagId, taskId, name, color FROM tags WHERE taskId = $taskId`;
-    return this.db.prepare(query).all({ taskId: task.id }).map(row => ISerializable.deserialize(Tag, row));
   }
 }
