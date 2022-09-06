@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { ISerializable } from "@models/repositories/ISerializable";
 import { v4 as uuidV4, validate as isValidUuid } from "uuid";
-import { Token, UserAccessTokenPayload } from "@models/Token";
+import { Token, UserAccessTokenPayload, UserRefreshTokenPayload } from "@models/Token";
 import { IUserRecord } from "@models/IUserRecord";
 
 export class User implements ISerializable {
@@ -109,9 +109,9 @@ export class User implements ISerializable {
   }
 
   public createRefreshToken(): Token {
-    if (!process.env.REFRESH_TOKEN_PASSPHRASE) throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in .env");
+    if (!process.env.REFRESH_TOKEN_PASSPHRASE) throw new Error("Missing key REFRESH_TOKEN_PASSPHRASE in environment variables");
     const token = new Token();
-    const payload = new UserAccessTokenPayload(this.id);
+    const payload = new UserRefreshTokenPayload(this.id);
 
     payload.assignUniqueId();
     token.lifetimeDuration = 60 * 60 * 24 * 14; // 2 weeks

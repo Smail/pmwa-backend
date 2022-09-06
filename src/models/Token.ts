@@ -56,6 +56,10 @@ export class UserRefreshTokenPayload extends AuthTokenPayload implements IUserTo
     if (!User.isValidId(userId)) throw new Error("Invalid user ID");
     this.userId = userId;
   }
+
+  public assignUniqueId(): void {
+    this.tokenId = uuidV4();
+  }
 }
 
 export class Token {
