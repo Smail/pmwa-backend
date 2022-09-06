@@ -9,13 +9,10 @@ import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
 export class RefreshTokenRepositorySQLite extends SQLiteTable implements IRefreshTokenRepository {
   public static readonly tableSchema: string =
-    `CREATE TABLE IF NOT EXISTS refreshTokens (
-        uuid        TEXT UNIQUE NOT NULL,
-        userUuid    TEXT        NOT NULL,
+    `CREATE TABLE IF NOT EXISTS RefreshTokens (
+        tokenId     TEXT        NOT NULL PRIMARY KEY,
         tokenCipher TEXT UNIQUE NOT NULL,
-        created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (uuid, userUuid),
-        FOREIGN KEY (userUuid) REFERENCES users (uuid)
+        created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`;
 
   public constructor(db: sqlite3) {
@@ -37,14 +34,14 @@ export class RefreshTokenRepositorySQLite extends SQLiteTable implements IRefres
     if (token.payload == null) throw new Error("Token payload is null");
     if (!token.payload.hasOwnProperty("userId")) throw new Error("Missing user ID in token payload");
     if (!User.isValidId(token.payload["userId"])) throw new Error("Invalid user ID");
-    const query = `INSERT INTO refreshTokens (uuid, tokenCipher, userUuid) VALUES ($tokenId, $tokenCipher, $userId)`;
+    const query = `INSERT INTO RefreshTokens (tokenId, tokenCipher) VALUES ($tokenId, $tokenCipher)`;
     const tokenCipher = RefreshTokenRepositorySQLite.encryptToken(token.encoding);
 
-    runTransaction(this.db, query, { tokenId: token.id, userId: token.payload["userId"], tokenCipher: tokenCipher });
+    runTransaction(this.db, query, { tokenId: token.id, tokenCipher: tokenCipher });
   }
 
   public read(tokenId: string): Token | null {
-    const query = `SELECT uuid AS taskId, userUuid AS userId, tokenCipher FROM refreshTokens WHERE uuid = $tokenId`;
+    const query = `SELECT * FROM RefreshTokens WHERE tokenId = $tokenId`;
     const row = this.db.prepare(query).get({ tokenId: tokenId });
 
     if (row == null) return null;
@@ -54,7 +51,7 @@ export class RefreshTokenRepositorySQLite extends SQLiteTable implements IRefres
   }
 
   public readAll(): Token[] {
-    const query = `SELECT uuid AS taskId, userUuid AS userId, tokenCipher FROM refreshTokens`;
+    const query = `SELECT * FROM RefreshTokens`;
     return this.db.prepare(query).all().map(row => ISerializable.deserialize(Token, row));
   }
 
@@ -63,7 +60,7 @@ export class RefreshTokenRepositorySQLite extends SQLiteTable implements IRefres
   }
 
   public delete(token: Token): void {
-    const query = `DELETE FROM refreshTokens WHERE uuid = $id`;
-    runTransaction(this.db, query, { id: token.id });
+    const query = `DELETE FROM RefreshTokens WHERE tokenId = $tokenId`;
+    runTransaction(this.db, query, { tokenId: token.id });
   }
 }

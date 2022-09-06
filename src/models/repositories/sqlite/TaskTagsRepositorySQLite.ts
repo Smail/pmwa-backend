@@ -31,7 +31,7 @@ export class TaskTagsRepositorySQLite extends SQLiteTable implements ITaskTagsRe
   public read(tagId: string): Tag | null {
     const query = `SELECT *
                    FROM Tags
-                            JOIN TaskTags ON Tags.taskId = TaskTags.taskId
+                            JOIN TaskTags ON Tags.tagId = TaskTags.tagId
                    WHERE TaskTags.taskId = $taskId
                      AND TaskTags.tagId = $tagId`;
     const row = this.db.perpare(query).get({ taskId: this.task.id, tagId: tagId });
@@ -42,7 +42,7 @@ export class TaskTagsRepositorySQLite extends SQLiteTable implements ITaskTagsRe
   public readAll(): Tag[] {
     const query = `SELECT *
                    FROM Tags
-                            JOIN TaskTags ON Tags.taskId = TaskTags.taskId
+                            JOIN TaskTags ON Tags.tagId = TaskTags.tagId
                    WHERE TaskTags.taskId = $taskId`;
     return this.db.prepare(query)
       .all({ taskId: this.task.id })
