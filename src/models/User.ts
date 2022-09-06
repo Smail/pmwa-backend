@@ -96,7 +96,7 @@ export class User implements ISerializable {
   }
 
   public createAccessToken(): Token {
-    if (!process.env.ACCESS_TOKEN_PASSPHRASE) throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in .env");
+    if (!process.env.ACCESS_TOKEN_PASSPHRASE) throw new Error("Missing key ACCESS_TOKEN_PASSPHRASE in environment variables");
     const token = new Token();
     const payload = new UserAccessTokenPayload(this.id);
 
