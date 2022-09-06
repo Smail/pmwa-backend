@@ -24,15 +24,6 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
     super(db, UserRepositorySQLite.tableSchema);
   }
 
-  public readAll(): User[] {
-    const query = `SELECT userId, username, displayName, firstName, lastName, email FROM users`;
-    return this.db.prepare(query).all().map(row => ISerializable.deserialize(User, row));
-  }
-
-  public getTokens(user: User, refreshTokenRepository: IRefreshTokenRepository): Token[] {
-    throw new Error("Method not implemented.");
-  }
-
   public create(user: User): void {
     const query = `INSERT INTO users(userId, username, displayName, firstName, lastName, email, passwordHash)
                    VALUES ($userId, LOWER($username), $displayName, $firstName, $lastName, $email, $passwordHash)`;
@@ -47,6 +38,11 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
     if (row == null) throw new Error("User not found: no such ID");
 
     return ISerializable.deserialize(User, row);
+  }
+
+  public readAll(): User[] {
+    const query = `SELECT userId, username, displayName, firstName, lastName, email FROM users`;
+    return this.db.prepare(query).all().map(row => ISerializable.deserialize(User, row));
   }
 
   public update(user: User): void {
@@ -79,5 +75,9 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
     if (row.length === 0) throw new Error("User not found: no such ID");
 
     return comparePasswords(password, row.passwordHash);
+  }
+
+  public getTokens(user: User, refreshTokenRepository: IRefreshTokenRepository): Token[] {
+    throw new Error("Method not implemented.");
   }
 }
