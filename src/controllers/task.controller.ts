@@ -17,19 +17,27 @@ export const get_task = (req: { user: User; params: { taskId: string } }, res) =
   res.send(task);
 };
 
-export const create_task = (req: { user: User; task: ITaskRecord }, res) => {
-  const userTasksRepository = new UserTasksRepositorySQLite(Model.db, req.user);
-  const task: Task = new Task();
+export const create_task = (req: { user: User; body: { name: string, content: string | null, isDone: boolean | null } }, res) => {
+  if (req.body.name == null) throw createError(StatusCodes.BAD_REQUEST, "Missing required argument 'name'");
 
-  task.assignUniqueId();
-  task.userId = req.user.id;
-  task.name = req.task.name;
-  task.content = req.task.content;
-  task.isDone = req.task.isDone;
+  if (req.body.name != null && typeof req.body.name !== "string") {
+    throw createError(StatusCodes.BAD_REQUEST, `Invalid type: name is not a string`);
+  }
+  if (req.body.content != null && typeof req.body.content !== "string") {
+    throw createError(StatusCodes.BAD_REQUEST, `Invalid type: content is not a string`);
+  }
+  if (req.body.isDone != null && typeof req.body.isDone !== "boolean") {
+    throw createError(StatusCodes.BAD_REQUEST, `Invalid type: isDone is not a boolean`);
+  }
+
+  const task = new Task();
+  task.name = req.body.name;
+  if (req.body.content != null) task.content = req.body.content;
+  if (req.body.isDone != null) task.isDone = req.body.isDone;
 
   Model.tasksRepository.create(task);
-  userTasksRepository.create(task);
-  res.status(StatusCodes.CREATED).send({ uuid: task.id });
+  new UserTasksRepositorySQLite(Model.db, req.user).create(task);
+  res.status(StatusCodes.CREATED).send({ taskId: task.id });
 };
 
 export const update_task = (req: {
