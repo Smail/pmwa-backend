@@ -41,7 +41,7 @@ export const get_user = (req, res, next) => {
     // Send a public version of the user object, that doesn't contain sensitive information
     res.send(user.public());
   } else {
-    return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, `Unknown auth level: ${req.authLevel}`));
+    throw createError(StatusCodes.INTERNAL_SERVER_ERROR, `Unknown auth level: ${req.authLevel}`);
   }
 };
 
