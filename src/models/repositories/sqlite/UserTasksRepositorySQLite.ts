@@ -35,7 +35,7 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
                      AND UserTasks.userId = $userId`;
     const row = this.db.prepare(query).get({ userId: this.user.id, taskId: taskId });
 
-    return (row != null) ? ISerializable.deserialize(Task, row) : null;
+    return (row != null) ? ISerializable.deserialize(Task, { ...row, isDone: row.isDone === 1 }) : null;
   }
 
   public readAll(): Task[] {
@@ -45,7 +45,7 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
                    WHERE UserTasks.userId = $userId`;
     return this.db.prepare(query)
       .all({ userId: this.user.id })
-      .map(row => ISerializable.deserialize(Task, row));
+      .map(row => ISerializable.deserialize(Task, { ...row, isDone: row.isDone == 1 }));
   }
 
   public update(task: Task): void {
