@@ -32,7 +32,11 @@ export const create_task = (req: { user: User; task: ITaskRecord }, res) => {
   res.status(StatusCodes.CREATED).send({ uuid: task.id });
 };
 
-export const update_task = (req: { body: ITaskRecord; user: User; params: { taskId: string } }, res) => {
+export const update_task = (req: {
+  body: {
+    name: string | null, content: string | null, isDone: boolean | null,
+  }; user: User; params: { taskId: string }
+}, res) => {
   const { name, content, isDone } = req.body;
   const userTasksRepository = new UserTasksRepositorySQLite(Model.db, req.user);
   const task = userTasksRepository.read(req.params.taskId);
