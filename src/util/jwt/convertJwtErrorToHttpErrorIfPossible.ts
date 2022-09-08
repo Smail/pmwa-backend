@@ -11,6 +11,8 @@ export function convertJwtErrorToHttpErrorIfPossible(error): Error {
       errMsg = "Invalid token";
     } else if (errMsg.toLowerCase() === "jwt expired") {
       errMsg = "JWT expired";
+    } else if (errMsg.toLowerCase() === "invalid signature") {
+      errMsg = "Invalid signature";
     }
 
     // Rethrow possible errors like "jwt expired" as a NetworkError with a proper HTTP code, i.e., not simply 500.
