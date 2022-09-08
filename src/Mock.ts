@@ -64,7 +64,7 @@ if (process.env.DEBUG) {
     const tags = [faker.word.noun(), faker.word.noun(), faker.word.noun()];
     for (let i = 0; i < 10; i++) {
       const task = new Task();
-      task.assignUniqueId(); // TODO Maybe repo should generate ids
+
       task.name = faker.hacker.phrase();
       task.content = faker.hacker.phrase();
       debug("Task created: " + JSON.stringify(task));
