@@ -15,6 +15,7 @@ export class Task implements ISerializable {
   public static throwIfInvalid({ taskId, name, content, isDone }: ITaskRecord): void {
     if (!Task.isValidId(taskId)) throw new Error(`Invalid argument: taskId = ${taskId}`);
     if (name == null) throw new Error(`Invalid argument: name is null`);
+    if (typeof name !== "string") throw new Error(`Invalid argument type: name is not a string`);
     if (content != null && typeof content !== "string") throw new Error(`Invalid argument: content is not a string or null`);
     if (isDone == null) throw new Error(`Invalid argument: isDone is null`);
     if (typeof isDone !== "boolean") throw new Error(`Invalid argument: isDone is not of type boolean`);
