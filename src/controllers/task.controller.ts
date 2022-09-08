@@ -7,7 +7,7 @@ import { User } from "@models/User";
 import { ITaskRecord } from "@models/ITaskRecord";
 
 export const get_tasks = (req: { user: User }, res) => {
-  res.status(StatusCodes.OK).send(new UserTasksRepositorySQLite(Model.db, req.user).readAll());
+  res.send(new UserTasksRepositorySQLite(Model.db, req.user).readAll());
 };
 
 export const get_task = (req: { user: User; params: { taskId: string } }, res) => {
