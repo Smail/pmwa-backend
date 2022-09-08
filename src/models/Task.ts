@@ -17,7 +17,7 @@ export class Task implements ISerializable {
     if (name == null) throw new Error(`Invalid argument: name is null`);
     if (content != null && typeof content !== "string") throw new Error(`Invalid argument: content is not a string or null`);
     if (isDone == null) throw new Error(`Invalid argument: isDone is null`);
-    if (typeof isDone === "boolean") throw new Error(`Invalid argument: isDone is not of type boolean`);
+    if (typeof isDone !== "boolean") throw new Error(`Invalid argument: isDone is not of type boolean`);
   }
 
   // TODO assign only if not null else default value
