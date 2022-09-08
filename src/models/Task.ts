@@ -1,10 +1,9 @@
 import { ISerializable } from "@models/repositories/ISerializable";
 import { v4 as uuidv4, validate as isValidUuid } from "uuid";
-import { User } from "@models/User";
 import { ITaskRecord } from "@models/ITaskRecord";
 
 export class Task implements ISerializable {
-  public id: string;
+  public id: string = uuidv4();
   public name: string;
   public content: string | null;
   public isDone: boolean = false;
@@ -19,10 +18,6 @@ export class Task implements ISerializable {
     if (content != null && typeof content !== "string") throw new Error(`Invalid argument: content is not a string or null`);
     if (isDone == null) throw new Error(`Invalid argument: isDone is null`);
     if (typeof isDone === "boolean") throw new Error(`Invalid argument: isDone is not of type boolean`);
-  }
-
-  public assignUniqueId(): void {
-    this.id = uuidv4();
   }
 
   // TODO assign only if not null else default value
