@@ -24,8 +24,8 @@ export const get_user = (req, res, next) => {
           if (err != null) throw err;
           const user: User = req.user;
           if (user.username.toLowerCase() !== username.toLowerCase()) {
-            return createError(StatusCodes.BAD_REQUEST,
-              "Username mismatch: The username contained in the access token is not the same as the one provided in the URL");
+            return next(createError(StatusCodes.FORBIDDEN,
+              "Username mismatch: The username contained in the access token is not the same as the one provided in the URL"));
           }
 
           res.send(user.serializeToObject());
