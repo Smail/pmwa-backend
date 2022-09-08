@@ -4,7 +4,6 @@ import { Task } from "@models/Task";
 import { Model } from "../Model";
 import { UserTasksRepositorySQLite } from "@models/repositories/sqlite/UserTasksRepositorySQLite";
 import { User } from "@models/User";
-import { ITaskRecord } from "@models/ITaskRecord";
 
 export const get_tasks = (req: { user: User }, res) => {
   res.send(new UserTasksRepositorySQLite(Model.db, req.user).readAll());
