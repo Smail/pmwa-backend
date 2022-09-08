@@ -33,7 +33,7 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
                             JOIN UserTasks ON Tasks.taskId = UserTasks.taskId
                    WHERE UserTasks.taskId = $taskId
                      AND UserTasks.userId = $userId`;
-    const row = this.db.perpare(query).get({ userId: this.user.id, taskId: taskId });
+    const row = this.db.prepare(query).get({ userId: this.user.id, taskId: taskId });
 
     return (row != null) ? ISerializable.deserialize(Task, row) : null;
   }
