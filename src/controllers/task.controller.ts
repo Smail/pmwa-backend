@@ -51,6 +51,6 @@ export const delete_task = (req: { user: User; params: { taskId: string } }, res
   const task = userTasksRepository.read(req.params.taskId);
   if (task == null) throw createError(StatusCodes.NOT_FOUND, "Task not found");
 
-  userTasksRepository.delete(task);
+  Model.tasksRepository.delete(task);
   res.sendStatus(StatusCodes.OK);
 };
