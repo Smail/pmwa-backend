@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import createError from "http-errors";
 import { StatusCodes } from "http-status-codes";
 import { decodeAccessToken } from "../util/jwt/decodeAccessToken";
@@ -18,6 +19,8 @@ export function requireAccessToken(req, res, next) {
 
     next();
   } catch (error) {
-    throw convertJwtErrorToHttpErrorIfPossible(error);
+    if (error instanceof jwt.JsonWebTokenError) throw convertJwtErrorToHttpErrorIfPossible(error);
+    if (error instanceof SyntaxError) throw createError(StatusCodes.BAD_REQUEST, error.message);
+    throw error;
   }
 }
