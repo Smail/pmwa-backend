@@ -60,5 +60,5 @@ export const update_user = (req, res, next) => {
   if (password) user.password = password;
 
   Model.userRepository.update(user);
-  res.sendStatus(StatusCodes.OK);
+  res.sendStatus(StatusCodes.NO_CONTENT);
 };
