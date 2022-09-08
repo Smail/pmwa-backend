@@ -4,12 +4,11 @@ import { User } from "@models/User";
 import { ITaskRecord } from "@models/ITaskRecord";
 
 export class Task implements ISerializable {
-  // TODO default values
   public id: string;
   public userId: string;
   public name: string;
   public content: string | null;
-  public isDone: boolean;
+  public isDone: boolean = false;
 
   public static isValidId(taskId: string) {
     return isValidUuid(taskId);
