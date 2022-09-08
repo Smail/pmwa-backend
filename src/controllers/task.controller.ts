@@ -43,7 +43,7 @@ export const update_task = (req: { body: ITaskRecord; user: User; params: { task
   if (isDone) task.isDone = isDone;
 
   Model.tasksRepository.update(task);
-  res.sendStatus(StatusCodes.OK);
+  res.sendStatus(StatusCodes.NO_CONTENT);
 };
 
 export const delete_task = (req: { user: User; params: { taskId: string } }, res) => {
@@ -52,5 +52,5 @@ export const delete_task = (req: { user: User; params: { taskId: string } }, res
   if (task == null) throw createError(StatusCodes.NOT_FOUND, "Task not found");
 
   Model.tasksRepository.delete(task);
-  res.sendStatus(StatusCodes.OK);
+  res.sendStatus(StatusCodes.NO_CONTENT);
 };
