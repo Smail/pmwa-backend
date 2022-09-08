@@ -11,7 +11,10 @@ export const get_tasks = (req: { user: User }, res) => {
 };
 
 export const get_task = (req: { user: User; params: { taskId: string } }, res) => {
-  res.status(StatusCodes.OK).send(new UserTasksRepositorySQLite(Model.db, req.user).read(req.params.taskId));
+  const task = new UserTasksRepositorySQLite(Model.db, req.user).read(req.params.taskId);
+  if (task == null) throw createError(StatusCodes.NOT_FOUND, "Unknown task ID");
+
+  res.send(task);
 };
 
 export const create_task = (req: { user: User; task: ITaskRecord }, res) => {
