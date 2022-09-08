@@ -48,7 +48,7 @@ function createUser(req, next): User {
 export const sign_up_user = (req, res, next) => {
   try {
     const user = createUser(req, next);
-    res.status(StatusCodes.CREATED).send({ userId: user.id, ...createAccessAndRefreshToken(user) });
+    res.sendStatus(StatusCodes.CREATED);
   } catch (error) {
     next(error);
   }
