@@ -40,6 +40,7 @@ function createUser(req, next): User {
   user.email = email;
   user.password = password;
 
+  // TODO check if email already exists
   Model.userRepository.create(user);
 
   return user;
