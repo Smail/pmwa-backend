@@ -38,11 +38,11 @@ export class TagsRepositorySQLite extends SQLiteTable implements ITagsRepository
 
   public update(tag: Tag): void {
     const query = `UPDATE Tags SET name = $name, color = $color WHERE tagId = $tagId`;
-    runTransaction(this.db, query, { tagId: tag.id });
+    runTransaction(this.db, query, { tagId: tag.tagId });
   }
 
   public delete(tag: Tag): void {
     const query = `DELETE FROM Tags WHERE tagId = $tagId`;
-    runTransaction(this.db, query, { tagId: tag.id });
+    runTransaction(this.db, query, { tagId: tag.tagId });
   }
 }
