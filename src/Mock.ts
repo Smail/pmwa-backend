@@ -75,13 +75,17 @@ if (process.env.DEBUG) {
 
       // Create fake tags for the just now created task
       for (let j = 0; j < Math.round(5 * Math.random()); j++) {
-        const tag = new Tag();
+        try {
+          const tag = new Tag();
 
-        tag.name = tags[Math.floor(tags.length * Math.random())];
-        tag.color = (Math.random() < 0.8) ? faker.internet.color() : null;
-        Model.tagRepository.create(tag);
-        new TaskTagsRepositorySQLite(Model.db, task).create(tag);
-        debug("Tag created: " + JSON.stringify(tag));
+          tag.name = tags[Math.floor(tags.length * Math.random())];
+          tag.color = (Math.random() < 0.8) ? faker.internet.color() : null;
+          Model.tagRepository.create(tag);
+          new TaskTagsRepositorySQLite(Model.db, task).create(tag);
+          debug("Tag created: " + JSON.stringify(tag));
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
   })();
