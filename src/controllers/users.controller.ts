@@ -39,19 +39,46 @@ export const get_user = (req, res, next) => {
   }
 };
 
-export const update_user = (req, res, next) => {
-  const { username, firstName, lastName, email, password } = req.body;
+export const update_user = (req: {
+  body: { username?: string; displayName?: string, firstName?: string; lastName?: string; email?: string; password?: string; };
+  params: { username: string }; accessTokenContent: { userId: string }
+}, res, next) => {
+  const { username, displayName, firstName, lastName, email, password } = req.body;
   const userId = req.accessTokenContent.userId;
+  if (!User.isValidId(userId)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: userId = ${userId}`));
+
   const user = Model.userRepository.read(userId);
   if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User ID not found"));
-  if (user.id !== userId) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "Token ID mismatch"));
+  if (user.id !== userId) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "User ID mismatch"));
+  if (user.username != req.params.username) {
+    return next(createError(StatusCodes.BAD_REQUEST,
+      "Mismatch: Username obtained via the user ID doesn't match the URL parameter"));
+  }
 
-  // TODO validity checks
-  if (username) user.username = username;
-  if (firstName) user.firstName = firstName;
-  if (lastName) user.lastName = lastName;
-  if (email) user.email = email;
-  if (password) user.password = password;
+  if (username) {
+    if (!User.isValidUsername(username)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: username = ${username}`));
+    user.username = username;
+  }
+  if (displayName) {
+    if (!User.isValidDisplayName(displayName)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: displayName = ${displayName}`));
+    user.displayName = displayName;
+  }
+  if (firstName) {
+    if (!User.isValidNaturalName(firstName)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: firstName = ${firstName}`));
+    user.firstName = firstName;
+  }
+  if (lastName) {
+    if (!User.isValidNaturalName(lastName)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: lastName = ${lastName}`));
+    user.lastName = lastName;
+  }
+  if (email) {
+    if (!User.isValidEmail(email)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: email = ${email}`));
+    user.email = email;
+  }
+  if (password) {
+    if (!User.isValidPassword(password)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: password`));
+    user.password = password;
+  }
 
   Model.userRepository.update(user);
   res.sendStatus(StatusCodes.NO_CONTENT);
