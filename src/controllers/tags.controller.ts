@@ -9,7 +9,7 @@ export const get_tags = (req, res) => {
   const task = userTasksRepository.read(req.params.taskId);
   if (task == null) throw createError(StatusCodes.NOT_FOUND, "Task not found");
 
-  res.status(StatusCodes.OK).send(new TaskTagsRepositorySQLite(Model.db, task).readAll());
+  res.send(new TaskTagsRepositorySQLite(Model.db, task).readAll());
 };
 
 export const get_tag = (req, res) => {
@@ -17,5 +17,5 @@ export const get_tag = (req, res) => {
   const task = userTasksRepository.read(req.params.taskId);
   if (task == null) throw createError(StatusCodes.NOT_FOUND, "Task not found");
 
-  res.status(StatusCodes.OK).send(new TaskTagsRepositorySQLite(Model.db, task).read(req.params.taskId));
+  res.send(new TaskTagsRepositorySQLite(Model.db, task).read(req.params.taskId));
 };
