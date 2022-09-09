@@ -15,7 +15,7 @@ router.get("/", setAuthLevel, requireAuthLevelPublic, get_users);
 router.get("/:username", setAuthLevel, get_user);
 
 /* UPDATE user */
-router.patch("/", setAuthLevel, requireAuthLevelPrivate, requireAccessToken,  requireAuthenticatedUser,
+router.patch("/:username", setAuthLevel, requireAuthLevelPrivate, requireAccessToken,  requireAuthenticatedUser,
   update_user);
 
 export { router };
