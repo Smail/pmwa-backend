@@ -5,6 +5,8 @@ import { User } from "@models/User";
 import { Task } from "@models/Task";
 import { Tag } from "@models/Tag";
 import fs from "fs";
+import { UserTasksRepositorySQLite } from "@models/repositories/sqlite/UserTasksRepositorySQLite";
+import { TaskTagsRepositorySQLite } from "@models/repositories/sqlite/TaskTagsRepositorySQLite";
 
 if (process.env.DEBUG) {
   const debug = Debug("backend:mock");
@@ -67,14 +69,18 @@ if (process.env.DEBUG) {
 
       task.name = faker.hacker.phrase();
       task.content = faker.hacker.phrase();
+      Model.tasksRepository.create(task);
+      new UserTasksRepositorySQLite(Model.db, smail).create(task);
       debug("Task created: " + JSON.stringify(task));
 
       // Create fake tags for the just now created task
       for (let j = 0; j < Math.round(5 * Math.random()); j++) {
         const tag = new Tag();
-        tag.assignUniqueId();
+
         tag.name = tags[Math.floor(tags.length * Math.random())];
         tag.color = (Math.random() < 0.8) ? faker.internet.color() : null;
+        Model.tagRepository.create(tag);
+        new TaskTagsRepositorySQLite(Model.db, task).create(tag);
         debug("Tag created: " + JSON.stringify(tag));
       }
     }
