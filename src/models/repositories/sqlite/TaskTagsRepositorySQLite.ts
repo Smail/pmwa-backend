@@ -24,7 +24,7 @@ export class TaskTagsRepositorySQLite extends SQLiteTable implements ITaskTagsRe
 
   public create(tag: Tag): void {
     const query = `INSERT INTO TaskTags(taskId, tagId) VALUES ($taskId, $tagId)`;
-    runTransaction(this.db, query, { taskId: this.task.id, tagId: tag.id });
+    runTransaction(this.db, query, { taskId: this.task.id, tagId: tag.tagId });
   }
 
   public read(tagId: string): Tag | null {
