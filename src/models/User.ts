@@ -54,7 +54,7 @@ export class User implements ISerializable {
 
   public static isValidNaturalName(name: string): boolean {
     // TODO add support for non ascii chars
-    return /^[a-z]+$/i.test(name || "");
+    return /^[a-z']+$/i.test(name || "");
   }
 
   public static throwIfInvalid({ userId, username, displayName, firstName, lastName, email }: IUserRecord): void {
