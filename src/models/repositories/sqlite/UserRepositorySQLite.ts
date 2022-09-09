@@ -44,12 +44,12 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
 
   public update(user: User): void {
     const query = `UPDATE Users
-                   SET username     = LOWER($username),
-                       displayName  = $displayName,
-                       firstName    = $firstName,
-                       lastName     = $lastName,
-                       passwordHash = $passwordHash,
-                       email        = $email
+                   SET username    = LOWER($username),
+                       displayName = $displayName,
+                       firstName   = $firstName,
+                       lastName    = $lastName,
+                       ${user.passwordHash != null ? "passwordHash = $passwordHash," : ""}
+                       email       = $email
                    WHERE userId = $userId`;
     runTransaction(this.db, query, user.serializeToObject());
   }
