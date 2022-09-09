@@ -45,7 +45,7 @@ export class TaskTagsRepositorySQLite extends SQLiteTable implements ITaskTagsRe
                    WHERE TaskTags.taskId = $taskId`;
     return this.db.prepare(query)
       .all({ taskId: this.task.id })
-      .map(row => ISerializable.deserialize(Task, row));
+      .map(row => ISerializable.deserialize(Tag, row));
   }
 
   public update(tag: Tag): void {
