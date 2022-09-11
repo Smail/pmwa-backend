@@ -11,7 +11,8 @@ export class TagsRepositorySQLite extends SQLiteTable implements ITagsRepository
         tagId      TEXT      NOT NULL PRIMARY KEY,
         name       TEXT      NOT NULL,
         color      TEXT      NOT NULL DEFAULT 'red',
-        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE (name, color) ON CONFLICT ROLLBACK
     )`;
 
   public constructor(db: sqlite3) {
