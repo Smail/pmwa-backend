@@ -41,10 +41,12 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
   }
 
   public readAll(): Task[] {
+    // TODO add created_at to Task
     const query = `SELECT *
                    FROM Tasks
                             JOIN UserTasks ON Tasks.taskId = UserTasks.taskId
-                   WHERE UserTasks.userId = $userId`;
+                   WHERE UserTasks.userId = $userId
+                   ORDER BY Tasks.created_at`;
     return this.db.prepare(query)
       .all({ userId: this.user.id })
       .map(row => TasksRepositorySQLite.deserializeFromSQLiteCompatible(row))
