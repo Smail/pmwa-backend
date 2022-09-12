@@ -5,6 +5,7 @@ import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 import { sqlite3 } from "better-sqlite3";
 import { runTransaction } from "../../../util/db/runTransaction";
 import * as ISerializable from "@models/repositories/ISerializable";
+import { TasksRepositorySQLite } from "@models/repositories/sqlite/TasksRepositorySQLite";
 
 export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasksRepository {
   public static readonly tableSchema: string =
@@ -35,7 +36,8 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
                      AND UserTasks.userId = $userId`;
     const row = this.db.prepare(query).get({ userId: this.user.id, taskId: taskId });
 
-    return (row != null) ? ISerializable.deserialize(Task, { ...row, isDone: row.isDone === 1 }) : null;
+    if (row == null) return null;
+    return ISerializable.deserialize(Task, TasksRepositorySQLite.deserializeFromSQLiteCompatible(row));
   }
 
   public readAll(): Task[] {
@@ -45,7 +47,8 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
                    WHERE UserTasks.userId = $userId`;
     return this.db.prepare(query)
       .all({ userId: this.user.id })
-      .map(row => ISerializable.deserialize(Task, { ...row, isDone: row.isDone == 1 }));
+      .map(row => TasksRepositorySQLite.deserializeFromSQLiteCompatible(row))
+      .map(row => ISerializable.deserialize(Task, TasksRepositorySQLite.deserializeFromSQLiteCompatible(row)));
   }
 
   public update(task: Task): void {
