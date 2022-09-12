@@ -1,6 +1,7 @@
 // Load environment variables
 require("dotenv").config();
 
+import { StatusCodes } from "http-status-codes";
 import createError from "http-errors";
 import express from "express";
 import path from "path";
@@ -33,7 +34,7 @@ app.use("/tags", tagsRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+  next(createError(StatusCodes.NOT_FOUND, "Oops! Could not find the requested resource :/"));
 });
 
 // Error handler
