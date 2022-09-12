@@ -72,7 +72,7 @@ export const update_task = (req: {
   user: User;
   params: { taskId: string };
   body: {
-    name: string | null, content: string | null, isDone: boolean | null,
+    name: string | null, content: string | null, isDone: string | boolean | null,
     startDate: string | null, endDate: string | null,
   };
 }, res) => {
@@ -90,13 +90,22 @@ export const update_task = (req: {
   if (content != null && typeof content !== "string") {
     throw createError(StatusCodes.BAD_REQUEST, `Invalid type: content is not a string`);
   }
-  if (isDone != null && typeof isDone !== "boolean") {
-    throw createError(StatusCodes.BAD_REQUEST, `Invalid type: isDone is not a boolean`);
+  if (isDone != null) {
+    if (typeof isDone === "string") {
+      if (isDone !== "true" && isDone !== "false") {
+        throw createError(StatusCodes.BAD_REQUEST, `Invalid type: Expected bool. isDone: ${typeof isDone} = ${isDone}`);
+      }
+      task.isDone = isDone === "true";
+    } else {
+      if (typeof isDone !== "boolean") {
+        throw createError(StatusCodes.BAD_REQUEST, `Invalid type: Expected bool. isDone: ${typeof isDone} = ${isDone}`);
+      }
+      task.isDone = isDone;
+    }
   }
 
   if (name != null) task.name = name;
   if (content != null) task.content = content;
-  if (isDone != null) task.isDone = isDone;
   task.startDate = parseDate(req.body.startDate);
   task.endDate = parseDate(req.body.endDate);
 
