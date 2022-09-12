@@ -23,7 +23,7 @@ client.test("Request executed successfully", function() {
 });
 %}
 
-### GET token
+### POST create token
 POST http://{{host}}/auth/sign-in
 Content-Type: application/json
 Accept: application/json
