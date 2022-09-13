@@ -81,7 +81,7 @@ export class TasksRepositorySQLite extends SQLiteTable implements ITasksReposito
   }
 
   public readAll(): Task[] {
-    const query = `SELECT * FROM Tasks`;
+    const query = `SELECT * FROM Tasks ORDER BY Tasks.created_at`;
     return this.db.prepare(query)
       .all()
       .map(row => TasksRepositorySQLite.deserializeFromSQLiteCompatible(row))
