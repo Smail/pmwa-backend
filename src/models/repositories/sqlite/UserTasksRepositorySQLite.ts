@@ -50,7 +50,7 @@ export class UserTasksRepositorySQLite extends SQLiteTable implements IUserTasks
     return this.db.prepare(query)
       .all({ userId: this.user.id })
       .map(row => TasksRepositorySQLite.deserializeFromSQLiteCompatible(row))
-      .map(row => ISerializable.deserialize(Task, TasksRepositorySQLite.deserializeFromSQLiteCompatible(row)));
+      .map(row => ISerializable.deserialize(Task, row));
   }
 
   public update(task: Task): void {
