@@ -27,8 +27,8 @@ export class TasksRepositorySQLite extends SQLiteTable implements ITasksReposito
     return {
       ...obj,
       isDone: obj.isDone ? 1 : 0,
-      startDate: obj.startDate != null ? obj.startDate.toJSON() : null,
-      endDate: obj.endDate != null ? obj.endDate.toJSON() : null,
+      startDate: obj.startDate != null ? obj.startDate.toISOString() : null,
+      endDate: obj.endDate != null ? obj.endDate.toISOString() : null,
     };
   }
 
