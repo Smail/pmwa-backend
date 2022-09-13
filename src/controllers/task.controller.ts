@@ -106,8 +106,19 @@ export const update_task = (req: {
 
   if (name != null) task.name = name;
   if (content != null) task.content = content;
-  task.startDate = parseDate(req.body.startDate);
-  task.endDate = parseDate(req.body.endDate);
+  if (req.body.startDate != null) task.startDate = parseDate(req.body.startDate);
+  if (req.body.endDate != null) task.endDate = parseDate(req.body.endDate);
+
+  if (task.startDate == null && task.endDate != null) {
+    throw createError(StatusCodes.BAD_REQUEST, `Inconsistent state: Passed an end date without a start date`);
+  }
+  if (task.endDate == null && task.startDate != null) {
+    throw createError(StatusCodes.BAD_REQUEST, `Inconsistent state: Passed a start date without an end date`);
+  }
+
+  // TODO check if end date is after start date also in create task, maybe make SQL constraint
+  console.log(task.startDate);
+  console.log(task.endDate);
 
   Model.tasksRepository.update(task);
   res.sendStatus(StatusCodes.NO_CONTENT);
