@@ -41,6 +41,7 @@ export class TasksRepositorySQLite extends SQLiteTable implements ITasksReposito
       throw new Error(`Invalid state: isDone is neither 0 or 1. It's '${obj.isDone}'`);
     }
 
+    const isDone = obj.isDone === 1;
     const startDate = obj.startDate != null ? new Date(obj.startDate) : null;
     const endDate = obj.endDate != null ? new Date(obj.endDate) : null;
 
@@ -60,7 +61,7 @@ export class TasksRepositorySQLite extends SQLiteTable implements ITasksReposito
 
     return {
       ...obj,
-      isDone: obj.isDone === 1,
+      isDone,
       startDate,
       endDate,
     };
