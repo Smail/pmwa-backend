@@ -13,7 +13,9 @@ export const get_users = (req, res) => {
 export const get_user = (req, res, next) => {
   const username: string = req.params.username;
   if (username == null) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "No username is URL parameters"));
-  if (!User.isValidUsername(username)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid ID syntax"));
+  if (!User.isValidUsername(username)) return next(createError(StatusCodes.BAD_REQUEST, "Invalid username"));
+  const user = Model.userRepository.findUsername(username);
+  if (user == null) return next(createError(StatusCodes.NOT_FOUND, "Username not found"));
 
   if (req.authLevel === AUTH_LEVEL_PRIVATE) {
     try {
@@ -22,6 +24,9 @@ export const get_user = (req, res, next) => {
 
         requireAuthenticatedUser(req, res, function (err) {
           if (err != null) throw err;
+          if (req.user.username !== user.username || req.user.id !== user.id) {;
+            res.send(user.public());
+          }
           res.send(req.user.serializeToObject());
         });
       });
@@ -29,9 +34,6 @@ export const get_user = (req, res, next) => {
       return next(error);
     }
   } else if (req.authLevel === AUTH_LEVEL_PUBLIC) {
-    const user = Model.userRepository.findUsername(username);
-    if (user == null) return next(createError(StatusCodes.NOT_FOUND, "User not found"));
-
     // Send a public version of the user object, that doesn't contain sensitive information
     res.send(user.public());
   } else {
