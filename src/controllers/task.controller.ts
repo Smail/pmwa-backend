@@ -110,8 +110,6 @@ export const update_task = (req: {
   }
 
   // TODO check if end date is after start date also in create task, maybe make SQL constraint
-  console.log(task.startDate);
-  console.log(task.endDate);
 
   Model.tasksRepository.update(task);
   res.sendStatus(StatusCodes.NO_CONTENT);
