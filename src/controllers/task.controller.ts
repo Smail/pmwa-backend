@@ -91,17 +91,10 @@ export const update_task = (req: {
     throw createError(StatusCodes.BAD_REQUEST, `Invalid type: content is not a string`);
   }
   if (isDone != null) {
-    if (typeof isDone === "string") {
-      if (isDone !== "true" && isDone !== "false") {
-        throw createError(StatusCodes.BAD_REQUEST, `Invalid type: Expected bool. isDone: ${typeof isDone} = ${isDone}`);
-      }
-      task.isDone = isDone === "true";
-    } else {
-      if (typeof isDone !== "boolean") {
-        throw createError(StatusCodes.BAD_REQUEST, `Invalid type: Expected bool. isDone: ${typeof isDone} = ${isDone}`);
-      }
-      task.isDone = isDone;
+    if (typeof isDone !== "boolean") {
+      throw createError(StatusCodes.BAD_REQUEST, `Invalid type: Expected bool. isDone: ${typeof isDone} = ${isDone}`);
     }
+    task.isDone = isDone;
   }
 
   if (name != null) task.name = name;
