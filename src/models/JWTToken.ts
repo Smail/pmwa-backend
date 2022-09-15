@@ -4,8 +4,9 @@ import { ITokenRecord } from "@models/ITokenRecord";
 
 export class JWTToken implements ISerializable {
   public id: string;
-  public grantType: string;
   public userId: string;
+  public username: string;
+  public grantType: string;
   public passphrase: string;
   public options: { expiresIn: number };
 
@@ -26,18 +27,20 @@ export class JWTToken implements ISerializable {
     this.deserializeFromObject(jwt.verify(jwtEncoding, this.passphrase));
   }
 
-  public deserializeFromObject({ tokenId, grantType, userId }: ITokenRecord): void {
-    if (!tokenId || !grantType || !userId) throw new Error("Null"); // TODO Check properly
+  public deserializeFromObject({ tokenId, userId, username, grantType }: ITokenRecord): void {
+    if (!tokenId || !userId || !username || !grantType) throw new Error("Null"); // TODO Check properly
     this.id = tokenId;
-    this.grantType = grantType;
     this.userId = userId;
+    this.username = username;
+    this.grantType = grantType;
   }
 
   public serializeToObject(): ITokenRecord {
     return {
       tokenId: this.id,
-      grantType: this.grantType,
       userId: this.userId,
+      username: this.username,
+      grantType: this.grantType,
     };
   }
 }

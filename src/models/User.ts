@@ -36,6 +36,8 @@ export class User implements ISerializable {
   }
 
   public static isValidUsername(username: string): boolean {
+    // Forbid UUIDs as username
+    if (isValidUuid(username)) return false;
     return /^[a-z0-9-_.]+$/i.test(username || "");
   }
 
@@ -102,8 +104,9 @@ export class User implements ISerializable {
     const token = new JWTToken();
     const lifetime = 60 * 10; // 10 min
 
-    token.userId = this.id;
     token.id = uuidV4();
+    token.userId = this.id;
+    token.username = this.username;
     token.grantType = "access";
     token.passphrase = process.env.ACCESS_TOKEN_PASSPHRASE;
     token.options = { expiresIn: lifetime };
@@ -118,8 +121,9 @@ export class User implements ISerializable {
     const token = new JWTToken();
     const lifetime = 60 * 60 * 24 * 14; // 2 weeks
 
-    token.userId = this.id;
     token.id = uuidV4();
+    token.userId = this.id;
+    token.username = this.username;
     token.grantType = "refresh";
     token.passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
     token.options = { expiresIn: lifetime };
