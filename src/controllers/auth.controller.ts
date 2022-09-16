@@ -73,7 +73,7 @@ export const sign_in_user = (req, res, next) => {
 export const refresh_token = (req: { body: { refreshToken: string } }, res, next) => {
   const { refreshToken } = req.body;
   const passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
-  if (refreshToken == null) return next(createError(StatusCodes.UNAUTHORIZED, "Missing refresh token"));
+  if (refreshToken == null) return next(createError(StatusCodes.BAD_REQUEST, "Missing refresh token"));
   if (passphrase == null) return next(createError(StatusCodes.INTERNAL_SERVER_ERROR, "Passphrase is null"));
 
   try {
