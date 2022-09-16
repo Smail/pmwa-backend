@@ -24,10 +24,10 @@ export const get_user = (req, res, next) => {
 
         requireAuthenticatedUser(req, res, function (err) {
           if (err != null) throw err;
-          if (req.user.username !== user.username || req.user.id !== user.id) {;
-            res.send(user.public());
+          if (req.user.username !== user.username || req.user.id !== user.id) {
+            res.send({ ...user.public(), isPrivate: false });
           }
-          res.send(req.user.serializeToObject());
+          res.send({ ...req.user.serializeToObject(), isPrivate: true });
         });
       });
     } catch (error) {
@@ -35,7 +35,7 @@ export const get_user = (req, res, next) => {
     }
   } else if (req.authLevel === AUTH_LEVEL_PUBLIC) {
     // Send a public version of the user object, that doesn't contain sensitive information
-    res.send(user.public());
+    res.send({ ...user.public(), isPrivate: false });
   } else {
     throw createError(StatusCodes.INTERNAL_SERVER_ERROR, `Unknown auth level: ${req.authLevel}`);
   }
