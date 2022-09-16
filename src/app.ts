@@ -1,5 +1,8 @@
 // Load environment variables
 require("dotenv").config();
+if (process.env.NODE_ENV == null) {
+  throw new Error("Missing environment variable NODE_ENV");
+}
 
 import { StatusCodes } from "http-status-codes";
 import createError from "http-errors";
