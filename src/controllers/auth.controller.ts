@@ -6,6 +6,9 @@ import { v4 as uuidV4 } from "uuid";
 import { UserRefreshTokensRepositorySQLite } from "@models/repositories/sqlite/UserRefreshTokensRepositorySQLite";
 import { JWTToken } from "@models/JWTToken";
 import { convertJwtErrorToHttpErrorIfPossible } from "../util/jwt/convertJwtErrorToHttpErrorIfPossible";
+import Debug from "debug";
+
+const debug = Debug("backend:controller:auth");
 
 function createAccessAndRefreshToken(user: User): { accessToken: string, refreshToken: string } {
   const accessToken: JWTToken = user.createAccessToken();
