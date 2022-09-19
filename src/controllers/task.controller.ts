@@ -4,6 +4,7 @@ import { Task } from "@models/Task";
 import { Model } from "../Model";
 import { UserTasksRepositorySQLite } from "@models/repositories/sqlite/UserTasksRepositorySQLite";
 import { User } from "@models/User";
+import moment from "moment";
 
 function parseDate(dateString: string | null) {
   if (dateString == null) return null;
@@ -63,6 +64,11 @@ export const create_task = (req: {
     throw createError(StatusCodes.BAD_REQUEST, `Inconsistent state: Passed a start date without an end date`);
   }
 
+  if (moment(task.startDate).isSameOrAfter(moment(task.endDate))) {
+    throw createError(StatusCodes.UNPROCESSABLE_ENTITY,
+      `Start date (${task.startDate}) is same or after end date ${task.endDate}`);
+  }
+
   Model.tasksRepository.create(task);
   new UserTasksRepositorySQLite(Model.db, req.user).create(task);
   res.status(StatusCodes.CREATED).send({ taskId: task.id });
@@ -110,6 +116,10 @@ export const update_task = (req: {
   }
 
   // TODO check if end date is after start date also in create task, maybe make SQL constraint
+  if (moment(task.startDate).isSameOrAfter(moment(task.endDate))) {
+    throw createError(StatusCodes.UNPROCESSABLE_ENTITY,
+      `Start date (${task.startDate}) is same or after end date ${task.endDate}`);
+  }
 
   Model.tasksRepository.update(task);
   res.sendStatus(StatusCodes.NO_CONTENT);
