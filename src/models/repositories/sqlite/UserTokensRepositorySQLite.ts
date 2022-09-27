@@ -9,11 +9,11 @@ import { Model } from "../../../Model";
 
 export class UserTokensRepositorySQLite extends SQLiteTable implements IUserTokensRepository {
   public static readonly tableSchema: string =
-    `CREATE TABLE IF NOT EXISTS UserRefreshTokens (
+    `CREATE TABLE IF NOT EXISTS UserTokens (
         userId  TEXT NOT NULL,
         tokenId TEXT NOT NULL,
         FOREIGN KEY (userId) REFERENCES Users (userId) ON UPDATE CASCADE ON DELETE CASCADE,
-        FOREIGN KEY (tokenId) REFERENCES RefreshTokens (tokenId) ON UPDATE CASCADE ON DELETE CASCADE,
+        FOREIGN KEY (tokenId) REFERENCES Tokens (tokenId) ON UPDATE CASCADE ON DELETE CASCADE,
         PRIMARY KEY (userId, tokenId)
     )`;
   public readonly user: User;
