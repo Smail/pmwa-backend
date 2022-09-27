@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { Model } from "../Model";
 import { User } from "@models/User";
 import { v4 as uuidV4 } from "uuid";
-import { UserRefreshTokensRepositorySQLite } from "@models/repositories/sqlite/UserRefreshTokensRepositorySQLite";
+import { UserTokensRepositorySQLite } from "@models/repositories/sqlite/UserTokensRepositorySQLite";
 import { JWTToken } from "@models/JWTToken";
 import { convertJwtErrorToHttpErrorIfPossible } from "../util/jwt/convertJwtErrorToHttpErrorIfPossible";
 import Debug from "debug";
@@ -84,7 +84,7 @@ export const refresh_token = (req: { body: { refreshToken: string } }, res, next
     if (token.grantType !== "refresh") return next(createError(StatusCodes.FORBIDDEN, "Invalid grant type"));
 
     // Check if token exists.
-    const token2 = new UserRefreshTokensRepositorySQLite(Model.db, user).read(token.id);
+    const token2 = new UserTokensRepositorySQLite(Model.db, user).read(token.id);
     if (token2 == null) return next(createError(StatusCodes.NOT_FOUND, "Unknown refresh token"));
 
     // Remove used refresh token.

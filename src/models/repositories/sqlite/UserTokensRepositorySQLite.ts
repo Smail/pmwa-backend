@@ -1,4 +1,4 @@
-import { IUserRefreshTokensRepository } from "@models/repositories/IUserRefreshTokensRepository";
+import { IUserTokensRepository } from "@models/repositories/IUserTokensRepository";
 import { JWTToken } from "@models/JWTToken";
 import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 import { sqlite3 } from "better-sqlite3";
@@ -7,7 +7,7 @@ import { runTransaction } from "../../../util/db/runTransaction";
 import { TokenRepositorySQLite } from "@models/repositories/sqlite/TokenRepositorySQLite";
 import { Model } from "../../../Model";
 
-export class UserRefreshTokensRepositorySQLite extends SQLiteTable implements IUserRefreshTokensRepository {
+export class UserTokensRepositorySQLite extends SQLiteTable implements IUserTokensRepository {
   public static readonly tableSchema: string =
     `CREATE TABLE IF NOT EXISTS UserRefreshTokens (
         userId  TEXT NOT NULL,
@@ -19,7 +19,7 @@ export class UserRefreshTokensRepositorySQLite extends SQLiteTable implements IU
   public readonly user: User;
 
   public constructor(db: sqlite3, user: User) {
-    super(db, UserRefreshTokensRepositorySQLite.tableSchema);
+    super(db, UserTokensRepositorySQLite.tableSchema);
     this.user = user;
   }
 
