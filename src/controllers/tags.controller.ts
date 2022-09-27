@@ -5,7 +5,6 @@ import { TaskTagsRepositorySQLite } from "@models/repositories/sqlite/TaskTagsRe
 import { UserTasksRepositorySQLite } from "@models/repositories/sqlite/UserTasksRepositorySQLite";
 import { User } from "@models/User";
 import { Task } from "@models/Task";
-import { Tag } from "@models/Tag";
 
 function checkReqThrowIfInvalid(req: { params: { taskId: any } }) {
   const taskId = req.params.taskId;
