@@ -4,7 +4,7 @@ import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 import { sqlite3 } from "better-sqlite3";
 import { User } from "@models/User";
 import { runTransaction } from "../../../util/db/runTransaction";
-import { RefreshTokenRepositorySQLite } from "@models/repositories/sqlite/RefreshTokenRepositorySQLite";
+import { TokenRepositorySQLite } from "@models/repositories/sqlite/TokenRepositorySQLite";
 import { Model } from "../../../Model";
 
 export class UserRefreshTokensRepositorySQLite extends SQLiteTable implements IUserRefreshTokensRepository {
@@ -41,7 +41,7 @@ export class UserRefreshTokensRepositorySQLite extends SQLiteTable implements IU
     const passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
     if (passphrase == null) throw new Error("Passphrase is null");
 
-    return row != null ? JWTToken.decode(RefreshTokenRepositorySQLite.decryptToken(row.tokenCipher), passphrase) : null;
+    return row != null ? JWTToken.decode(TokenRepositorySQLite.decryptToken(row.tokenCipher), passphrase) : null;
   }
 
   public readAll(): JWTToken[] {
@@ -53,7 +53,7 @@ export class UserRefreshTokensRepositorySQLite extends SQLiteTable implements IU
     if (passphrase == null) throw new Error("Passphrase is null");
     return this.db.prepare(query)
       .all({ userId: this.user.id })
-      .map(row => JWTToken.decode(RefreshTokenRepositorySQLite.decryptToken(row.tokenCipher), passphrase));
+      .map(row => JWTToken.decode(TokenRepositorySQLite.decryptToken(row.tokenCipher), passphrase));
   }
 
   public update(token: JWTToken): void {

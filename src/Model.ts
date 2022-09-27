@@ -3,10 +3,10 @@ import { IUserRepository } from "@models/repositories/IUserRepository";
 import { UserRepositorySQLite } from "@models/repositories/sqlite/UserRepositorySQLite";
 import { ITasksRepository } from "@models/repositories/ITasksRepository";
 import { ITagsRepository } from "@models/repositories/ITagsRepository";
-import { IRefreshTokenRepository } from "@models/repositories/IRefreshTokenRepository";
+import { ITokenRepository } from "@models/repositories/ITokenRepository";
 import { TasksRepositorySQLite } from "@models/repositories/sqlite/TasksRepositorySQLite";
 import { TagsRepositorySQLite } from "@models/repositories/sqlite/TagsRepositorySQLite";
-import { RefreshTokenRepositorySQLite } from "@models/repositories/sqlite/RefreshTokenRepositorySQLite";
+import { TokenRepositorySQLite } from "@models/repositories/sqlite/TokenRepositorySQLite";
 
 let dbPath: string;
 if (process.env.DEBUG) {
@@ -31,5 +31,5 @@ export class Model {
   public static readonly userRepository: IUserRepository = new UserRepositorySQLite(Model.db);
   public static readonly tasksRepository: ITasksRepository = new TasksRepositorySQLite(Model.db);
   public static readonly tagRepository: ITagsRepository = new TagsRepositorySQLite(Model.db);
-  public static readonly refreshTokenRepository: IRefreshTokenRepository = new RefreshTokenRepositorySQLite(Model.db);
+  public static readonly refreshTokenRepository: ITokenRepository = new TokenRepositorySQLite(Model.db);
 }
