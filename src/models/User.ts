@@ -147,4 +147,8 @@ export class User implements ISerializable {
       displayName: o.displayName,
     };
   }
+
+  public save(): void {
+    Model.userRepository.create(this);
+  }
 }

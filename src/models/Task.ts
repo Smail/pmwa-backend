@@ -1,6 +1,9 @@
 import { ISerializable } from "@models/repositories/ISerializable";
 import { v4 as uuidv4, validate as isValidUuid } from "uuid";
 import { ITaskRecord } from "@models/ITaskRecord";
+import { Model } from "../Model";
+import { UserTasksRepositorySQLite } from "@models/repositories/sqlite/UserTasksRepositorySQLite";
+import { User } from "@models/User";
 
 export class Task implements ISerializable, ITaskRecord {
   public id: string = uuidv4();
@@ -52,5 +55,10 @@ export class Task implements ISerializable, ITaskRecord {
     };
     Task.throwIfInvalid(o);
     return o;
+  }
+
+  public save(user: User): void {
+    Model.tasksRepository.create(this);
+    new UserTasksRepositorySQLite(Model.db, user).create(this);
   }
 }

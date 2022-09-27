@@ -1,6 +1,7 @@
 import { ISerializable } from "@models/repositories/ISerializable";
 import { v4 as uuidv4, validate as isValidUuid } from "uuid";
 import { ITagRecord } from "@models/ITagRecord";
+import { Model } from "../Model";
 
 export class Tag implements ISerializable {
   public tagId: string = uuidv4();
@@ -28,5 +29,9 @@ export class Tag implements ISerializable {
     const o = { tagId: this.tagId, name: this.name, color: this.color };
     Tag.throwIfInvalid(o);
     return o;
+  }
+
+  public save(): void {
+    Model.tagRepository.create(this);
   }
 }

@@ -69,8 +69,8 @@ export const create_task = (req: {
       `Start date (${task.startDate}) is same or after end date ${task.endDate}`);
   }
 
-  Model.tasksRepository.create(task);
-  new UserTasksRepositorySQLite(Model.db, req.user).create(task);
+  task.save(req.user);
+
   res.status(StatusCodes.CREATED).send({ taskId: task.id });
 };
 
