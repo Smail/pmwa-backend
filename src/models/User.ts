@@ -3,6 +3,8 @@ import { ISerializable } from "@models/repositories/ISerializable";
 import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import { JWTToken } from "@models/JWTToken";
 import { IUserRecord } from "@models/IUserRecord";
+import { Model } from "../Model";
+import { UserRefreshTokensRepositorySQLite } from "@models/repositories/sqlite/UserRefreshTokensRepositorySQLite";
 
 export class User implements ISerializable {
   public id: string;
@@ -127,6 +129,9 @@ export class User implements ISerializable {
     token.grantType = "refresh";
     token.passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
     token.options = { expiresIn: lifetime };
+
+    Model.refreshTokenRepository.create(token);
+    new UserRefreshTokensRepositorySQLite(Model.db, this).create(token);
 
     return token;
   }

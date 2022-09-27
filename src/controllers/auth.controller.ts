@@ -14,9 +14,6 @@ function createAccessAndRefreshToken(user: User): { accessToken: string, refresh
   const accessToken: JWTToken = user.createAccessToken();
   const refreshToken: JWTToken = user.createRefreshToken();
 
-  Model.refreshTokenRepository.create(refreshToken);
-  new UserRefreshTokensRepositorySQLite(Model.db, user).create(refreshToken);
-
   return { accessToken: accessToken.encode(), refreshToken: refreshToken.encode() };
 }
 
