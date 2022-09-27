@@ -10,12 +10,12 @@ export class JWTToken implements ISerializable {
   public passphrase: string;
   public options: { expiresIn: number };
 
-  public static decode(jwtEncoding: string, passphrase: string): JWTToken {
+  public static decode(jwtEncoding: string, passphrase: string): Readonly<JWTToken> {
     const token = new JWTToken();
     token.passphrase = passphrase;
     token.decode(jwtEncoding);
 
-    return token;
+    return Object.freeze(token);
   }
 
   public encode(): string {
