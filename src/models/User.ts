@@ -4,7 +4,6 @@ import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import { JWTToken } from "@models/JWTToken";
 import { IUserRecord } from "@models/IUserRecord";
 import { Model } from "../Model";
-import { UserTokensRepositorySQLite } from "@models/repositories/sqlite/UserTokensRepositorySQLite";
 
 export class User implements ISerializable {
   public id: string;
@@ -113,8 +112,7 @@ export class User implements ISerializable {
     token.passphrase = process.env.ACCESS_TOKEN_PASSPHRASE;
     token.options = { expiresIn: lifetime };
 
-    Model.tokenRepository.create(token);
-    new UserTokensRepositorySQLite(Model.db, this).create(token);
+    token.save(this);
 
     return token;
   }
@@ -133,8 +131,7 @@ export class User implements ISerializable {
     token.passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
     token.options = { expiresIn: lifetime };
 
-    Model.tokenRepository.create(token);
-    new UserTokensRepositorySQLite(Model.db, this).create(token);
+    token.save(this);
 
     return token;
   }

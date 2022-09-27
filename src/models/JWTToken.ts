@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
 import { ISerializable } from "@models/repositories/ISerializable";
 import { ITokenRecord } from "@models/ITokenRecord";
+import { User } from "@models/User";
+import { Model } from "../Model";
+import { UserTokensRepositorySQLite } from "@models/repositories/sqlite/UserTokensRepositorySQLite";
 
 export class JWTToken implements ISerializable {
   public id: string;
@@ -42,5 +45,10 @@ export class JWTToken implements ISerializable {
       username: this.username,
       grantType: this.grantType,
     };
+  }
+
+  public save(user: User): void {
+    Model.tokenRepository.create(this);
+    new UserTokensRepositorySQLite(Model.db, user).create(this);
   }
 }
