@@ -12,6 +12,7 @@ export class User implements ISerializable {
   public firstName: string;
   public lastName: string;
   public email: string;
+  private settings: object = {};
 
   private _passwordHash: string;
 
@@ -74,7 +75,7 @@ export class User implements ISerializable {
   }
 
   // Note: this function won't deserialize any password or password hash
-  public deserializeFromObject({ userId, username, displayName, firstName, lastName, email }): void {
+  public deserializeFromObject({ userId, username, displayName, firstName, lastName, email, settings }): void {
     User.throwIfInvalid({ userId, username, displayName, firstName, lastName, email });
     this.id = userId;
     this.username = username;
@@ -82,6 +83,7 @@ export class User implements ISerializable {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
+    this.settings = JSON.parse(settings);
   }
 
   public serializeToObject(): IUserRecord {
@@ -93,6 +95,7 @@ export class User implements ISerializable {
       lastName: this.lastName,
       email: this.email,
       passwordHash: this.passwordHash,
+      settings: JSON.stringify(this.settings),
     };
     User.throwIfInvalid(o);
     return o;
@@ -134,6 +137,12 @@ export class User implements ISerializable {
     token.save(this);
 
     return token;
+  }
+
+  public updateSettings(settings: object): void {
+    for (const key in settings) {
+      this.settings[key] = settings[key];
+    }
   }
 
   public public(): { userId: string, username: string, displayName: string } {

@@ -42,10 +42,18 @@ export const get_user = (req, res, next) => {
 };
 
 export const update_user = (req: {
-  body: { username?: string; displayName?: string, firstName?: string; lastName?: string; email?: string; password?: string; };
+  body: {
+    username?: string;
+    displayName?: string,
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    password?: string;
+    settings?: object;
+  };
   params: { username: string }; accessTokenContent: { userId: string }
 }, res, next) => {
-  const { username, displayName, firstName, lastName, email, password } = req.body;
+  const { username, displayName, firstName, lastName, email, password, settings } = req.body;
   const userId = req.accessTokenContent.userId;
   if (!User.isValidId(userId)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: userId = ${userId}`));
 
@@ -80,6 +88,9 @@ export const update_user = (req: {
   if (password) {
     if (!User.isValidPassword(password)) return next(createError(StatusCodes.BAD_REQUEST, `Invalid argument: password`));
     user.password = password;
+  }
+  if (settings) {
+    user.updateSettings(settings);
   }
 
   Model.userRepository.update(user);

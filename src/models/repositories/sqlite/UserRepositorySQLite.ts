@@ -15,6 +15,7 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
         lastName     TEXT        NOT NULL,
         email        TEXT UNIQUE NOT NULL,
         passwordHash TEXT        NOT NULL,
+        settings     TEXT CHECK (JSON_VALID(settings) == 1),
         created_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`;
 
@@ -23,13 +24,14 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
   }
 
   public create(user: User): void {
-    const query = `INSERT INTO Users(userId, username, displayName, firstName, lastName, email, passwordHash)
-                   VALUES ($userId, LOWER($username), $displayName, $firstName, $lastName, $email, $passwordHash)`;
+    const query = `INSERT INTO Users(userId, username, displayName, firstName, lastName, email, passwordHash, settings)
+                   VALUES ($userId, LOWER($username), $displayName, $firstName, $lastName, $email, $passwordHash,
+                           JSON($settings))`;
     runTransaction(this.db, query, user.serializeToObject());
   }
 
   public read(userId: string): User | null {
-    const query = `SELECT userId, username, displayName, firstName, lastName, email
+    const query = `SELECT userId, username, displayName, firstName, lastName, email, settings
                    FROM Users
                    WHERE userId = $userId`;
     const row = this.db.prepare(query).get({ userId: userId });
@@ -49,7 +51,8 @@ export class UserRepositorySQLite extends SQLiteTable implements IUserRepository
                        firstName   = $firstName,
                        lastName    = $lastName,
                        ${user.passwordHash != null ? "passwordHash = $passwordHash," : ""}
-                       email       = $email
+                       email       = $email,
+                       settings    = json($settings)
                    WHERE userId = $userId`;
     runTransaction(this.db, query, user.serializeToObject());
   }
