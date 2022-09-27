@@ -130,7 +130,7 @@ export class User implements ISerializable {
     token.passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
     token.options = { expiresIn: lifetime };
 
-    Model.refreshTokenRepository.create(token);
+    Model.tokenRepository.create(token);
     new UserRefreshTokensRepositorySQLite(Model.db, this).create(token);
 
     return token;

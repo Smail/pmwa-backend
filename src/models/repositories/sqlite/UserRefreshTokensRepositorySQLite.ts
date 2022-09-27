@@ -24,7 +24,7 @@ export class UserRefreshTokensRepositorySQLite extends SQLiteTable implements IU
   }
 
   public create(token: JWTToken): void {
-    const retrievedToken = Model.refreshTokenRepository.read(token.id);
+    const retrievedToken = Model.tokenRepository.read(token.id);
     if (retrievedToken == null) throw new Error(`No token with ID ${token.id} found.`);
 
     const query = `INSERT INTO UserRefreshTokens(userId, tokenId) VALUES ($userId, $tokenId)`;

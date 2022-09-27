@@ -88,7 +88,7 @@ export const refresh_token = (req: { body: { refreshToken: string } }, res, next
     if (token2 == null) return next(createError(StatusCodes.NOT_FOUND, "Unknown refresh token"));
 
     // Remove used refresh token.
-    Model.refreshTokenRepository.delete(token);
+    Model.tokenRepository.delete(token);
 
     // Create and return new tokens.
     res.status(StatusCodes.CREATED).send(createAccessAndRefreshToken(user));

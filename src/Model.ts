@@ -31,5 +31,5 @@ export class Model {
   public static readonly userRepository: IUserRepository = new UserRepositorySQLite(Model.db);
   public static readonly tasksRepository: ITasksRepository = new TasksRepositorySQLite(Model.db);
   public static readonly tagRepository: ITagsRepository = new TagsRepositorySQLite(Model.db);
-  public static readonly refreshTokenRepository: ITokenRepository = new TokenRepositorySQLite(Model.db);
+  public static readonly tokenRepository: ITokenRepository = new TokenRepositorySQLite(Model.db);
 }
