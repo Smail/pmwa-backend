@@ -22,7 +22,7 @@ export class User implements ISerializable {
 
   public set password(password: string) {
     if (!User.isValidPassword(password)) throw new Error("Invalid password");
-    this._passwordHash = bcrypt.hashSync(password, 10);
+    this._passwordHash = User.hashPassword(password);
   }
 
   public static hashPassword(password): string {
