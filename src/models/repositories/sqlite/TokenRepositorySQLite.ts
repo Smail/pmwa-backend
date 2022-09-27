@@ -7,7 +7,7 @@ import { SQLiteTable } from "@models/repositories/sqlite/SQLiteTable";
 
 export class TokenRepositorySQLite extends SQLiteTable implements ITokenRepository {
   public static readonly tableSchema: string =
-    `CREATE TABLE IF NOT EXISTS RefreshTokens (
+    `CREATE TABLE IF NOT EXISTS Tokens (
         tokenId     TEXT        NOT NULL PRIMARY KEY,
         tokenCipher TEXT UNIQUE NOT NULL,
         grantType   TEXT        NOT NULL CHECK (grantType == 'access' OR grantType == 'refresh'),
@@ -39,7 +39,7 @@ export class TokenRepositorySQLite extends SQLiteTable implements ITokenReposito
   }
 
   public create(token: JWTToken): void {
-    const query = `INSERT INTO RefreshTokens (tokenId, tokenCipher, grantType)
+    const query = `INSERT INTO Tokens (tokenId, tokenCipher, grantType)
                    VALUES ($tokenId, $tokenCipher, $grantType)`;
     const tokenCipher = TokenRepositorySQLite.encryptToken(token.encode());
 
@@ -47,7 +47,7 @@ export class TokenRepositorySQLite extends SQLiteTable implements ITokenReposito
   }
 
   public read(tokenId: string): JWTToken | null {
-    const query = `SELECT * FROM RefreshTokens WHERE tokenId = $tokenId`;
+    const query = `SELECT * FROM Tokens WHERE tokenId = $tokenId`;
     const row = this.db.prepare(query).get({ tokenId: tokenId });
     if (row == null) return null;
 
@@ -60,7 +60,7 @@ export class TokenRepositorySQLite extends SQLiteTable implements ITokenReposito
   }
 
   public readAll(): JWTToken[] {
-    const query = `SELECT * FROM RefreshTokens`;
+    const query = `SELECT * FROM Tokens`;
     const accessTokenPassphrase = process.env.ACCESS_TOKEN_PASSPHRASE;
     const refreshTokenPassphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
     if (accessTokenPassphrase == null) throw new Error("Access token passphrase is missing");
@@ -80,7 +80,7 @@ export class TokenRepositorySQLite extends SQLiteTable implements ITokenReposito
   }
 
   public delete(token: JWTToken): void {
-    const query = `DELETE FROM RefreshTokens WHERE tokenId = $tokenId`;
+    const query = `DELETE FROM Tokens WHERE tokenId = $tokenId`;
     runTransaction(this.db, query, { tokenId: token.id });
   }
 }

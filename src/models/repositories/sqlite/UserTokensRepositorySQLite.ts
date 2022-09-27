@@ -27,16 +27,16 @@ export class UserTokensRepositorySQLite extends SQLiteTable implements IUserToke
     const retrievedToken = Model.tokenRepository.read(token.id);
     if (retrievedToken == null) throw new Error(`No token with ID ${token.id} found.`);
 
-    const query = `INSERT INTO UserRefreshTokens(userId, tokenId) VALUES ($userId, $tokenId)`;
+    const query = `INSERT INTO UserTokens(userId, tokenId) VALUES ($userId, $tokenId)`;
     runTransaction(this.db, query, token.serializeToObject());
   }
 
   public read(tokenId: string): JWTToken | null {
     const query = `SELECT *
-                   FROM UserRefreshTokens
-                            JOIN RefreshTokens ON RefreshTokens.tokenId = UserRefreshTokens.tokenId
-                   WHERE UserRefreshTokens.userId = $userId
-                     AND UserRefreshTokens.tokenId = $tokenId`;
+                   FROM UserTokens
+                            JOIN UserTokens ON Tokens.tokenId = UserTokens.tokenId
+                   WHERE UserTokens.userId = $userId
+                     AND UserTokens.tokenId = $tokenId`;
     const row = this.db.prepare(query).get({ userId: this.user.id, tokenId: tokenId });
     const passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
     if (passphrase == null) throw new Error("Passphrase is null");
@@ -46,9 +46,9 @@ export class UserTokensRepositorySQLite extends SQLiteTable implements IUserToke
 
   public readAll(): JWTToken[] {
     const query = `SELECT *
-                   FROM UserRefreshTokens
-                            JOIN RefreshTokens ON RefreshTokens.tokenId = UserRefreshTokens.tokenId
-                   WHERE UserRefreshTokens.userId = $userId`;
+                   FROM UserTokens
+                            JOIN Tokens ON Tokens.tokenId = UserTokens.tokenId
+                   WHERE UserTokens.userId = $userId`;
     const passphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
     if (passphrase == null) throw new Error("Passphrase is null");
     return this.db.prepare(query)
